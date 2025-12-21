@@ -28,7 +28,7 @@ public class Specialization {
     private String title;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "department_id")
     private AcademicDepartment department;
 
     @OneToMany(mappedBy = "specialization")
@@ -75,6 +75,5 @@ public class Specialization {
     public void setGroups(List<Group> groups) {
         this.groups = groups;
     }
-    
-    
+
 }

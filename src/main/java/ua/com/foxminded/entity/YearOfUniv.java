@@ -1,14 +1,17 @@
 package ua.com.foxminded.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class YearOfUniversity {
+public class YearOfUniv {
 
-    private int yearsOfStudy;
+    @Column(name = "year_of_univ")
     private int curentYearInUniv;
+    
+    private int totalYearsOfStudy;
 
-    public YearOfUniversity(int curentYearInUniv) {
+    public YearOfUniv(int curentYearInUniv) {
         if (curentYearInUniv < 1 || curentYearInUniv > 6) {
             throw new IllegalArgumentException();
         }
@@ -17,9 +20,9 @@ public class YearOfUniversity {
 
     public int calculateYearOfUniversity() {
         int yearsLeft;
-        yearsLeft = yearsOfStudy - curentYearInUniv;
+        yearsLeft = totalYearsOfStudy - curentYearInUniv;
         int currentYear;
-        currentYear = yearsOfStudy - yearsLeft;
+        currentYear = totalYearsOfStudy - yearsLeft;
         return currentYear;
 
     }

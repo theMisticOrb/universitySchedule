@@ -18,7 +18,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "groups")
+@Table(name = "academic_groups")
 public class Group {
 
     @Id
@@ -28,19 +28,19 @@ public class Group {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "faculty_id")
     private Faculty faculty;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "department_id")
     private AcademicDepartment department;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "specialization_id")
     private Specialization specialization;
 
     @Embedded
-    private YearOfUniversity yearOfUniv = new YearOfUniversity(1);
+    private YearOfUniv yearOfUniv = new YearOfUniv(1);
 
     @Column(name = "group_name")
     private String name;
@@ -56,7 +56,7 @@ public class Group {
     }
 
     public Group(Integer id, Faculty faculty, AcademicDepartment department, Specialization specialization,
-            YearOfUniversity yearOfUniv, Set<Student> students, Set<Subject> subjects) {
+            YearOfUniv yearOfUniv, Set<Student> students, Set<Subject> subjects) {
         super();
         this.id = id;
         this.faculty = faculty;
@@ -104,7 +104,7 @@ public class Group {
         return yearOfUniv.calculateYearOfUniversity();
     }
 
-    public void setYearOfUniv(YearOfUniversity yearOfUniv) {
+    public void setYearOfUniv(YearOfUniv yearOfUniv) {
         this.yearOfUniv = yearOfUniv;
     }
 

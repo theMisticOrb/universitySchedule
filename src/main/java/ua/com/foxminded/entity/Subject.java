@@ -1,11 +1,15 @@
 package ua.com.foxminded.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -15,8 +19,8 @@ import javax.persistence.Table;
 public class Subject {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "subject_gen")
-    @SequenceGenerator(name = "subject_gen", sequenceName = "subject_seq", allocationSize = 30)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "subject_id_gen")
+    @SequenceGenerator(name = "subject_id_gen", sequenceName = "subject_id_seq", allocationSize = 30)
     @Column(name = "subject_id")
     private Integer id;
 
@@ -27,13 +31,25 @@ public class Subject {
     @JoinColumn(name = "teacher_id", nullable = false)
     private Teacher teacher;
 
+    @ManyToMany(mappedBy = "subjects")
+    private Set<Group> groups = new HashSet<>();
+
     public Subject() {
     }
 
-    public Subject(Integer id, String title, Teacher teacher) {
+    public Subject(Integer id, String title, Teacher teacher, Set<Group> groups) {
         this.id = id;
         this.title = title;
         this.teacher = teacher;
+        this.groups = groups;
+    }
+
+    public Set<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
     }
 
     public Integer getId() {
@@ -59,7 +75,5 @@ public class Subject {
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
     }
-    
-    
 
 }

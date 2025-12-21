@@ -28,7 +28,7 @@ public class AcademicDepartment {
     private String title;
     
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "faculty_id")
     private Faculty faculty;
 
     @OneToMany(mappedBy = "department")
