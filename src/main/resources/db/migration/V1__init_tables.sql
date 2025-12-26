@@ -1,6 +1,3 @@
-CREATE SEQUENCE IF NOT EXISTS faculty_id_seq START WITH 1 INCREMENT BY 1 CACHE 30; 
-CREATE SEQUENCE IF NOT EXISTS department_id_seq START WITH 1 INCREMENT BY 1 CACHE 30; 
-CREATE SEQUENCE IF NOT EXISTS specialization_id_seq START WITH 1 INCREMENT BY 1 CACHE 30; 
 CREATE SEQUENCE IF NOT EXISTS group_id_seq START WITH 1 INCREMENT BY 1 CACHE 30; 
 CREATE SEQUENCE IF NOT EXISTS subject_id_seq START WITH 1 INCREMENT BY 1 CACHE 30; 
 CREATE SEQUENCE IF NOT EXISTS user_id_seq START WITH 1 INCREMENT BY 1 CACHE 30; 
@@ -78,6 +75,22 @@ group_id INTEGER NOT NULL,
 
 CONSTRAINT fk_student_group FOREIGN KEY (group_id) REFERENCES academic_groups (group_id),
 CONSTRAINT fk_student_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE IF NOT EXISTS classrooms(
+classroom_id INTEGER PRIMARY KEY,
+classroom_name varchar(225) UNIQUE
+);
+
+
+CREATE TABLE IF NOT EXISTS lessons(
+lesson_id INTEGER PRIMARY KEY,
+subject_id INTEGER NOT NULL,
+classroom_id INTEGER NOT NULL,
+
+CONSTRAINT fk_lesson_subject FOREIGN KEY (subject_id) REFERENCES subjects (subject_id),
+CONSTRAINT fk_lesson_classroom FOREIGN KEY (classroom_id) REFERENCES classrooms (classroom_id)
 );
 
 

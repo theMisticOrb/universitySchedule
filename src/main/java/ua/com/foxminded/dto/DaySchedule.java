@@ -4,18 +4,20 @@ import java.time.LocalDate;
 import java.util.List;
 
 import ua.com.foxminded.entity.Group;
+import ua.com.foxminded.entity.Lesson;
+import ua.com.foxminded.enums.ClassHour;
 
 public class DaySchedule {
 
     private Group group;
     private LocalDate date;
-    private ClassHours classHour;
+    private ClassHour classHour;
     private List<Lesson> lessons;
 
     public DaySchedule() {
     }
 
-    public DaySchedule(Group group, LocalDate date, ClassHours classHour, List<Lesson> lessons) {
+    public DaySchedule(Group group, LocalDate date, ClassHour classHour, List<Lesson> lessons) {
         this.group = group;
         this.date = date;
         this.classHour = classHour;
@@ -26,32 +28,16 @@ public class DaySchedule {
         return group;
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
-    }
-
     public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public ClassHours getClassHour() {
+    public ClassHour getClassHour() {
         return classHour;
-    }
-
-    public void setClassHour(ClassHours classHour) {
-        this.classHour = classHour;
     }
 
     public List<Lesson> getLessons() {
         return lessons;
-    }
-
-    public void setLessons(List<Lesson> lessons) {
-        this.lessons = lessons;
     }
 
 }

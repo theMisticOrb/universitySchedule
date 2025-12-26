@@ -1,18 +1,45 @@
-package ua.com.foxminded.dto;
+package ua.com.foxminded.entity;
 
-import ua.com.foxminded.entity.Classroom;
-import ua.com.foxminded.entity.Subject;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
+import ua.com.foxminded.enums.ClassHour;
+import ua.com.foxminded.enums.WeekDay;
+
+@Entity
+@Table(name = "lessons")
 public class Lesson {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "lesson_id")
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "subject_id")
     private Subject subject;
+
+    @ManyToOne
+    @JoinColumn(name = "classroom_id")
     private Classroom classroom;
-    private ClassHours classHours;
+
+    private ClassHour classHours;
+
+    @Enumerated(EnumType.STRING)
+    private WeekDay weekDays;
 
     public Lesson() {
     }
 
-    public Lesson(Subject subject, Classroom classroom, ClassHours classHours) {
+    public Lesson(Subject subject, Classroom classroom, ClassHour classHours) {
         this.subject = subject;
         this.classroom = classroom;
         this.classHours = classHours;
@@ -34,14 +61,12 @@ public class Lesson {
         this.classroom = classroom;
     }
 
-    public ClassHours getClassHours() {
+    public ClassHour getClassHours() {
         return classHours;
     }
 
-    public void setClassHours(ClassHours classHours) {
+    public void setClassHours(ClassHour classHours) {
         this.classHours = classHours;
     }
-    
-    
 
 }

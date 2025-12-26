@@ -1,8 +1,8 @@
-package ua.com.foxminded.dto;
+package ua.com.foxminded.enums;
 
 import java.time.LocalTime;
 
-public enum ClassHours {
+public enum ClassHour {
 
     FIRST_CLASS(LocalTime.of(8, 30), LocalTime.of(10, 5)), 
     SECOND_CLASS(LocalTime.of(10, 15), LocalTime.of(11, 50)), 
@@ -15,7 +15,7 @@ public enum ClassHours {
     private final LocalTime start;
     private final LocalTime end;
     
-    private ClassHours(LocalTime start, LocalTime end) {
+    private ClassHour(LocalTime start, LocalTime end) {
         this.start = start;
         this.end = end;
     }
