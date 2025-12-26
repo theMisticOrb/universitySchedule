@@ -8,8 +8,11 @@ public class YearOfUniv {
 
     @Column(name = "year_of_univ")
     private int curentYearInUniv;
-    
+
     private int totalYearsOfStudy;
+
+    protected YearOfUniv() {
+    }
 
     public YearOfUniv(int curentYearInUniv) {
         if (curentYearInUniv < 1 || curentYearInUniv > 6) {
