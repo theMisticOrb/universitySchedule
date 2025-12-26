@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.entity.Subject;
+import ua.com.foxminded.helpers.UpdateUtils;
 import ua.com.foxminded.sdjpa.SubjectRepository;
 
 @Service
@@ -19,7 +20,7 @@ public class SubjectService {
     public SubjectService(SubjectRepository subjectRepository) {
         this.subjectRepository = subjectRepository;
     }
-    
+
     public Subject create(Subject subject) {
         return subjectRepository.save(subject);
     }
@@ -35,9 +36,9 @@ public class SubjectService {
 
     public Subject update(Integer id, Subject updated) {
         Subject subject = findById(id);
-        subject.setGroups(updated.getGroups());
-        subject.setTeacher(updated.getTeacher());
-        subject.setTitle(updated.getTitle());
+        UpdateUtils.setIfNotNull(updated.getGroups(), subject::setGroups);
+        UpdateUtils.setIfNotNull(updated.getTeacher(), subject::setTeacher);
+        UpdateUtils.setIfNotNull(updated.getTitle(), subject::setTitle);
         return updated;
     }
 

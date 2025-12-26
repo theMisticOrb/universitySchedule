@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.entity.Lesson;
+import ua.com.foxminded.helpers.UpdateUtils;
 import ua.com.foxminded.sdjpa.LessonRepository;
 
 @Service
@@ -19,14 +20,13 @@ public class LessonService {
     protected LessonService(LessonRepository lessonRepository) {
         this.lessonRepository = lessonRepository;
     }
-    
+
     public Lesson create(Lesson lesson) {
         return lessonRepository.save(lesson);
     }
 
     public Lesson findById(Integer id) {
-        return lessonRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Lesson not found: " + id));
+        return lessonRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Lesson not found: " + id));
     }
 
     public List<Lesson> findAll() {
@@ -35,9 +35,10 @@ public class LessonService {
 
     public Lesson update(Integer id, Lesson updated) {
         Lesson lesson = findById(id);
-        lesson.setClassHours(updated.getClassHours());
-        lesson.setClassroom(updated.getClassroom());
-        lesson.setSubject(updated.getSubject());
+
+        UpdateUtils.setIfNotNull(updated.getClassHours(), lesson::setClassHours);
+        UpdateUtils.setIfNotNull(updated.getClassroom(), lesson::setClassroom);
+        UpdateUtils.setIfNotNull(updated.getSubject(), lesson::setSubject);
         return updated;
     }
 

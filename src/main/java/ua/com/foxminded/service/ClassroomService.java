@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.entity.Classroom;
+import ua.com.foxminded.helpers.UpdateUtils;
 import ua.com.foxminded.sdjpa.ClassroomRepository;
 
 @Service
@@ -35,7 +36,7 @@ public class ClassroomService {
 
     public Classroom update(Integer id, Classroom updated) {
         Classroom classroom = findById(id);
-        classroom.setName(updated.getName());
+        UpdateUtils.setIfNotNull(updated.getName(), classroom::setName);
         return updated;
     }
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.entity.Faculty;
+import ua.com.foxminded.helpers.UpdateUtils;
 import ua.com.foxminded.sdjpa.FacultyRepository;
 
 @Service
@@ -35,8 +36,8 @@ public class FacultyService {
 
     public Faculty update(Integer id, Faculty updated) {
         Faculty faculty = findById(id);
-        faculty.setDepartments(updated.getDepartments());
-        faculty.setTitle(updated.getTitle());
+        UpdateUtils.setIfNotNull(updated.getDepartments(), faculty::setDepartments);
+        UpdateUtils.setIfNotNull(updated.getTitle(), faculty::setTitle);
         return updated;
     }
 

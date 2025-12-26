@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.entity.Group;
+import ua.com.foxminded.helpers.UpdateUtils;
 import ua.com.foxminded.sdjpa.GroupRepository;
 
 @Service
@@ -35,11 +36,11 @@ public class GroupService {
 
     public Group update(Integer id, Group updated) {
         Group group = findById(id);
-        group.setFaculty(updated.getFaculty());
-        group.setDepartment(updated.getDepartment());
-        group.setSpecialization(updated.getSpecialization());
-        group.setStudents(updated.getStudents());
-        group.setSubjects(updated.getSubjects());
+        UpdateUtils.setIfNotNull(updated.getFaculty(), group::setFaculty);
+        UpdateUtils.setIfNotNull(updated.getDepartment(), group::setDepartment);
+        UpdateUtils.setIfNotNull(updated.getSpecialization(), group::setSpecialization);
+        UpdateUtils.setIfNotNull(updated.getStudents(), group::setStudents);
+        UpdateUtils.setIfNotNull(updated.getSubjects(), group::setSubjects);
         return updated;
     }
 
