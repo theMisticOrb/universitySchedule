@@ -34,8 +34,8 @@ public class FacultyService {
         return facultyRepository.findAll();
     }
 
-    public Faculty update(Integer id, Faculty updated) {
-        Faculty faculty = findById(id);
+    public Faculty update(Faculty updated) {
+        Faculty faculty = findById(updated.getId());
         UpdateUtils.setIfNotNull(updated.getDepartments(), faculty::setDepartments);
         UpdateUtils.setIfNotNull(updated.getTitle(), faculty::setTitle);
         return updated;

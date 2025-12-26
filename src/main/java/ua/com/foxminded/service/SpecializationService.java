@@ -34,8 +34,8 @@ public class SpecializationService {
         return specializationRepository.findAll();
     }
 
-    public Specialization update(Integer id, Specialization updated) {
-        Specialization specialization = findById(id);
+    public Specialization update(Specialization updated) {
+        Specialization specialization = findById(updated.getId());
         UpdateUtils.setIfNotNull(updated.getDepartment(), specialization::setDepartment);
         UpdateUtils.setIfNotNull(updated.getGroups(), specialization::setGroups);
         UpdateUtils.setIfNotNull(updated.getTitle(), specialization::setTitle);

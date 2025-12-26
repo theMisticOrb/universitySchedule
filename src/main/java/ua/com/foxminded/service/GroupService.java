@@ -34,8 +34,8 @@ public class GroupService {
         return groupRepository.findAll();
     }
 
-    public Group update(Integer id, Group updated) {
-        Group group = findById(id);
+    public Group update(Group updated) {
+        Group group = findById(updated.getId());
         UpdateUtils.setIfNotNull(updated.getFaculty(), group::setFaculty);
         UpdateUtils.setIfNotNull(updated.getDepartment(), group::setDepartment);
         UpdateUtils.setIfNotNull(updated.getSpecialization(), group::setSpecialization);

@@ -34,8 +34,8 @@ public class ClassroomService {
         return classroomRapository.findAll();
     }
 
-    public Classroom update(Integer id, Classroom updated) {
-        Classroom classroom = findById(id);
+    public Classroom update(Classroom updated) {
+        Classroom classroom = findById(updated.getId());
         UpdateUtils.setIfNotNull(updated.getName(), classroom::setName);
         return updated;
     }

@@ -34,8 +34,8 @@ public class TeacherService {
         return teacherRepository.findAll();
     }
 
-    public Teacher update(Integer id, Teacher updated) {
-        Teacher teacher = findById(id);
+    public Teacher update(Teacher updated) {
+        Teacher teacher = findById(updated.getId());
         UpdateUtils.setIfNotNull(updated.getDepartment(), teacher::setDepartment);
         UpdateUtils.setIfNotNull(updated.getFirstName(), teacher::setFirstName);
         UpdateUtils.setIfNotNull(updated.getMiddleName(), teacher::setMiddleName);

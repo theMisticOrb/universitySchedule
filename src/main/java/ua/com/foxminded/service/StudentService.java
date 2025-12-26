@@ -34,8 +34,8 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
-    public Student update(Integer id, Student updated) {
-        Student student = findById(id);
+    public Student update(Student updated) {
+        Student student = findById(updated.getId());
         UpdateUtils.setIfNotNull(updated.getFirstName(), student::setFirstName);
         UpdateUtils.setIfNotNull(updated.getMiddleName(), student::setMiddleName);
         UpdateUtils.setIfNotNull(updated.getLastName(), student::setLastName);

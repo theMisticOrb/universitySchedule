@@ -33,9 +33,8 @@ public class LessonService {
         return lessonRepository.findAll();
     }
 
-    public Lesson update(Integer id, Lesson updated) {
-        Lesson lesson = findById(id);
-
+    public Lesson update(Lesson updated) {
+        Lesson lesson = findById(updated.getId());
         UpdateUtils.setIfNotNull(updated.getClassHours(), lesson::setClassHours);
         UpdateUtils.setIfNotNull(updated.getClassroom(), lesson::setClassroom);
         UpdateUtils.setIfNotNull(updated.getSubject(), lesson::setSubject);

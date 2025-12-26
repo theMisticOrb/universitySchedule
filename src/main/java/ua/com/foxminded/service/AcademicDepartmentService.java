@@ -34,8 +34,8 @@ public class AcademicDepartmentService {
         return departmentRapository.findAll();
     }
 
-    public AcademicDepartment update(Integer id, AcademicDepartment updated) {
-        AcademicDepartment department = findById(id);
+    public AcademicDepartment update(AcademicDepartment updated) {
+        AcademicDepartment department = findById(updated.getId());
         UpdateUtils.setIfNotNull(updated.getFaculty(), department::setFaculty);
         UpdateUtils.setIfNotNull(updated.getSpecializations(), department::setSpecializations);
         UpdateUtils.setIfNotNull(updated.getTitle(), department::setTitle);

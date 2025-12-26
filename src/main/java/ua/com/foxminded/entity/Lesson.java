@@ -45,6 +45,22 @@ public class Lesson {
         this.classHours = classHours;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public WeekDay getWeekDays() {
+        return weekDays;
+    }
+
+    public void setWeekDays(WeekDay weekDays) {
+        this.weekDays = weekDays;
+    }
+
     public Subject getSubject() {
         return subject;
     }

@@ -34,8 +34,8 @@ public class SubjectService {
         return subjectRepository.findAll();
     }
 
-    public Subject update(Integer id, Subject updated) {
-        Subject subject = findById(id);
+    public Subject update(Subject updated) {
+        Subject subject = findById(updated.getId());
         UpdateUtils.setIfNotNull(updated.getGroups(), subject::setGroups);
         UpdateUtils.setIfNotNull(updated.getTeacher(), subject::setTeacher);
         UpdateUtils.setIfNotNull(updated.getTitle(), subject::setTitle);
