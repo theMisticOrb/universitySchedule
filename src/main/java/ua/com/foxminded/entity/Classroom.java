@@ -18,7 +18,7 @@ public class Classroom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "classroom_gen")
-    @SequenceGenerator(name = "classroom_gen", sequenceName = "classroom_seq", allocationSize = 30)
+    @SequenceGenerator(name = "classroom_gen", sequenceName = "classroom_id_seq", allocationSize = 30)
     @Column(name = "classroom_id")
     private Integer id;
 
@@ -51,5 +51,15 @@ public class Classroom {
     public void setName(String name) {
         this.name = name;
     }
+
+    public List<Lesson> getLesson() {
+        return lesson;
+    }
+
+    public void setLesson(List<Lesson> lesson) {
+        this.lesson = lesson;
+    }
+    
+    
 
 }

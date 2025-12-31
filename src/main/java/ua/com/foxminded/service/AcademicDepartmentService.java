@@ -21,8 +21,9 @@ public class AcademicDepartmentService {
         this.departmentRapository = departmentRapository;
     }
 
-    public AcademicDepartment create(AcademicDepartment department) {
-        return departmentRapository.save(department);
+    public AcademicDepartment addOne(AcademicDepartment department) {
+            return departmentRapository.save(department);
+
     }
 
     public AcademicDepartment findById(Integer id) {
@@ -39,7 +40,7 @@ public class AcademicDepartmentService {
         UpdateUtils.setIfNotNull(updated.getFaculty(), department::setFaculty);
         UpdateUtils.setIfNotNull(updated.getSpecializations(), department::setSpecializations);
         UpdateUtils.setIfNotNull(updated.getTitle(), department::setTitle);
-        return updated;
+        return department;
     }
 
     public void deleteById(Integer id) {

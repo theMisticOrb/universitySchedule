@@ -1,16 +1,17 @@
 CREATE SEQUENCE IF NOT EXISTS group_id_seq START WITH 1 INCREMENT BY 30 CACHE 30; 
 CREATE SEQUENCE IF NOT EXISTS subject_id_seq START WITH 1 INCREMENT BY 30 CACHE 30; 
 CREATE SEQUENCE IF NOT EXISTS user_id_seq START WITH 1 INCREMENT BY 30 CACHE 30; 
+CREATE SEQUENCE IF NOT EXISTS classroom_id_seq START WITH 1 INCREMENT BY 30 CACHE 30; 
 
 
 CREATE TABLE IF NOT EXISTS faculties(
-faculty_id INTEGER PRIMARY KEY,
+faculty_id BIGSERIAL PRIMARY KEY,
 faculty_title varchar(225) UNIQUE
 );
 
 
 CREATE TABLE IF NOT EXISTS departments (
-department_id INTEGER PRIMARY KEY,
+department_id BIGSERIAL PRIMARY KEY,
 department_title varchar(225) UNIQUE,
 faculty_id INTEGER NOT NULL,
 
@@ -19,7 +20,7 @@ CONSTRAINT fk_department_faculty FOREIGN KEY (faculty_id) REFERENCES faculties (
 
 
 CREATE TABLE IF NOT EXISTS specializations (
-specialization_id INTEGER PRIMARY KEY,
+specialization_id BIGSERIAL PRIMARY KEY,
 specialization_title varchar(225) UNIQUE,
 department_id INTEGER NOT NULL,
 

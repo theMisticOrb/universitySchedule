@@ -21,7 +21,7 @@ public class ClassroomService {
         this.classroomRapository = classroomRapository;
     }
 
-    public Classroom create(Classroom classroom) {
+    public Classroom addOne(Classroom classroom) {
         return classroomRapository.save(classroom);
     }
 
@@ -37,7 +37,7 @@ public class ClassroomService {
     public Classroom update(Classroom updated) {
         Classroom classroom = findById(updated.getId());
         UpdateUtils.setIfNotNull(updated.getName(), classroom::setName);
-        return updated;
+        return classroom;
     }
 
     public void deleteById(Integer id) {
