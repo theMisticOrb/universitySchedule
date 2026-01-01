@@ -22,9 +22,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.BootTest;
-import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Classroom;
-import ua.com.foxminded.entity.Faculty;
 
 @Testcontainers
 @Transactional
@@ -106,31 +104,48 @@ class ClassroomServiceTest {
         List<Classroom> allClassrooms = service.findAll();
         assertTrue(allClassrooms.isEmpty());
     }
-    
+
     @Test
     void update_shouldUpdateEntity_whenCalled() {
-//
-//        AcademicDepartment computerScience = new AcademicDepartment();
-//        computerScience.setTitle("Computer Science");
-//        computerScience.setFaculty(engineegingFaculty);
-//        AcademicDepartment department = service.addOne(computerScience);
-//
-//        AcademicDepartment computerScienceUpdated = new AcademicDepartment();
-//        computerScienceUpdated.setId(department.getId());
-//        computerScienceUpdated.setFaculty(economyFaculty);
-//        AcademicDepartment result = service.update(computerScienceUpdated);
-        
+
         Classroom classroom = new Classroom();
         classroom.setName("2-A");
         Classroom classroomSaved = service.addOne(classroom);
-        
-        classroom.setName("3-A");
-        Classroom classroomUpdated = service.update(classroom);
+
+        Classroom updated = new Classroom();
+        updated.setId(classroomSaved.getId());
+        updated.setName("3-A");
+        Classroom classroomUpdated = service.update(updated);
 
         assertEquals(classroomSaved.getId(), classroomUpdated.getId());
         assertEquals("3-A", classroomUpdated.getName());
 
     }
+
+    @Test
+    void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
+        Classroom classroom = new Classroom();
+        classroom.setName("2-A");
+        Classroom classroomSaved = service.addOne(classroom);
+
+        Classroom updated = new Classroom();
+        updated.setId(classroomSaved.getId());
+        updated.setName(null);
+        Classroom classroomUpdated = service.update(updated);
+
+        assertEquals("2-A", classroomUpdated.getName());
+    }
     
-    
+    @Test
+    void delete_shouldDeleteEntityById_whenEntityExists() {
+        Classroom classroom = new Classroom();
+        classroom.setName("2-A");
+        Classroom classroomSaved = service.addOne(classroom);
+        int id = classroomSaved.getId();
+
+        assertNotNull(service.findById(id));
+        service.deleteById(id);
+        assertThrows(EntityNotFoundException.class, () -> service.findById(id));
+    }
+
 }
