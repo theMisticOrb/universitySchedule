@@ -134,19 +134,20 @@ class AcademicDepartmentServiceTest {
         Faculty economy = new Faculty();
         economy.setTitle("Economy");
         Faculty economyFaculty = facultyRepository.save(economy);
-        
 
         AcademicDepartment computerScience = new AcademicDepartment();
         computerScience.setTitle("Computer Science");
         computerScience.setFaculty(engineegingFaculty);
-        service.addOne(computerScience);
+        AcademicDepartment department = service.addOne(computerScience);
+        
+        AcademicDepartment computerScienceUpdated = new AcademicDepartment();
+        computerScienceUpdated.setId(department.getId());
+        computerScienceUpdated.setFaculty(economyFaculty);
+        AcademicDepartment result = service.update(computerScienceUpdated);
 
-        computerScience.setFaculty(economyFaculty);
-        AcademicDepartment computerScienceUpdated = service.update(computerScience);
-
-        assertEquals(computerScience.getId(), computerScienceUpdated.getId());
-        assertEquals("Computer Science", computerScienceUpdated.getTitle());
-        assertEquals(economy.getTitle(), computerScienceUpdated.getFaculty().getTitle());
+        assertEquals(computerScience.getId(), result.getId());
+        assertEquals("Computer Science", result.getTitle());
+        assertEquals(economy.getTitle(), result.getFaculty().getTitle());
 
     }
 

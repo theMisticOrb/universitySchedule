@@ -21,7 +21,7 @@ public class FacultyService {
         this.facultyRepository = facultyRepository;
     }
     
-    public Faculty create(Faculty faculty) {
+    public Faculty addOne(Faculty faculty) {
         return facultyRepository.save(faculty);
     }
 
@@ -38,7 +38,7 @@ public class FacultyService {
         Faculty faculty = findById(updated.getId());
         UpdateUtils.setIfNotNull(updated.getDepartments(), faculty::setDepartments);
         UpdateUtils.setIfNotNull(updated.getTitle(), faculty::setTitle);
-        return updated;
+        return faculty;
     }
 
     public void deleteById(Integer id) {
