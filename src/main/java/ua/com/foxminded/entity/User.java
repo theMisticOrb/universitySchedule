@@ -21,13 +21,13 @@ public abstract class User {
     @Column(name = "user_id")
     private Integer id;
 
-    @Column(name = "first_name")
+    @Column(name = "user_first_name")
     private String firstName;
 
-    @Column(name = "middle_name")
+    @Column(name = "user_middle_name")
     private String middleName;
 
-    @Column(name = "last_name")
+    @Column(name = "user_last_name")
     private String lastName;
 
     protected User() {

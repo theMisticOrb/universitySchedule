@@ -31,9 +31,12 @@ public class Lesson {
     @JoinColumn(name = "classroom_id")
     private Classroom classroom;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "class_hours")
     private ClassHour classHours;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "week_days")
     private WeekDay weekDays;
 
     public Lesson() {

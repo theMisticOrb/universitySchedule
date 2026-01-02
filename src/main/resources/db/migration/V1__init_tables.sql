@@ -87,9 +87,11 @@ classroom_name varchar(225) UNIQUE
 
 
 CREATE TABLE IF NOT EXISTS lessons(
-lesson_id INTEGER PRIMARY KEY,
+lesson_id BIGSERIAL PRIMARY KEY,
 subject_id INTEGER NOT NULL,
 classroom_id INTEGER NOT NULL,
+class_hours varchar(225) NOT NULL,
+week_days varchar(225) NOT NULL,
 
 CONSTRAINT fk_lesson_subject FOREIGN KEY (subject_id) REFERENCES subjects (subject_id),
 CONSTRAINT fk_lesson_classroom FOREIGN KEY (classroom_id) REFERENCES classrooms (classroom_id)

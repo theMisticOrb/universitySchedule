@@ -21,7 +21,7 @@ public class LessonService {
         this.lessonRepository = lessonRepository;
     }
 
-    public Lesson create(Lesson lesson) {
+    public Lesson addOne(Lesson lesson) {
         return lessonRepository.save(lesson);
     }
 
@@ -38,7 +38,7 @@ public class LessonService {
         UpdateUtil.setIfNotNull(updated.getClassHours(), lesson::setClassHours);
         UpdateUtil.setIfNotNull(updated.getClassroom(), lesson::setClassroom);
         UpdateUtil.setIfNotNull(updated.getSubject(), lesson::setSubject);
-        return updated;
+        return lesson;
     }
 
     public void deleteById(Integer id) {
