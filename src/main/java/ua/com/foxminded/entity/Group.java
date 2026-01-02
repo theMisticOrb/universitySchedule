@@ -1,5 +1,6 @@
 package ua.com.foxminded.entity;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,7 +41,10 @@ public class Group {
     private Specialization specialization;
 
     @Embedded
-    private YearOfUniv yearOfUniv = new YearOfUniv(1);
+    private YearOfUniv yearOfUniv;
+
+    @Column(name = "start_date")
+    private LocalDate startDate;
 
     @Column(name = "group_name")
     private String name;
@@ -100,12 +104,28 @@ public class Group {
         this.specialization = specialization;
     }
 
-    public int getYearOfUniv() {
-        return yearOfUniv.calculateYearOfUniversity();
+    public YearOfUniv getYearOfUniv() {
+        return yearOfUniv;
     }
 
     public void setYearOfUniv(YearOfUniv yearOfUniv) {
         this.yearOfUniv = yearOfUniv;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getName() {
+        return toString();
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Set<Student> getStudents() {
@@ -124,17 +144,9 @@ public class Group {
         this.subjects = subjects;
     }
 
-    public String getName() {
-        return toString();
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Override
     public String toString() {
         return faculty.getId().toString() + "." + department.getId().toString() + "."
-                + specialization.getId().toString() + "." + yearOfUniv + "." + getId();
+                + specialization.getId().toString() + "." + getYearOfUniv().getCurentYearInUniv();
     }
 }
