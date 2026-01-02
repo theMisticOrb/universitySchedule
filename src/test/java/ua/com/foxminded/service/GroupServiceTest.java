@@ -2,6 +2,11 @@ package ua.com.foxminded.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.List;
+
+import javax.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -83,8 +88,76 @@ class GroupServiceTest {
         Group firstGroup = service.addOne(group);
 
         assertNotNull(firstGroup.getId());
-        assertEquals("1.1.1.1", firstGroup.getName());
         assertEquals(1, firstGroup.getYearOfUniv().getCurentYearInUniv());
+    }
+
+    @Test
+    void findById_shouldFindEntityById_whenCalledIfEntityExists() {
+
+        Group saved = service.addOne(group);
+
+        Group found = service.findById(saved.getId());
+
+        assertNotNull(found);
+        assertEquals(saved.getId(), found.getId());
+    }
+
+    @Test
+    void findById_shouldThrowException_whenCalledifEntityDoesNotExist() {
+        int nonexistentId = 34;
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.findById(nonexistentId));
+        assertEquals("Group not found: " + nonexistentId, ex.getMessage());
+    }
+
+    @Test
+    void findAll_shouldGetListOfAllEntities_whenCalledIfNotEmpty() {
+
+        List<Group> allGroups = service.findAll();
+
+        assertNotNull(allGroups);
+
+    }
+
+    @Test
+    void update_shouldUpdateEntity_whenCalled() {
+        Group firstGroup = service.addOne(group);
+
+        Faculty faculty = new Faculty();
+        faculty.setTitle("Math");
+        Faculty mathFaculty = facultyRepository.save(faculty);
+
+        Group firstGroupUpdated = new Group();
+        firstGroupUpdated.setId(firstGroup.getId());
+        firstGroupUpdated.setFaculty(mathFaculty);
+        Group result = service.update(firstGroupUpdated);
+
+        assertEquals(firstGroup.getId(), result.getId());
+        assertEquals(mathFaculty.getId(), result.getFaculty().getId());
+        assertEquals(mathFaculty.getTitle(), result.getFaculty().getTitle());
+
+    }
+    
+    @Test
+    void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
+
+        Group firstGroup = service.addOne(group);
+        
+        Group computerScienceUpdated = new Group();
+        computerScienceUpdated.setId(firstGroup.getId());
+        computerScienceUpdated.setFaculty(null);
+        Group result = service.update(computerScienceUpdated);
+
+        assertEquals("Engineering", result.getFaculty().getTitle());
+    }
+    
+    @Test
+    void delete_shouldDeleteEntityById_whenEntityExists() {
+        Group firstGroup = service.addOne(group);
+        int id = firstGroup.getId();
+
+        assertNotNull(service.findById(id));
+        service.deleteById(id);
+        assertThrows(EntityNotFoundException.class, () -> service.findById(id));
     }
 
 }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.entity.Teacher;
-import ua.com.foxminded.helpers.UpdateUtils;
+import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.sdjpa.TeacherRepository;
 
 @Service
@@ -36,11 +36,11 @@ public class TeacherService {
 
     public Teacher update(Teacher updated) {
         Teacher teacher = findById(updated.getId());
-        UpdateUtils.setIfNotNull(updated.getDepartment(), teacher::setDepartment);
-        UpdateUtils.setIfNotNull(updated.getFirstName(), teacher::setFirstName);
-        UpdateUtils.setIfNotNull(updated.getMiddleName(), teacher::setMiddleName);
-        UpdateUtils.setIfNotNull(updated.getLastName(), teacher::setLastName);
-        UpdateUtils.setIfNotNull(updated.getSubjects(), teacher::setSubjects);
+        UpdateUtil.setIfNotNull(updated.getDepartment(), teacher::setDepartment);
+        UpdateUtil.setIfNotNull(updated.getFirstName(), teacher::setFirstName);
+        UpdateUtil.setIfNotNull(updated.getMiddleName(), teacher::setMiddleName);
+        UpdateUtil.setIfNotNull(updated.getLastName(), teacher::setLastName);
+        UpdateUtil.setIfNotNull(updated.getSubjects(), teacher::setSubjects);
         return updated;
     }
 

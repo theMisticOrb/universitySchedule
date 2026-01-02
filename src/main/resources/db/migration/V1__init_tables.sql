@@ -35,7 +35,7 @@ faculty_id INTEGER NOT NULL,
 department_id INTEGER NOT NULL,
 specialization_id INTEGER NOT NULL,
 year_of_univ INTEGER,
-start_date INTEGER NOT NULL,
+start_date DATE NOT NULL,
 
 CONSTRAINT uk_group_name_faculty UNIQUE (group_name, faculty_id),
 

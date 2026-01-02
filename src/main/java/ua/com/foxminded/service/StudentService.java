@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.entity.Student;
-import ua.com.foxminded.helpers.UpdateUtils;
+import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.sdjpa.StudentRepository;
 
 @Service
@@ -36,10 +36,10 @@ public class StudentService {
 
     public Student update(Student updated) {
         Student student = findById(updated.getId());
-        UpdateUtils.setIfNotNull(updated.getFirstName(), student::setFirstName);
-        UpdateUtils.setIfNotNull(updated.getMiddleName(), student::setMiddleName);
-        UpdateUtils.setIfNotNull(updated.getLastName(), student::setLastName);
-        UpdateUtils.setIfNotNull(updated.getGroup(), student::setGroup);
+        UpdateUtil.setIfNotNull(updated.getFirstName(), student::setFirstName);
+        UpdateUtil.setIfNotNull(updated.getMiddleName(), student::setMiddleName);
+        UpdateUtil.setIfNotNull(updated.getLastName(), student::setLastName);
+        UpdateUtil.setIfNotNull(updated.getGroup(), student::setGroup);
         return updated;
     }
 

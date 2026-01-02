@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.config.UniversityProperties;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.YearOfUniv;
-import ua.com.foxminded.helpers.UpdateUtils;
+import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.sdjpa.GroupRepository;
 
 @Service
@@ -44,12 +44,12 @@ public class GroupService {
 
     public Group update(Group updated) {
         Group group = findById(updated.getId());
-        UpdateUtils.setIfNotNull(updated.getFaculty(), group::setFaculty);
-        UpdateUtils.setIfNotNull(updated.getDepartment(), group::setDepartment);
-        UpdateUtils.setIfNotNull(updated.getSpecialization(), group::setSpecialization);
-        UpdateUtils.setIfNotNull(updated.getStudents(), group::setStudents);
-        UpdateUtils.setIfNotNull(updated.getSubjects(), group::setSubjects);
-        return updated;
+        UpdateUtil.setIfNotNull(updated.getFaculty(), group::setFaculty);
+        UpdateUtil.setIfNotNull(updated.getDepartment(), group::setDepartment);
+        UpdateUtil.setIfNotNull(updated.getSpecialization(), group::setSpecialization);
+        UpdateUtil.setIfNotNull(updated.getStudents(), group::setStudents);
+        UpdateUtil.setIfNotNull(updated.getSubjects(), group::setSubjects);
+        return group;
     }
 
     public void deleteById(Integer id) {

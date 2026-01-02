@@ -2,9 +2,9 @@ package ua.com.foxminded.helpers;
 
 import java.util.function.Consumer;
 
-public final class UpdateUtils {
+public final class UpdateUtil {
 
-    private UpdateUtils() {
+    private UpdateUtil() {
         
     }
     

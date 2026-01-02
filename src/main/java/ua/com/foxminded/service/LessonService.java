@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.entity.Lesson;
-import ua.com.foxminded.helpers.UpdateUtils;
+import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.sdjpa.LessonRepository;
 
 @Service
@@ -35,9 +35,9 @@ public class LessonService {
 
     public Lesson update(Lesson updated) {
         Lesson lesson = findById(updated.getId());
-        UpdateUtils.setIfNotNull(updated.getClassHours(), lesson::setClassHours);
-        UpdateUtils.setIfNotNull(updated.getClassroom(), lesson::setClassroom);
-        UpdateUtils.setIfNotNull(updated.getSubject(), lesson::setSubject);
+        UpdateUtil.setIfNotNull(updated.getClassHours(), lesson::setClassHours);
+        UpdateUtil.setIfNotNull(updated.getClassroom(), lesson::setClassroom);
+        UpdateUtil.setIfNotNull(updated.getSubject(), lesson::setSubject);
         return updated;
     }
 

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.entity.Specialization;
-import ua.com.foxminded.helpers.UpdateUtils;
+import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.sdjpa.SpecializationRepository;
 
 @Service
@@ -36,9 +36,9 @@ public class SpecializationService {
 
     public Specialization update(Specialization updated) {
         Specialization specialization = findById(updated.getId());
-        UpdateUtils.setIfNotNull(updated.getDepartment(), specialization::setDepartment);
-        UpdateUtils.setIfNotNull(updated.getGroups(), specialization::setGroups);
-        UpdateUtils.setIfNotNull(updated.getTitle(), specialization::setTitle);
+        UpdateUtil.setIfNotNull(updated.getDepartment(), specialization::setDepartment);
+        UpdateUtil.setIfNotNull(updated.getGroups(), specialization::setGroups);
+        UpdateUtil.setIfNotNull(updated.getTitle(), specialization::setTitle);
         return updated;
     }
 
