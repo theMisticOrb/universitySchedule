@@ -97,7 +97,7 @@ class TeacherServiceTest {
     void findById_shouldThrowException_whenCalledifEntityDoesNotExist() {
         int nonexistentId = 34;
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.findById(nonexistentId));
-        assertEquals("Student not found: " + nonexistentId, ex.getMessage());
+        assertEquals("Teacher not found: " + nonexistentId, ex.getMessage());
     }
 
     @Test
