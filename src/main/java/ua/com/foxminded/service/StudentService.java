@@ -21,7 +21,7 @@ public class StudentService {
         this.studentRepository = studentRepository;
     }
 
-    public Student create(Student student) {
+    public Student addOne(Student student) {
         return studentRepository.save(student);
     }
 
@@ -40,7 +40,7 @@ public class StudentService {
         UpdateUtil.setIfNotNull(updated.getMiddleName(), student::setMiddleName);
         UpdateUtil.setIfNotNull(updated.getLastName(), student::setLastName);
         UpdateUtil.setIfNotNull(updated.getGroup(), student::setGroup);
-        return updated;
+        return student;
     }
 
     public void deleteById(Integer id) {
