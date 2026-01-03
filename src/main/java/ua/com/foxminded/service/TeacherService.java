@@ -21,7 +21,7 @@ public class TeacherService {
         this.teacherRepository = teacherRepository;
     }
 
-    public Teacher create(Teacher teacher) {
+    public Teacher addOne(Teacher teacher) {
         return teacherRepository.save(teacher);
     }
 
@@ -41,7 +41,7 @@ public class TeacherService {
         UpdateUtil.setIfNotNull(updated.getMiddleName(), teacher::setMiddleName);
         UpdateUtil.setIfNotNull(updated.getLastName(), teacher::setLastName);
         UpdateUtil.setIfNotNull(updated.getSubjects(), teacher::setSubjects);
-        return updated;
+        return teacher;
     }
 
     public void deleteById(Integer id) {

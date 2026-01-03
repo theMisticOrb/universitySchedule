@@ -97,8 +97,8 @@ class StudentServiceTest {
         Student firstStudent = service.addOne(student);
 
         assertNotNull(firstStudent.getId());
-        assertEquals("Jack", student.getFirstName());
-        assertEquals("Sparrow", student.getLastName());
+        assertEquals("Jack", firstStudent.getFirstName());
+        assertEquals("Sparrow", firstStudent.getLastName());
     }
 
     @Test
