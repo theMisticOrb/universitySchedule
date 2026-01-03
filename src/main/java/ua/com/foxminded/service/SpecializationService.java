@@ -21,7 +21,7 @@ public class SpecializationService {
         this.specializationRepository = specializationRepository;
     }
 
-    public Specialization create(Specialization specialization) {
+    public Specialization addOne(Specialization specialization) {
         return specializationRepository.save(specialization);
     }
 
@@ -39,7 +39,7 @@ public class SpecializationService {
         UpdateUtil.setIfNotNull(updated.getDepartment(), specialization::setDepartment);
         UpdateUtil.setIfNotNull(updated.getGroups(), specialization::setGroups);
         UpdateUtil.setIfNotNull(updated.getTitle(), specialization::setTitle);
-        return updated;
+        return specialization;
     }
 
     public void deleteById(Integer id) {
