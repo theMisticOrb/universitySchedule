@@ -90,14 +90,13 @@ class SubjectServiceTest {
         Subject firstSubject = service.addOne(subject);
 
         assertNotNull(firstSubject.getId());
-        assertEquals("Math", subject.getTitle());
+        assertEquals("Math", firstSubject.getTitle());
     }
     
     @Test
     void findById_shouldFindEntityById_whenCalledIfEntityExists() {
 
         Subject saved = service.addOne(subject);
-
         Subject found = service.findById(saved.getId());
 
         assertNotNull(found);

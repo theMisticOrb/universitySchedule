@@ -95,7 +95,6 @@ class GroupServiceTest {
     void findById_shouldFindEntityById_whenCalledIfEntityExists() {
 
         Group saved = service.addOne(group);
-
         Group found = service.findById(saved.getId());
 
         assertNotNull(found);

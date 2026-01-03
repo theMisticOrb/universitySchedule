@@ -85,7 +85,6 @@ class SpecializationServiceTest {
     void findById_shouldFindEntityById_whenCalledIfEntityExists() {
 
         Specialization saved = service.addOne(specialization);
-
         Specialization found = service.findById(saved.getId());
 
         assertNotNull(found);

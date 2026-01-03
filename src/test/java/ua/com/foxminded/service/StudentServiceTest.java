@@ -105,7 +105,6 @@ class StudentServiceTest {
     void findById_shouldFindEntityById_whenCalledIfEntityExists() {
 
         Student saved = service.addOne(student);
-
         Student found = service.findById(saved.getId());
 
         assertNotNull(found);

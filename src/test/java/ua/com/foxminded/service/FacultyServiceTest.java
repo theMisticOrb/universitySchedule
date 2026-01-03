@@ -48,6 +48,7 @@ class FacultyServiceTest {
 
     @Test
     void addOne_shouldSaveNewEntity_whenCalled() {
+        
         Faculty faculty = new Faculty();
         faculty.setTitle("Engineering");
         Faculty savedFaculty = service.addOne(faculty);

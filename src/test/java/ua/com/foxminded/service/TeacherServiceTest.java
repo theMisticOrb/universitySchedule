@@ -1,6 +1,8 @@
 package ua.com.foxminded.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
@@ -21,7 +23,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import ua.com.foxminded.BootTest;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
-import ua.com.foxminded.entity.Student;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.sdjpa.AcademicDepartmentRepository;
 import ua.com.foxminded.sdjpa.FacultyRepository;
@@ -86,7 +87,6 @@ class TeacherServiceTest {
     void findById_shouldFindEntityById_whenCalledIfEntityExists() {
 
         Teacher saved = service.addOne(teacher);
-
         Teacher found = service.findById(saved.getId());
 
         assertNotNull(found);
