@@ -21,7 +21,7 @@ public class SubjectService {
         this.subjectRepository = subjectRepository;
     }
 
-    public Subject create(Subject subject) {
+    public Subject addOne(Subject subject) {
         return subjectRepository.save(subject);
     }
 
@@ -39,7 +39,7 @@ public class SubjectService {
         UpdateUtil.setIfNotNull(updated.getGroups(), subject::setGroups);
         UpdateUtil.setIfNotNull(updated.getTeacher(), subject::setTeacher);
         UpdateUtil.setIfNotNull(updated.getTitle(), subject::setTitle);
-        return updated;
+        return subject;
     }
 
     public void deleteById(Integer id) {
