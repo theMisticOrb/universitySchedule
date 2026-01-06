@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import ua.com.foxminded.enums.ClassHour;
@@ -19,7 +20,8 @@ import ua.com.foxminded.enums.WeekDay;
 public class Lesson {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "lesson_id_gen")
+    @SequenceGenerator(name = "lesson_id_gen", sequenceName = "lesson_id_seq", allocationSize = 30)
     @Column(name = "lesson_id")
     private Integer id;
 
@@ -33,19 +35,21 @@ public class Lesson {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "class_hours")
-    private ClassHour classHours;
+    private ClassHour classHour;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "week_days")
-    private WeekDay weekDays;
+    private WeekDay weekDay;
 
     public Lesson() {
     }
 
-    public Lesson(Subject subject, Classroom classroom, ClassHour classHours) {
+    public Lesson(Integer id, Subject subject, Classroom classroom, ClassHour classHour, WeekDay weekDay) {
+        this.id = id;
         this.subject = subject;
         this.classroom = classroom;
-        this.classHours = classHours;
+        this.classHour = classHour;
+        this.weekDay = weekDay;
     }
 
     public Integer getId() {
@@ -57,11 +61,11 @@ public class Lesson {
     }
 
     public WeekDay getWeekDays() {
-        return weekDays;
+        return weekDay;
     }
 
     public void setWeekDays(WeekDay weekDays) {
-        this.weekDays = weekDays;
+        this.weekDay = weekDays;
     }
 
     public Subject getSubject() {
@@ -81,11 +85,11 @@ public class Lesson {
     }
 
     public ClassHour getClassHours() {
-        return classHours;
+        return classHour;
     }
 
     public void setClassHours(ClassHour classHours) {
-        this.classHours = classHours;
+        this.classHour = classHours;
     }
 
 }

@@ -13,11 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.BootTest;
@@ -33,57 +30,45 @@ import ua.com.foxminded.sdjpa.TeacherRepository;
 @Transactional
 @SpringBootTest(classes = { BootTest.class })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("test")
 class SubjectServiceTest {
 
-    private static String dbTestName = "univ_schedule_app";
-
-    @Container
-    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
-            .withDatabaseName(dbTestName).withUsername("test").withPassword("1234");
-
-    @DynamicPropertySource
-    static void props(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
-    
     @Autowired
     private SubjectService service;
-    
+
     @Autowired
     private TeacherRepository teacherRepository;
     @Autowired
     private FacultyRepository facultyRepository;
     @Autowired
     private AcademicDepartmentRepository departmentRepository;
-    
+
     private Subject subject = new Subject();
-    
+
     @BeforeEach
     void setUp() {
-        
+
         Faculty faculty = new Faculty();
         faculty.setTitle("Engineering");
         Faculty engineeringFaculty = facultyRepository.save(faculty);
-        
+
         AcademicDepartment computerScience = new AcademicDepartment();
         computerScience.setTitle("Computer Science");
         computerScience.setFaculty(engineeringFaculty);
         AcademicDepartment csDepartment = departmentRepository.save(computerScience);
-        
+
         Teacher teacher = new Teacher();
         teacher.setFirstName("Don");
         teacher.setMiddleName("Bon");
         teacher.setLastName("Jon");
         teacher.setDepartment(csDepartment);
         Teacher jonTeacher = teacherRepository.save(teacher);
-        
+
         subject.setTeacher(jonTeacher);
         subject.setTitle("Math");
-        
+
     }
-    
+
     @Test
     void addOne_shouldSaveNewEntity_whenCalled() {
 
@@ -92,7 +77,7 @@ class SubjectServiceTest {
         assertNotNull(firstSubject.getId());
         assertEquals("Math", firstSubject.getTitle());
     }
-    
+
     @Test
     void findById_shouldFindEntityById_whenCalledIfEntityExists() {
 
@@ -118,7 +103,7 @@ class SubjectServiceTest {
         assertNotNull(allSubjects);
 
     }
-    
+
     @Test
     void update_shouldUpdateEntity_whenCalled() {
         Subject firstSubject = service.addOne(subject);
@@ -132,7 +117,7 @@ class SubjectServiceTest {
         assertEquals("History", result.getTitle());
 
     }
-    
+
     @Test
     void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
         Subject firstSubject = service.addOne(subject);
@@ -146,7 +131,7 @@ class SubjectServiceTest {
         assertEquals("Math", result.getTitle());
 
     }
-    
+
     @Test
     void delete_shouldDeleteEntityById_whenEntityExists() {
         Subject firstSubject = service.addOne(subject);
