@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.BootTest;
+import ua.com.foxminded.dto.AcademicDepartmentDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.sdjpa.FacultyRepository;
@@ -42,9 +44,9 @@ class AcademicDepartmentServiceTest {
         faculty.setTitle("Engineering");
         Faculty savedFaculty = facultyRepository.save(faculty);
 
-        AcademicDepartment computerScience = new AcademicDepartment();
+        AcademicDepartmentDto computerScience = new AcademicDepartmentDto();
         computerScience.setTitle("Computer Science");
-        computerScience.setFaculty(savedFaculty);
+        computerScience.setFacultyId(savedFaculty.getId());
 
         AcademicDepartment newDepartment = service.addOne(computerScience);
 
@@ -58,17 +60,36 @@ class AcademicDepartmentServiceTest {
         faculty.setTitle("Engineering");
         Faculty savedFaculty = facultyRepository.save(faculty);
 
-        AcademicDepartment computerScience = new AcademicDepartment();
-        computerScience.setTitle("Multimedia");
-        computerScience.setFaculty(savedFaculty);
+        AcademicDepartmentDto multimedia = new AcademicDepartmentDto();
+        multimedia.setTitle("Multimedia");
+        multimedia.setFacultyId(savedFaculty.getId());
 
-        AcademicDepartment saved = service.addOne(computerScience);
+        AcademicDepartment saved = service.addOne(multimedia);
 
         AcademicDepartment found = service.findById(saved.getId());
 
         assertNotNull(found);
         assertEquals(saved.getId(), found.getId());
         assertEquals("Multimedia", found.getTitle());
+    }
+
+    @Test
+    void findByTitle_shouldReturnDepartment_whenExists() {
+        Faculty faculty = new Faculty();
+        faculty.setTitle("Engineering");
+        Faculty savedFaculty = facultyRepository.save(faculty);
+
+        AcademicDepartmentDto multimedia = new AcademicDepartmentDto();
+        multimedia.setTitle("Multimedia");
+        multimedia.setFacultyId(savedFaculty.getId());
+
+        service.addOne(multimedia);
+
+        Optional<AcademicDepartment> result = service.findByTitle("Multimedia");
+
+        assertTrue(result.isPresent());
+        assertEquals("Multimedia", result.get().getTitle());
+        assertEquals(savedFaculty.getId(), result.get().getFaculty().getId());
     }
 
     @Test
@@ -84,14 +105,14 @@ class AcademicDepartmentServiceTest {
         faculty.setTitle("Engineering");
         Faculty savedFaculty = facultyRepository.save(faculty);
 
-        AcademicDepartment computerScience = new AcademicDepartment();
+        AcademicDepartmentDto computerScience = new AcademicDepartmentDto();
         computerScience.setTitle("Computer Science");
-        computerScience.setFaculty(savedFaculty);
+        computerScience.setFacultyId(savedFaculty.getId());
         service.addOne(computerScience);
 
-        AcademicDepartment multimedia = new AcademicDepartment();
+        AcademicDepartmentDto multimedia = new AcademicDepartmentDto();
         multimedia.setTitle("Multimedia");
-        multimedia.setFaculty(savedFaculty);
+        multimedia.setFacultyId(savedFaculty.getId());
         service.addOne(multimedia);
 
         List<AcademicDepartment> allDepartments = service.findAll();
@@ -120,17 +141,16 @@ class AcademicDepartmentServiceTest {
         economy.setTitle("Economy");
         Faculty economyFaculty = facultyRepository.save(economy);
 
-        AcademicDepartment computerScience = new AcademicDepartment();
+        AcademicDepartmentDto computerScience = new AcademicDepartmentDto();
         computerScience.setTitle("Computer Science");
-        computerScience.setFaculty(engineegingFaculty);
+        computerScience.setFacultyId(engineegingFaculty.getId());
         AcademicDepartment department = service.addOne(computerScience);
-        
-        AcademicDepartment computerScienceUpdated = new AcademicDepartment();
-        computerScienceUpdated.setId(department.getId());
-        computerScienceUpdated.setFaculty(economyFaculty);
-        AcademicDepartment result = service.update(computerScienceUpdated);
 
-        assertEquals(computerScience.getId(), result.getId());
+        AcademicDepartmentDto computerScienceUpdated = new AcademicDepartmentDto();
+        computerScienceUpdated.setFacultyId(economyFaculty.getId());
+        AcademicDepartment result = service.update(computerScienceUpdated, department.getId());
+
+        assertEquals(department.getId(), result.getId());
         assertEquals("Computer Science", result.getTitle());
         assertEquals(economy.getTitle(), result.getFaculty().getTitle());
 
@@ -142,15 +162,15 @@ class AcademicDepartmentServiceTest {
         engineeging.setTitle("Engineering");
         Faculty engineegingFaculty = facultyRepository.save(engineeging);
 
-        AcademicDepartment computerScience = new AcademicDepartment();
+        AcademicDepartmentDto computerScience = new AcademicDepartmentDto();
         computerScience.setTitle("Computer Science");
-        computerScience.setFaculty(engineegingFaculty);
+        computerScience.setFacultyId(engineegingFaculty.getId());
         AcademicDepartment department = service.addOne(computerScience);
 
-        AcademicDepartment computerScienceUpdated = new AcademicDepartment();
-        computerScienceUpdated.setId(department.getId());
-        computerScienceUpdated.setTitle(null);
-        AcademicDepartment result = service.update(computerScienceUpdated);
+        AcademicDepartmentDto computerScienceUpdated = new AcademicDepartmentDto();
+        computerScienceUpdated.setFacultyId(engineegingFaculty.getId());
+        computerScience.setTitle(null);
+        AcademicDepartment result = service.update(computerScienceUpdated, department.getId());
 
         assertEquals("Computer Science", result.getTitle());
         assertEquals(engineeging.getTitle(), result.getFaculty().getTitle());
@@ -162,9 +182,9 @@ class AcademicDepartmentServiceTest {
         engineeging.setTitle("Engineering");
         Faculty engineegingFaculty = facultyRepository.save(engineeging);
 
-        AcademicDepartment computerScience = new AcademicDepartment();
+        AcademicDepartmentDto computerScience = new AcademicDepartmentDto();
         computerScience.setTitle("Computer Science");
-        computerScience.setFaculty(engineegingFaculty);
+        computerScience.setFacultyId(engineegingFaculty.getId());
         AcademicDepartment department = service.addOne(computerScience);
 
         int id = department.getId();

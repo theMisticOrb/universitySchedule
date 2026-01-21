@@ -61,7 +61,6 @@ public class Group {
 
     public Group(Integer id, Faculty faculty, AcademicDepartment department, Specialization specialization,
             YearOfUniv yearOfUniv, Set<Student> students, Set<Subject> subjects) {
-        super();
         this.id = id;
         this.faculty = faculty;
         this.department = department;
