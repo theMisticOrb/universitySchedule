@@ -4,25 +4,15 @@ import java.util.List;
 
 public class FacultyDto {
 
-    private Integer id;
     private String title;
     private List<AcademicDepartmentDto> departments;
 
     public FacultyDto() {
     }
 
-    public FacultyDto(Integer id, String title, List<AcademicDepartmentDto> departments) {
-        this.id = id;
+    public FacultyDto(String title, List<AcademicDepartmentDto> departments) {
         this.title = title;
         this.departments = departments;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getTitle() {

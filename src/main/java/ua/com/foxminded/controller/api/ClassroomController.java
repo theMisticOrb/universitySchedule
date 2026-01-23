@@ -44,8 +44,8 @@ public class ClassroomController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Classroom create(@RequestBody ClassroomDto classroom) {
-        return service.addOne(classroom);
+    public Classroom create(@RequestBody ClassroomDto dto) {
+        return service.addOne(dto);
     }
 
     @DeleteMapping("/{id}")
@@ -55,7 +55,7 @@ public class ClassroomController {
     }
 
     @PutMapping("/{id}")
-    public Classroom updateDepartment(@RequestBody ClassroomDto clasroom, @PathVariable Integer id) {
-        return service.update(clasroom, id);
+    public Classroom updateDepartment(@RequestBody ClassroomDto dto, @PathVariable Integer id) {
+        return service.update(dto, id);
     }
 }

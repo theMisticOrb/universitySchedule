@@ -14,19 +14,8 @@ public class FacultyMapper {
         }
 
         Faculty entity = new Faculty();
-        entity.setId(dto.getId());
         entity.setTitle(dto.getTitle());
         return entity;
     }
 
-    public FacultyDto toDto(Faculty entity) {
-        if (entity == null) {
-            return null;
-        }
-        
-        FacultyDto dto = new FacultyDto();
-        dto.setId(entity.getId());
-        dto.setTitle(entity.getTitle());
-        return dto;
-    }
 }

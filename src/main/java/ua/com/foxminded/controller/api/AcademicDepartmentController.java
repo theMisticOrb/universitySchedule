@@ -44,8 +44,8 @@ public class AcademicDepartmentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AcademicDepartment create(@RequestBody AcademicDepartmentDto department) {
-        return service.addOne(department);
+    public AcademicDepartment create(@RequestBody AcademicDepartmentDto dto) {
+        return service.addOne(dto);
     }
 
     @DeleteMapping("/{id}")
@@ -55,8 +55,8 @@ public class AcademicDepartmentController {
     }
 
     @PutMapping("/{id}")
-    public AcademicDepartment updateDepartment(@RequestBody AcademicDepartmentDto department, @PathVariable Integer id) {
-        return service.update(department, id);
+    public AcademicDepartment updateDepartment(@RequestBody AcademicDepartmentDto dto, @PathVariable Integer id) {
+        return service.update(dto, id);
     }
 
 }
