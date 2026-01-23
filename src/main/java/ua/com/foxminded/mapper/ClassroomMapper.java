@@ -14,20 +14,8 @@ public class ClassroomMapper {
         }
 
         Classroom entity = new Classroom();
-        entity.setId(dto.getId());
         entity.setName(dto.getName());
         return entity;
-    }
-
-    public ClassroomDto toDto(Classroom entity) {
-        if (entity == null) {
-            return null;
-        }
-
-        ClassroomDto dto = new ClassroomDto();
-        dto.setId(entity.getId());
-        dto.setName(entity.getName());
-        return dto;
     }
 
 }

@@ -4,25 +4,15 @@ import java.util.List;
 
 public class ClassroomDto {
 
-    private Integer id;
     private String name;
     private List<LessonDto> lessons;
 
     public ClassroomDto() {
     }
 
-    public ClassroomDto(Integer id, String name, List<LessonDto> lessons) {
-        this.id = id;
+    public ClassroomDto(String name, List<LessonDto> lessons) {
         this.name = name;
         this.lessons = lessons;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getName() {

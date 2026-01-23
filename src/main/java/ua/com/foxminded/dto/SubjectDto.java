@@ -2,18 +2,20 @@ package ua.com.foxminded.dto;
 
 import java.util.List;
 
+import ua.com.foxminded.dto.groupdto.GroupCreateUpdateDto;
+
 public class SubjectDto {
 
     private Integer id;
     private String title;
     private Integer teacherId;
-    private List<GroupDto> groups;
+    private List<GroupCreateUpdateDto> groups;
     private List<LessonDto> lessons;
 
     public SubjectDto() {
     }
 
-    public SubjectDto(Integer id, String title, Integer teacherId, List<GroupDto> groups, List<LessonDto> lessons) {
+    public SubjectDto(Integer id, String title, Integer teacherId, List<GroupCreateUpdateDto> groups, List<LessonDto> lessons) {
         this.id = id;
         this.title = title;
         this.teacherId = teacherId;
@@ -45,11 +47,11 @@ public class SubjectDto {
         this.teacherId = teacherId;
     }
 
-    public List<GroupDto> getGroups() {
+    public List<GroupCreateUpdateDto> getGroups() {
         return groups;
     }
 
-    public void setGroups(List<GroupDto> groups) {
+    public void setGroups(List<GroupCreateUpdateDto> groups) {
         this.groups = groups;
     }
 

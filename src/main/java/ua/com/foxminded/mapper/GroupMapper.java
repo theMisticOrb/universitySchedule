@@ -1,7 +1,7 @@
 package ua.com.foxminded.mapper;
 
-import ua.com.foxminded.dto.AcademicDepartmentDto;
-import ua.com.foxminded.dto.GroupDto;
+import ua.com.foxminded.dto.groupdto.GroupCreateUpdateDto;
+import ua.com.foxminded.dto.groupdto.GroupResponseDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Group;
@@ -9,7 +9,7 @@ import ua.com.foxminded.entity.Specialization;
 
 public class GroupMapper {
 
-    public Group toEntity(GroupDto dto) {
+    public Group toEntity(GroupCreateUpdateDto dto) {
         if (dto == null) {
             return null;
         }
@@ -21,28 +21,30 @@ public class GroupMapper {
 
         AcademicDepartment department = new AcademicDepartment();
         department.setId(dto.getDepartmentId());
-        
+
         Specialization specialization = new Specialization();
         specialization.setId(dto.getSpecializationId());
 
-        entity.setId(dto.getId());
         entity.setName(dto.getName());
         entity.setFaculty(faculty);
         entity.setDepartment(department);
         entity.setSpecialization(specialization);
-        entity.setStartDate(dto.getStartDate());
         return entity;
     }
 
-    public AcademicDepartmentDto toDto(AcademicDepartment entity) {
+    public GroupResponseDto toDto(Group entity) {
         if (entity == null) {
             return null;
         }
 
-        AcademicDepartmentDto dto = new AcademicDepartmentDto();
+        GroupResponseDto dto = new GroupResponseDto();
         dto.setId(entity.getId());
-        dto.setTitle(entity.getTitle());
+        dto.setName(entity.getName());
         dto.setFacultyId(entity.getFaculty().getId());
+        dto.setDepartmentId(entity.getDepartment().getId());
+        dto.setSpecializationId(entity.getSpecialization().getId());
+        dto.setStartDate(entity.getStartDate());
+        dto.setCurrentYearOfUniv(entity.getYearOfUniv().getCurentYearInUniv());
         return dto;
     }
 

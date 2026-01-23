@@ -35,7 +35,7 @@ public class LessonService {
 
     public Lesson update(Lesson updated) {
         Lesson lesson = findById(updated.getId());
-        UpdateUtil.setIfNotNull(updated.getClassHours(), lesson::setClassHours);
+        UpdateUtil.setIfNotNull(updated.getClassHour(), lesson::setClassHour);
         UpdateUtil.setIfNotNull(updated.getClassroom(), lesson::setClassroom);
         UpdateUtil.setIfNotNull(updated.getSubject(), lesson::setSubject);
         return lesson;

@@ -1,38 +1,32 @@
-package ua.com.foxminded.dto;
+package ua.com.foxminded.dto.groupdto;
 
-import java.time.LocalDate;
 import java.util.List;
 
-public class GroupDto {
+import ua.com.foxminded.dto.StudentDto;
+import ua.com.foxminded.dto.SubjectDto;
 
-    private Integer id;
+public class GroupCreateUpdateDto {
+
     private String name;
+
     private Integer specializationId;
     private Integer departmentId;
     private Integer facultyId;
-    private LocalDate startDate;
+
     private List<StudentDto> students;
     private List<SubjectDto> subjects;
 
-    public GroupDto() {
+    public GroupCreateUpdateDto() {
     }
 
-    public GroupDto(Integer id, Integer specializationId, Integer departmentId, Integer facultyId,
+    public GroupCreateUpdateDto(String name, Integer specializationId, Integer departmentId, Integer facultyId,
             List<StudentDto> students, List<SubjectDto> subjects) {
-        this.id = id;
+        this.name = name;
         this.specializationId = specializationId;
         this.departmentId = departmentId;
         this.facultyId = facultyId;
         this.students = students;
         this.subjects = subjects;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -65,22 +59,6 @@ public class GroupDto {
 
     public void setFacultyId(Integer facultyId) {
         this.facultyId = facultyId;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public YearOfUnivDto getYearOfUniv() {
-        return yearOfUniv;
-    }
-
-    public void setYearOfUniv(YearOfUnivDto yearOfUniv) {
-        this.yearOfUniv = yearOfUniv;
     }
 
     public List<StudentDto> getStudents() {

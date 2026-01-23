@@ -84,8 +84,8 @@ class LessonServiceTest {
 
         lesson.setClassroom(secondAClassroom);
         lesson.setSubject(math);
-        lesson.setWeekDays(WeekDay.FRIDAY);
-        lesson.setClassHours(ClassHour.FIRST_CLASS);
+        lesson.setWeekDay(WeekDay.FRIDAY);
+        lesson.setClassHour(ClassHour.FIRST_CLASS);
     }
 
     @Test

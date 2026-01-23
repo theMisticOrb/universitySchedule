@@ -60,12 +60,12 @@ public class Lesson {
         this.id = id;
     }
 
-    public WeekDay getWeekDays() {
+    public WeekDay getWeekDay() {
         return weekDay;
     }
 
-    public void setWeekDays(WeekDay weekDays) {
-        this.weekDay = weekDays;
+    public void setWeekDay(WeekDay weekDay) {
+        this.weekDay = weekDay;
     }
 
     public Subject getSubject() {
@@ -84,12 +84,12 @@ public class Lesson {
         this.classroom = classroom;
     }
 
-    public ClassHour getClassHours() {
+    public ClassHour getClassHour() {
         return classHour;
     }
 
-    public void setClassHours(ClassHour classHours) {
-        this.classHour = classHours;
+    public void setClassHour(ClassHour classHour) {
+        this.classHour = classHour;
     }
 
 }

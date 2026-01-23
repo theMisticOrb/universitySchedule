@@ -21,42 +21,42 @@ import ua.com.foxminded.service.AcademicDepartmentService;
 @RequestMapping("/api/departments")
 public class AcademicDepartmentController {
 
-    private final AcademicDepartmentService departmentService;
+    private final AcademicDepartmentService service;
 
     public AcademicDepartmentController(AcademicDepartmentService departmentService) {
-        this.departmentService = departmentService;
+        this.service = departmentService;
     }
 
     @GetMapping
     public Iterable<AcademicDepartment> findAll() {
-        return departmentService.findAll();
+        return service.findAll();
     }
 
     @GetMapping("/title/{title}")
     public Optional<AcademicDepartment> findByTitle(@PathVariable String title) {
-        return departmentService.findByTitle(title);
+        return service.findByTitle(title);
     }
 
     @GetMapping("/{id}")
     public AcademicDepartment findOne(@PathVariable Integer id) {
-        return departmentService.findById(id);
+        return service.findById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AcademicDepartment create(@RequestBody AcademicDepartmentDto department) {
-        return departmentService.addOne(department);
+        return service.addOne(department);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
-        departmentService.findById(id);
-        departmentService.deleteById(id);
+        service.findById(id);
+        service.deleteById(id);
     }
 
     @PutMapping("/{id}")
     public AcademicDepartment updateDepartment(@RequestBody AcademicDepartmentDto department, @PathVariable Integer id) {
-        return departmentService.update(department, id);
+        return service.update(department, id);
     }
 
 }
