@@ -27,12 +27,12 @@ public class AcademicDepartmentService {
         this.facultyService = facultyService;
     }
 
-    public AcademicDepartment addOne(AcademicDepartmentDto department) {
-        Faculty faculty = facultyService.findById(department.getFacultyId());
+    public AcademicDepartment addOne(AcademicDepartmentDto dto) {
+        Faculty faculty = facultyService.findById(dto.getFacultyId());
 
         AcademicDepartment newDepartment = new AcademicDepartment();
         newDepartment.setFaculty(faculty);
-        newDepartment.setTitle(department.getTitle());
+        newDepartment.setTitle(dto.getTitle());
         return departmentRapository.save(newDepartment);
 
     }
@@ -51,9 +51,11 @@ public class AcademicDepartmentService {
     }
 
     public AcademicDepartment update(AcademicDepartmentDto updated, Integer id) {
+        
         AcademicDepartment department = findById(id);
         SpecializationMapper mapper = new SpecializationMapper();
         Faculty faculty = facultyService.findById(updated.getFacultyId());
+        
         UpdateUtil.setIfNotNull(faculty, department::setFaculty);
         UpdateUtil.updateListIfNotNull(updated.getSpecializations(), department.getSpecializations(), mapper::toEntity);
         UpdateUtil.setIfNotNull(updated.getTitle(), department::setTitle);
