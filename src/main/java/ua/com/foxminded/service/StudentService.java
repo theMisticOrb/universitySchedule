@@ -1,12 +1,15 @@
 package ua.com.foxminded.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ua.com.foxminded.dto.StudentDto;
+import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Student;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.sdjpa.StudentRepository;
@@ -16,12 +19,20 @@ import ua.com.foxminded.sdjpa.StudentRepository;
 public class StudentService {
 
     private StudentRepository studentRepository;
+    private GroupService groupService;
 
     public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
-    public Student addOne(Student student) {
+    public Student addOne(StudentDto dto) {
+        Student student = new Student();
+        Group group = groupService.findById(dto.getGroupId());
+
+        student.setFirstName(dto.getFirstName());
+        student.setLastName(dto.getLastName());
+        student.setMiddleName(dto.getMiddleName());
+        student.setGroup(group);
         return studentRepository.save(student);
     }
 
@@ -30,16 +41,23 @@ public class StudentService {
                 .orElseThrow(() -> new EntityNotFoundException("Student not found: " + id));
     }
 
+    public Optional<Student> findByFullName(String lastName, String firstName, String middleName) {
+        return studentRepository.findByLastNameAndFirstNameAndMiddleName(lastName, firstName, middleName);
+
+    }
+
     public List<Student> findAll() {
         return studentRepository.findAll();
     }
 
-    public Student update(Student updated) {
-        Student student = findById(updated.getId());
+    public Student update(StudentDto updated, Integer id) {
+        Student student = findById(id);
+        Group group = groupService.findById(updated.getGroupId());
+
         UpdateUtil.setIfNotNull(updated.getFirstName(), student::setFirstName);
         UpdateUtil.setIfNotNull(updated.getMiddleName(), student::setMiddleName);
         UpdateUtil.setIfNotNull(updated.getLastName(), student::setLastName);
-        UpdateUtil.setIfNotNull(updated.getGroup(), student::setGroup);
+        UpdateUtil.setIfNotNull(group, student::setGroup);
         return student;
     }
 
