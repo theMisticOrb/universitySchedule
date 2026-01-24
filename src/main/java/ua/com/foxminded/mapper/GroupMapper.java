@@ -25,7 +25,6 @@ public class GroupMapper {
         Specialization specialization = new Specialization();
         specialization.setId(dto.getSpecializationId());
 
-        entity.setName(dto.getName());
         entity.setFaculty(faculty);
         entity.setDepartment(department);
         entity.setSpecialization(specialization);

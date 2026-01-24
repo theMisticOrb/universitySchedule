@@ -19,15 +19,6 @@ public class SpecializationMapper {
         return entity;
     }
 
-    public SpecializationDto toDto(Specialization entity) {
-        if (entity == null) {
-            return null;
-        }
-
-        SpecializationDto dto = new SpecializationDto();
-        dto.setId(entity.getId());
-        dto.setTitle(entity.getTitle());
-        return dto;
-    }
+   
 
 }

@@ -2,6 +2,7 @@ package ua.com.foxminded.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -9,9 +10,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.config.UniversityProperties;
+import ua.com.foxminded.dto.groupdto.GroupCreateUpdateDto;
+import ua.com.foxminded.entity.AcademicDepartment;
+import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Group;
+import ua.com.foxminded.entity.Specialization;
 import ua.com.foxminded.entity.YearOfUniv;
 import ua.com.foxminded.helpers.UpdateUtil;
+import ua.com.foxminded.mapper.StudentMapper;
+import ua.com.foxminded.mapper.SubjectMapper;
 import ua.com.foxminded.sdjpa.GroupRepository;
 
 @Service
@@ -19,6 +26,9 @@ import ua.com.foxminded.sdjpa.GroupRepository;
 public class GroupService {
 
     private GroupRepository groupRepository;
+    private FacultyService facultyService;
+    private AcademicDepartmentService departmentService;
+    private SpecializationService specializationService;
 
     private UniversityProperties properties;
 
@@ -27,10 +37,20 @@ public class GroupService {
         this.properties = properties;
     }
 
-    public Group addOne(Group group) {
+    public Group addOne(GroupCreateUpdateDto dto) {
+        Group group = new Group();
+
+        Faculty faculty = facultyService.findById(dto.getFacultyId());
+        AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
+        Specialization specialization = specializationService.findById(dto.getSpecializationId());
+
+        group.setFaculty(faculty);
+        group.setDepartment(department);
+        group.setSpecialization(specialization);
         group.setStartDate(LocalDate.now());
         int maxYears = properties.getTotalYearsOfStudy();
         group.setYearOfUniv(new YearOfUniv(group.getStartDate(), maxYears));
+
         return groupRepository.save(group);
     }
 
@@ -38,17 +58,29 @@ public class GroupService {
         return groupRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Group not found: " + id));
     }
 
+    public Optional<Group> findByTitle(String title) {
+        return groupRepository.findByName(title);
+    }
+
     public List<Group> findAll() {
         return groupRepository.findAll();
     }
 
-    public Group update(Group updated) {
-        Group group = findById(updated.getId());
-        UpdateUtil.setIfNotNull(updated.getFaculty(), group::setFaculty);
-        UpdateUtil.setIfNotNull(updated.getDepartment(), group::setDepartment);
-        UpdateUtil.setIfNotNull(updated.getSpecialization(), group::setSpecialization);
-        UpdateUtil.setIfNotNull(updated.getStudents(), group::setStudents);
-        UpdateUtil.setIfNotNull(updated.getSubjects(), group::setSubjects);
+    public Group update(GroupCreateUpdateDto updated, Integer id) {
+        Group group = findById(id);
+        
+        Faculty faculty = facultyService.findById(updated.getFacultyId());
+        AcademicDepartment department = departmentService.findById(updated.getDepartmentId());
+        Specialization specialization = specializationService.findById(updated.getSpecializationId());
+        
+        StudentMapper studentMapper = new StudentMapper();
+        SubjectMapper subjectMapper = new SubjectMapper();
+        
+        UpdateUtil.setIfNotNull(faculty, group::setFaculty);
+        UpdateUtil.setIfNotNull(department, group::setDepartment);
+        UpdateUtil.setIfNotNull(specialization, group::setSpecialization);
+        UpdateUtil.updateListIfNotNull(updated.getStudents(), group.getStudents(), studentMapper::toEntity);
+        UpdateUtil.updateListIfNotNull(updated.getSubjects(), group.getSubjects(), subjectMapper::toEntity);
         return group;
     }
 

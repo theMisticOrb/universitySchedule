@@ -6,7 +6,6 @@ import ua.com.foxminded.dto.groupdto.GroupCreateUpdateDto;
 
 public class SubjectDto {
 
-    private Integer id;
     private String title;
     private Integer teacherId;
     private List<GroupCreateUpdateDto> groups;
@@ -15,20 +14,11 @@ public class SubjectDto {
     public SubjectDto() {
     }
 
-    public SubjectDto(Integer id, String title, Integer teacherId, List<GroupCreateUpdateDto> groups, List<LessonDto> lessons) {
-        this.id = id;
+    public SubjectDto(String title, Integer teacherId, List<GroupCreateUpdateDto> groups, List<LessonDto> lessons) {
         this.title = title;
         this.teacherId = teacherId;
         this.groups = groups;
         this.lessons = lessons;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getTitle() {
