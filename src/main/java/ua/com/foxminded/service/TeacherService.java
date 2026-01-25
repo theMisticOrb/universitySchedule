@@ -1,14 +1,18 @@
 package ua.com.foxminded.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ua.com.foxminded.dto.TeacherDto;
+import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.helpers.UpdateUtil;
+import ua.com.foxminded.mapper.SubjectMapper;
 import ua.com.foxminded.sdjpa.TeacherRepository;
 
 @Service
@@ -16,12 +20,20 @@ import ua.com.foxminded.sdjpa.TeacherRepository;
 public class TeacherService {
 
     private TeacherRepository teacherRepository;
+    private AcademicDepartmentService departmentService;
 
     public TeacherService(TeacherRepository teacherRepository) {
         this.teacherRepository = teacherRepository;
     }
 
-    public Teacher addOne(Teacher teacher) {
+    public Teacher addOne(TeacherDto dto) {
+        Teacher teacher = new Teacher();
+        AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
+
+        teacher.setFirstName(dto.getFirstName());
+        teacher.setLastName(dto.getLastName());
+        teacher.setMiddleName(dto.getMiddleName());
+        teacher.setDepartment(department);
         return teacherRepository.save(teacher);
     }
 
@@ -30,17 +42,25 @@ public class TeacherService {
                 .orElseThrow(() -> new EntityNotFoundException("Teacher not found: " + id));
     }
 
+    public Optional<Teacher> findByFullName(String lastName, String firstName, String middleName) {
+        return teacherRepository.findByLastNameAndFirstNameAndMiddleName(lastName, firstName, middleName);
+
+    }
+
     public List<Teacher> findAll() {
         return teacherRepository.findAll();
     }
 
-    public Teacher update(Teacher updated) {
-        Teacher teacher = findById(updated.getId());
-        UpdateUtil.setIfNotNull(updated.getDepartment(), teacher::setDepartment);
+    public Teacher update(TeacherDto updated, Integer id) {
+        Teacher teacher = findById(id);
+        AcademicDepartment department = departmentService.findById(updated.getDepartmentId());
+        SubjectMapper mapper = new SubjectMapper();
+
+        UpdateUtil.setIfNotNull(department, teacher::setDepartment);
         UpdateUtil.setIfNotNull(updated.getFirstName(), teacher::setFirstName);
         UpdateUtil.setIfNotNull(updated.getMiddleName(), teacher::setMiddleName);
         UpdateUtil.setIfNotNull(updated.getLastName(), teacher::setLastName);
-        UpdateUtil.setIfNotNull(updated.getSubjects(), teacher::setSubjects);
+        UpdateUtil.updateListIfNotNull(updated.getSubjects(), teacher.getSubjects(), mapper::toEntity);
         return teacher;
     }
 
