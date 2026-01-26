@@ -3,8 +3,10 @@ package ua.com.foxminded.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -18,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.BootTest;
+import ua.com.foxminded.dto.StudentDto;
+import ua.com.foxminded.dto.groupdto.GroupCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Group;
@@ -46,7 +50,7 @@ class StudentServiceTest {
     @Autowired
     private GroupService groupService;
 
-    private Student student = new Student();
+    private StudentDto student = new StudentDto();
 
     @BeforeEach
     void setUp() {
@@ -65,15 +69,15 @@ class StudentServiceTest {
         specialization.setTitle("Security");
         Specialization security = specializationRepository.save(specialization);
 
-        Group group = new Group();
-        group.setFaculty(engineeringFaculty);
-        group.setDepartment(csDepartment);
-        group.setSpecialization(security);
+        GroupCreateUpdateDto group = new GroupCreateUpdateDto();
+        group.setFacultyId(engineeringFaculty.getId());
+        group.setDepartmentId(csDepartment.getId());
+        group.setSpecializationId(security.getId());
         Group firstGroup = groupService.addOne(group);
 
         student.setFirstName("Jack");
         student.setLastName("Sparrow");
-        student.setGroup(firstGroup);
+        student.setGroupId(firstGroup.getId());
     }
 
     @Test
@@ -111,15 +115,26 @@ class StudentServiceTest {
         assertNotNull(allStudents);
 
     }
+    
+    @Test
+    void findByTitle_shouldReturnStudent_whenExists() {
+        Student saved = service.addOne(student);
+
+        Optional<Student> result = service.findByFullName("Sparrow", "Jack", null);
+
+        assertTrue(result.isPresent());
+        assertEquals("Jack", result.get().getFirstName());
+        assertEquals("Sparrow", result.get().getLastName());
+        assertEquals(saved.getId(), result.get().getId());
+    }
 
     @Test
     void update_shouldUpdateEntity_whenCalled() {
         Student firstStudent = service.addOne(student);
 
-        Student firstStudentUpdated = new Student();
-        firstStudentUpdated.setId(firstStudent.getId());
+        StudentDto firstStudentUpdated = new StudentDto();
         firstStudentUpdated.setFirstName("Gibbs");
-        Student result = service.update(firstStudentUpdated);
+        Student result = service.update(firstStudentUpdated, firstStudent.getId());
 
         assertEquals(firstStudent.getId(), result.getId());
         assertEquals("Gibbs", result.getFirstName());
@@ -130,10 +145,9 @@ class StudentServiceTest {
     void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
         Student firstStudent = service.addOne(student);
 
-        Student firstStudentUpdated = new Student();
-        firstStudentUpdated.setId(firstStudent.getId());
+        StudentDto firstStudentUpdated = new StudentDto();
         firstStudentUpdated.setFirstName(null);
-        Student result = service.update(firstStudentUpdated);
+        Student result = service.update(firstStudentUpdated, firstStudent.getId());
 
         assertEquals(firstStudent.getId(), result.getId());
         assertEquals("Jack", result.getFirstName());

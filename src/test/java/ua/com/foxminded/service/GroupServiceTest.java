@@ -1,10 +1,12 @@
 package ua.com.foxminded.service;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.BootTest;
+import ua.com.foxminded.dto.groupdto.GroupCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Group;
@@ -43,7 +46,7 @@ class GroupServiceTest {
     @Autowired
     private SpecializationRepository specializationRepository;
 
-    private Group group = new Group();
+    private GroupCreateUpdateDto group = new GroupCreateUpdateDto();
 
     @BeforeEach
     void setUp() {
@@ -61,9 +64,9 @@ class GroupServiceTest {
         specialization.setTitle("Security");
         Specialization security = specializationRepository.save(specialization);
 
-        group.setFaculty(engineeringFaculty);
-        group.setDepartment(csDepartment);
-        group.setSpecialization(security);
+        group.setFacultyId(engineeringFaculty.getId());
+        group.setDepartmentId(csDepartment.getId());
+        group.setSpecializationId(security.getId());
 
     }
 
@@ -103,6 +106,18 @@ class GroupServiceTest {
     }
 
     @Test
+    void findByTitle_shouldReturnGroup_whenExists() {
+        Group saved = service.addOne(group);
+        String groupName = saved.getName();
+        
+        Optional<Group> result = service.findByTitle(groupName);
+        
+        assertTrue(result.isPresent());
+        assertEquals(groupName, result.get().getName());
+        assertEquals(saved.getId(), result.get().getId());
+    }
+
+    @Test
     void update_shouldUpdateEntity_whenCalled() {
         Group firstGroup = service.addOne(group);
 
@@ -110,10 +125,9 @@ class GroupServiceTest {
         faculty.setTitle("Math");
         Faculty mathFaculty = facultyRepository.save(faculty);
 
-        Group firstGroupUpdated = new Group();
-        firstGroupUpdated.setId(firstGroup.getId());
-        firstGroupUpdated.setFaculty(mathFaculty);
-        Group result = service.update(firstGroupUpdated);
+        GroupCreateUpdateDto firstGroupUpdated = new GroupCreateUpdateDto();
+        firstGroupUpdated.setFacultyId(mathFaculty.getId());
+        Group result = service.update(firstGroupUpdated, firstGroup.getId());
 
         assertEquals(firstGroup.getId(), result.getId());
         assertEquals(mathFaculty.getId(), result.getFaculty().getId());
@@ -126,10 +140,9 @@ class GroupServiceTest {
 
         Group firstGroup = service.addOne(group);
 
-        Group computerScienceUpdated = new Group();
-        computerScienceUpdated.setId(firstGroup.getId());
-        computerScienceUpdated.setFaculty(null);
-        Group result = service.update(computerScienceUpdated);
+        GroupCreateUpdateDto computerScienceUpdated = new GroupCreateUpdateDto();
+        computerScienceUpdated.setFacultyId(null);
+        Group result = service.update(computerScienceUpdated, firstGroup.getId());
 
         assertEquals("Engineering", result.getFaculty().getTitle());
     }

@@ -32,8 +32,13 @@ public class GroupService {
 
     private UniversityProperties properties;
 
-    public GroupService(GroupRepository groupRepository, UniversityProperties properties) {
+    public GroupService(GroupRepository groupRepository, FacultyService facultyService,
+            AcademicDepartmentService departmentService, SpecializationService specializationService,
+            UniversityProperties properties) {
         this.groupRepository = groupRepository;
+        this.facultyService = facultyService;
+        this.departmentService = departmentService;
+        this.specializationService = specializationService;
         this.properties = properties;
     }
 
@@ -50,7 +55,7 @@ public class GroupService {
         group.setStartDate(LocalDate.now());
         int maxYears = properties.getTotalYearsOfStudy();
         group.setYearOfUniv(new YearOfUniv(group.getStartDate(), maxYears));
-
+        group.setName(group.getName());
         return groupRepository.save(group);
     }
 
@@ -68,17 +73,23 @@ public class GroupService {
 
     public Group update(GroupCreateUpdateDto updated, Integer id) {
         Group group = findById(id);
-        
-        Faculty faculty = facultyService.findById(updated.getFacultyId());
-        AcademicDepartment department = departmentService.findById(updated.getDepartmentId());
-        Specialization specialization = specializationService.findById(updated.getSpecializationId());
-        
+
         StudentMapper studentMapper = new StudentMapper();
         SubjectMapper subjectMapper = new SubjectMapper();
-        
-        UpdateUtil.setIfNotNull(faculty, group::setFaculty);
-        UpdateUtil.setIfNotNull(department, group::setDepartment);
-        UpdateUtil.setIfNotNull(specialization, group::setSpecialization);
+
+        if (updated.getFacultyId() != null) {
+            Faculty faculty = facultyService.findById(updated.getFacultyId());
+            UpdateUtil.setIfNotNull(faculty, group::setFaculty);
+        }
+        if (updated.getDepartmentId() != null) {
+            AcademicDepartment department = departmentService.findById(updated.getDepartmentId());
+            UpdateUtil.setIfNotNull(department, group::setDepartment);
+        }
+        if (updated.getSpecializationId() != null) {
+            Specialization specialization = specializationService.findById(updated.getSpecializationId());
+            UpdateUtil.setIfNotNull(specialization, group::setSpecialization);
+        }
+
         UpdateUtil.updateListIfNotNull(updated.getStudents(), group.getStudents(), studentMapper::toEntity);
         UpdateUtil.updateListIfNotNull(updated.getSubjects(), group.getSubjects(), subjectMapper::toEntity);
         return group;

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.BootTest;
+import ua.com.foxminded.dto.ClassroomDto;
 import ua.com.foxminded.entity.Classroom;
 
 @Testcontainers
@@ -34,7 +36,7 @@ class ClassroomServiceTest {
     @Test
     void addOne_shouldSaveNewEntity_whenCalled() {
 
-        Classroom classroom = new Classroom();
+        ClassroomDto classroom = new ClassroomDto();
         classroom.setName("2-A");
         Classroom savedClassroom = service.addOne(classroom);
 
@@ -45,7 +47,7 @@ class ClassroomServiceTest {
     @Test
     void findById_shouldFindEntityById_whenCalledIfEntityExists() {
 
-        Classroom classroom = new Classroom();
+        ClassroomDto classroom = new ClassroomDto();
         classroom.setName("2-A");
         Classroom savedClassroom = service.addOne(classroom);
 
@@ -64,13 +66,26 @@ class ClassroomServiceTest {
     }
 
     @Test
-    void findAll_shouldGetListOfAllEntities_whenCalledIfNotEmpty() {
+    void findByTitle_shouldReturnClassroom_whenExists() {
 
-        Classroom classroom = new Classroom();
+        ClassroomDto classroom = new ClassroomDto();
         classroom.setName("2-A");
         service.addOne(classroom);
 
-        Classroom classroom2 = new Classroom();
+        Optional<Classroom> result = service.findByTitle("2-A");
+
+        assertTrue(result.isPresent());
+        assertEquals("2-A", result.get().getName());
+    }
+
+    @Test
+    void findAll_shouldGetListOfAllEntities_whenCalledIfNotEmpty() {
+
+        ClassroomDto classroom = new ClassroomDto();
+        classroom.setName("2-A");
+        service.addOne(classroom);
+
+        ClassroomDto classroom2 = new ClassroomDto();
         classroom2.setName("3-A");
         service.addOne(classroom2);
 
@@ -93,14 +108,13 @@ class ClassroomServiceTest {
     @Test
     void update_shouldUpdateEntity_whenCalled() {
 
-        Classroom classroom = new Classroom();
+        ClassroomDto classroom = new ClassroomDto();
         classroom.setName("2-A");
         Classroom classroomSaved = service.addOne(classroom);
 
-        Classroom updated = new Classroom();
-        updated.setId(classroomSaved.getId());
+        ClassroomDto updated = new ClassroomDto();
         updated.setName("3-A");
-        Classroom classroomUpdated = service.update(updated);
+        Classroom classroomUpdated = service.update(updated, classroomSaved.getId());
 
         assertEquals(classroomSaved.getId(), classroomUpdated.getId());
         assertEquals("3-A", classroomUpdated.getName());
@@ -109,21 +123,20 @@ class ClassroomServiceTest {
 
     @Test
     void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
-        Classroom classroom = new Classroom();
+        ClassroomDto classroom = new ClassroomDto();
         classroom.setName("2-A");
         Classroom classroomSaved = service.addOne(classroom);
 
-        Classroom updated = new Classroom();
-        updated.setId(classroomSaved.getId());
+        ClassroomDto updated = new ClassroomDto();
         updated.setName(null);
-        Classroom classroomUpdated = service.update(updated);
+        Classroom classroomUpdated = service.update(updated, classroomSaved.getId());
 
         assertEquals("2-A", classroomUpdated.getName());
     }
 
     @Test
     void delete_shouldDeleteEntityById_whenEntityExists() {
-        Classroom classroom = new Classroom();
+        ClassroomDto classroom = new ClassroomDto();
         classroom.setName("2-A");
         Classroom classroomSaved = service.addOne(classroom);
         int id = classroomSaved.getId();

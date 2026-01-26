@@ -21,8 +21,9 @@ public class StudentService {
     private StudentRepository studentRepository;
     private GroupService groupService;
 
-    public StudentService(StudentRepository studentRepository) {
+    public StudentService(StudentRepository studentRepository, GroupService groupService) {
         this.studentRepository = studentRepository;
+        this.groupService = groupService;
     }
 
     public Student addOne(StudentDto dto) {
@@ -51,13 +52,19 @@ public class StudentService {
     }
 
     public Student update(StudentDto updated, Integer id) {
+
         Student student = findById(id);
-        Group group = groupService.findById(updated.getGroupId());
+
+        if (updated.getGroupId() != null) {
+
+            Group group = groupService.findById(updated.getGroupId());
+            UpdateUtil.setIfNotNull(group, student::setGroup);
+
+        }
 
         UpdateUtil.setIfNotNull(updated.getFirstName(), student::setFirstName);
         UpdateUtil.setIfNotNull(updated.getMiddleName(), student::setMiddleName);
         UpdateUtil.setIfNotNull(updated.getLastName(), student::setLastName);
-        UpdateUtil.setIfNotNull(group, student::setGroup);
         return student;
     }
 

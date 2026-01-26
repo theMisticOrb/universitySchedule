@@ -22,8 +22,9 @@ public class SubjectService {
     private SubjectRepository subjectRepository;
     private TeacherService teacherService;
 
-    public SubjectService(SubjectRepository subjectRepository) {
+    public SubjectService(SubjectRepository subjectRepository, TeacherService teacherService) {
         this.subjectRepository = subjectRepository;
+        this.teacherService = teacherService;
     }
 
     public Subject addOne(SubjectDto dto) {
@@ -49,11 +50,17 @@ public class SubjectService {
     }
 
     public Subject update(SubjectDto updated, Integer id) {
+
         Subject subject = findById(id);
-        Teacher teacher = teacherService.findById(updated.getTeacherId());
         GroupMapper mapper = new GroupMapper();
+        
+        if (updated.getTeacherId() != null) {
+            Teacher teacher = teacherService.findById(updated.getTeacherId());
+            UpdateUtil.setIfNotNull(teacher, subject::setTeacher);
+
+        }
+        
         UpdateUtil.updateListIfNotNull(updated.getGroups(), subject.getGroups(), mapper::toEntity);
-        UpdateUtil.setIfNotNull(teacher, subject::setTeacher);
         UpdateUtil.setIfNotNull(updated.getTitle(), subject::setTitle);
         return subject;
     }

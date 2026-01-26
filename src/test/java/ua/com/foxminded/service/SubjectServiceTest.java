@@ -3,8 +3,10 @@ package ua.com.foxminded.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.BootTest;
+import ua.com.foxminded.dto.SubjectDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Subject;
@@ -43,7 +46,7 @@ class SubjectServiceTest {
     @Autowired
     private AcademicDepartmentRepository departmentRepository;
 
-    private Subject subject = new Subject();
+    private SubjectDto subject = new SubjectDto();
 
     @BeforeEach
     void setUp() {
@@ -64,7 +67,7 @@ class SubjectServiceTest {
         teacher.setDepartment(csDepartment);
         Teacher jonTeacher = teacherRepository.save(teacher);
 
-        subject.setTeacher(jonTeacher);
+        subject.setTeacherId(jonTeacher.getId());
         subject.setTitle("Math");
 
     }
@@ -103,15 +106,25 @@ class SubjectServiceTest {
         assertNotNull(allSubjects);
 
     }
+    
+    @Test
+    void findByTitle_shouldReturnStudent_whenExists() {
+        Subject saved = service.addOne(subject);
+
+        Optional<Subject> result = service.findByTitle("Math");
+
+        assertTrue(result.isPresent());
+        assertEquals("Math", result.get().getTitle());
+        assertEquals(saved.getId(), result.get().getId());
+    }
 
     @Test
     void update_shouldUpdateEntity_whenCalled() {
         Subject firstSubject = service.addOne(subject);
 
-        Subject firstSubjectUpdated = new Subject();
-        firstSubjectUpdated.setId(firstSubject.getId());
+        SubjectDto firstSubjectUpdated = new SubjectDto();
         firstSubjectUpdated.setTitle("History");
-        Subject result = service.update(firstSubjectUpdated);
+        Subject result = service.update(firstSubjectUpdated, firstSubject.getId());
 
         assertEquals(firstSubject.getId(), result.getId());
         assertEquals("History", result.getTitle());
@@ -122,10 +135,9 @@ class SubjectServiceTest {
     void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
         Subject firstSubject = service.addOne(subject);
 
-        Subject firstSubjectUpdated = new Subject();
-        firstSubjectUpdated.setId(firstSubject.getId());
+        SubjectDto firstSubjectUpdated = new SubjectDto();
         firstSubjectUpdated.setTitle(null);
-        Subject result = service.update(firstSubjectUpdated);
+        Subject result = service.update(firstSubjectUpdated, firstSubject.getId());
 
         assertEquals(firstSubject.getId(), result.getId());
         assertEquals("Math", result.getTitle());

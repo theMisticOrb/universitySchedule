@@ -22,8 +22,10 @@ public class SpecializationService {
     private SpecializationRepository specializationRepository;
     private AcademicDepartmentService departmentService;
 
-    public SpecializationService(SpecializationRepository specializationRepository) {
+    public SpecializationService(SpecializationRepository specializationRepository,
+            AcademicDepartmentService departmentService) {
         this.specializationRepository = specializationRepository;
+        this.departmentService = departmentService;
     }
 
     public Specialization addOne(SpecializationDto dto) {
@@ -51,12 +53,18 @@ public class SpecializationService {
     }
 
     public Specialization update(SpecializationDto updated, Integer id) {
+        
         Specialization specialization = findById(id);
-        AcademicDepartment department = departmentService.findById(updated.getDepartmentId());
-
         GroupMapper mapper = new GroupMapper();
 
-        UpdateUtil.setIfNotNull(department, specialization::setDepartment);
+        if (updated.getDepartmentId() != null) {
+            
+            AcademicDepartment department = departmentService.findById(updated.getDepartmentId());
+            
+            UpdateUtil.setIfNotNull(department, specialization::setDepartment);
+
+        }
+
         UpdateUtil.updateListIfNotNull(updated.getGroups(), specialization.getGroups(), mapper::toEntity);
         UpdateUtil.setIfNotNull(updated.getTitle(), specialization::setTitle);
         return specialization;

@@ -23,15 +23,18 @@ public class LessonService {
     private ClassroomService classroomService;
     private SubjectService subjectService;
 
-    protected LessonService(LessonRepository lessonRepository) {
+    public LessonService(LessonRepository lessonRepository, ClassroomService classroomService,
+            SubjectService subjectService) {
         this.lessonRepository = lessonRepository;
+        this.classroomService = classroomService;
+        this.subjectService = subjectService;
     }
 
     public Lesson addOne(LessonDto dto) {
         Lesson lesson = new Lesson();
         Classroom classroom = classroomService.findById(dto.getClassroomId());
         Subject subject = subjectService.findById(dto.getSubjectId());
-        
+
         lesson.setClassHour(dto.getClassHour());
         lesson.setClassroom(classroom);
         lesson.setSubject(subject);
@@ -44,7 +47,7 @@ public class LessonService {
     }
 
     public Optional<Lesson> findByTitle(String subjectTitle) {
-        return lessonRepository.findBySubject(subjectTitle);
+        return lessonRepository.findBySubject_Title(subjectTitle);
     }
 
     public List<Lesson> findAll() {
@@ -53,12 +56,17 @@ public class LessonService {
 
     public Lesson update(LessonDto updated, Integer id) {
         Lesson lesson = findById(id);
-        Classroom classroom = classroomService.findById(updated.getClassroomId());
-        Subject subject = subjectService.findById(updated.getSubjectId());
-        
+
+        if (updated.getClassroomId() != null) {
+            Classroom classroom = classroomService.findById(updated.getClassroomId());
+            UpdateUtil.setIfNotNull(classroom, lesson::setClassroom);
+        }
+        if (updated.getSubjectId() != null) {
+            Subject subject = subjectService.findById(updated.getSubjectId());
+            UpdateUtil.setIfNotNull(subject, lesson::setSubject);
+        }
+
         UpdateUtil.setIfNotNull(updated.getClassHour(), lesson::setClassHour);
-        UpdateUtil.setIfNotNull(classroom, lesson::setClassroom);
-        UpdateUtil.setIfNotNull(subject, lesson::setSubject);
         UpdateUtil.setIfNotNull(updated.getWeekDay(), lesson::setWeekDay);
         return lesson;
     }

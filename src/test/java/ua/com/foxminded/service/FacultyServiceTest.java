@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.BootTest;
+import ua.com.foxminded.dto.FacultyDto;
 import ua.com.foxminded.entity.Faculty;
 
 @Testcontainers
@@ -34,7 +36,7 @@ class FacultyServiceTest {
     @Test
     void addOne_shouldSaveNewEntity_whenCalled() {
 
-        Faculty faculty = new Faculty();
+        FacultyDto faculty = new FacultyDto();
         faculty.setTitle("Engineering");
         Faculty savedFaculty = service.addOne(faculty);
 
@@ -44,7 +46,7 @@ class FacultyServiceTest {
 
     @Test
     void findById_shouldFindEntityById_whenCalledIfEntityExists() {
-        Faculty faculty = new Faculty();
+        FacultyDto faculty = new FacultyDto();
         faculty.setTitle("Engineering");
         Faculty saved = service.addOne(faculty);
 
@@ -64,11 +66,11 @@ class FacultyServiceTest {
 
     @Test
     void findAll_shouldGetListOfAllEntities_whenCalledIfNotEmpty() {
-        Faculty facultyEngineering = new Faculty();
+        FacultyDto facultyEngineering = new FacultyDto();
         facultyEngineering.setTitle("Engineering");
         service.addOne(facultyEngineering);
 
-        Faculty facultyEconomy = new Faculty();
+        FacultyDto facultyEconomy = new FacultyDto();
         facultyEconomy.setTitle("Economy");
         service.addOne(facultyEconomy);
         List<Faculty> allFaculties = service.findAll();
@@ -88,15 +90,27 @@ class FacultyServiceTest {
     }
 
     @Test
+    void findByTitle_shouldReturnFaculty_whenExists() {
+        FacultyDto faculty = new FacultyDto();
+        faculty.setTitle("Engineering");
+
+        service.addOne(faculty);
+
+        Optional<Faculty> result = service.findByTitle("Engineering");
+
+        assertTrue(result.isPresent());
+        assertEquals("Engineering", result.get().getTitle());
+    }
+
+    @Test
     void update_shouldUpdateEntity_whenCalled() {
-        Faculty engineeging = new Faculty();
+        FacultyDto engineeging = new FacultyDto();
         engineeging.setTitle("Engineering");
         Faculty engineegingFaculty = service.addOne(engineeging);
 
-        Faculty economy = new Faculty();
-        economy.setId(engineeging.getId());
+        FacultyDto economy = new FacultyDto();
         economy.setTitle("Economy");
-        Faculty economyFacultyUpdated = service.update(economy);
+        Faculty economyFacultyUpdated = service.update(economy, engineegingFaculty.getId());
 
         assertEquals(engineegingFaculty.getId(), economyFacultyUpdated.getId());
         assertEquals("Economy", economyFacultyUpdated.getTitle());
@@ -105,14 +119,13 @@ class FacultyServiceTest {
 
     @Test
     void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
-        Faculty engineeging = new Faculty();
+        FacultyDto engineeging = new FacultyDto();
         engineeging.setTitle("Engineering");
         Faculty engineegingFaculty = service.addOne(engineeging);
 
-        Faculty economy = new Faculty();
-        economy.setId(engineeging.getId());
+        FacultyDto economy = new FacultyDto();
         economy.setTitle(null);
-        Faculty economyFacultyUpdated = service.update(engineeging);
+        Faculty economyFacultyUpdated = service.update(engineeging, engineegingFaculty.getId());
 
         assertEquals(engineegingFaculty.getId(), economyFacultyUpdated.getId());
         assertEquals("Engineering", economyFacultyUpdated.getTitle());
@@ -120,7 +133,7 @@ class FacultyServiceTest {
 
     @Test
     void delete_shouldDeleteEntityById_whenEntityExists() {
-        Faculty engineeging = new Faculty();
+        FacultyDto engineeging = new FacultyDto();
         engineeging.setTitle("Engineering");
         Faculty engineegingFaculty = service.addOne(engineeging);
 

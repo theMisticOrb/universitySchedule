@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.BootTest;
+import ua.com.foxminded.dto.TeacherDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Teacher;
@@ -39,7 +40,7 @@ class TeacherServiceTest {
     @Autowired
     private AcademicDepartmentRepository departmentRepository;
 
-    private Teacher teacher = new Teacher();
+    private TeacherDto teacher = new TeacherDto();
 
     @BeforeEach
     void setUp() {
@@ -53,7 +54,7 @@ class TeacherServiceTest {
         computerScience.setFaculty(engineeringFaculty);
         AcademicDepartment csDepartment = departmentRepository.save(computerScience);
 
-        teacher.setDepartment(csDepartment);
+        teacher.setDepartmentId(csDepartment.getId());
         teacher.setFirstName("Jhon");
         teacher.setLastName("Devis");
     }
@@ -98,10 +99,9 @@ class TeacherServiceTest {
     void update_shouldUpdateEntity_whenCalled() {
         Teacher firstTeacher = service.addOne(teacher);
 
-        Teacher firstTeacherUpdated = new Teacher();
-        firstTeacherUpdated.setId(firstTeacher.getId());
+        TeacherDto firstTeacherUpdated = new TeacherDto();
         firstTeacherUpdated.setFirstName("Gibbs");
-        Teacher result = service.update(firstTeacherUpdated);
+        Teacher result = service.update(firstTeacherUpdated, firstTeacher.getId());
 
         assertEquals(firstTeacher.getId(), result.getId());
         assertEquals("Gibbs", result.getFirstName());
@@ -112,10 +112,9 @@ class TeacherServiceTest {
     void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
         Teacher firstTeacher = service.addOne(teacher);
 
-        Teacher firstTeacherUpdated = new Teacher();
-        firstTeacherUpdated.setId(firstTeacher.getId());
+        TeacherDto firstTeacherUpdated = new TeacherDto();
         firstTeacherUpdated.setFirstName(null);
-        Teacher result = service.update(firstTeacherUpdated);
+        Teacher result = service.update(firstTeacherUpdated, firstTeacher.getId());
 
         assertEquals(firstTeacher.getId(), result.getId());
         assertEquals("Jhon", result.getFirstName());

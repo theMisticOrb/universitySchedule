@@ -3,8 +3,10 @@ package ua.com.foxminded.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.BootTest;
+import ua.com.foxminded.dto.SpecializationDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Specialization;
@@ -39,7 +42,7 @@ class SpecializationServiceTest {
     @Autowired
     private AcademicDepartmentRepository departmentRepository;
 
-    private Specialization specialization = new Specialization();
+    private SpecializationDto specialization = new SpecializationDto();
 
     @BeforeEach
     void setUp() {
@@ -53,7 +56,7 @@ class SpecializationServiceTest {
         computerScience.setFaculty(engineeringFaculty);
         AcademicDepartment csDepartment = departmentRepository.save(computerScience);
 
-        specialization.setDepartment(csDepartment);
+        specialization.setDepartmentId(csDepartment.getId());
         specialization.setTitle("Security");
     }
 
@@ -91,6 +94,17 @@ class SpecializationServiceTest {
         assertNotNull(allSpecializations);
 
     }
+    
+    @Test
+    void findByTitle_shouldReturnSpecialization_whenExists() {
+        Specialization saved = service.addOne(specialization);
+
+        Optional<Specialization> result = service.findByTitle("Security");
+
+        assertTrue(result.isPresent());
+        assertEquals("Security", result.get().getTitle());
+        assertEquals(saved.getId(), result.get().getId());
+    }
 
     @Test
     void update_shouldUpdateEntity_whenCalled() {
@@ -106,10 +120,9 @@ class SpecializationServiceTest {
         analysis.setFaculty(mathFaculty);
         AcademicDepartment csDepartment = departmentRepository.save(analysis);
 
-        Specialization securitySpecialUpdated = new Specialization();
-        securitySpecialUpdated.setId(securitySpecial.getId());
-        securitySpecialUpdated.setDepartment(csDepartment);
-        Specialization result = service.update(securitySpecialUpdated);
+        SpecializationDto securitySpecialUpdated = new SpecializationDto();
+        securitySpecialUpdated.setDepartmentId(csDepartment.getId());
+        Specialization result = service.update(securitySpecialUpdated, securitySpecial.getId());
 
         assertEquals(securitySpecial.getId(), result.getId());
         assertEquals(mathFaculty.getId(), result.getDepartment().getFaculty().getId());
@@ -122,10 +135,9 @@ class SpecializationServiceTest {
 
         Specialization securitySpecial = service.addOne(specialization);
 
-        Specialization securitySpecialUpdated = new Specialization();
-        securitySpecialUpdated.setId(securitySpecial.getId());
-        securitySpecialUpdated.setDepartment(null);
-        Specialization result = service.update(securitySpecialUpdated);
+        SpecializationDto securitySpecialUpdated = new SpecializationDto();
+        securitySpecialUpdated.setDepartmentId(null);
+        Specialization result = service.update(securitySpecialUpdated, securitySpecial.getId());
 
         assertEquals("Computer Science", result.getDepartment().getTitle());
     }

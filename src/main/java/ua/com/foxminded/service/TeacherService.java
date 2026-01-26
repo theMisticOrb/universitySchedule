@@ -22,8 +22,9 @@ public class TeacherService {
     private TeacherRepository teacherRepository;
     private AcademicDepartmentService departmentService;
 
-    public TeacherService(TeacherRepository teacherRepository) {
+    public TeacherService(TeacherRepository teacherRepository, AcademicDepartmentService departmentService) {
         this.teacherRepository = teacherRepository;
+        this.departmentService = departmentService;
     }
 
     public Teacher addOne(TeacherDto dto) {
@@ -53,10 +54,15 @@ public class TeacherService {
 
     public Teacher update(TeacherDto updated, Integer id) {
         Teacher teacher = findById(id);
-        AcademicDepartment department = departmentService.findById(updated.getDepartmentId());
         SubjectMapper mapper = new SubjectMapper();
+        
+        if (updated.getDepartmentId() != null) {
+            
+            AcademicDepartment department = departmentService.findById(updated.getDepartmentId());
+            UpdateUtil.setIfNotNull(department, teacher::setDepartment);
 
-        UpdateUtil.setIfNotNull(department, teacher::setDepartment);
+        }
+
         UpdateUtil.setIfNotNull(updated.getFirstName(), teacher::setFirstName);
         UpdateUtil.setIfNotNull(updated.getMiddleName(), teacher::setMiddleName);
         UpdateUtil.setIfNotNull(updated.getLastName(), teacher::setLastName);

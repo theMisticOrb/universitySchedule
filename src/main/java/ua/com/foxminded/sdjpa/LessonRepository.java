@@ -12,5 +12,5 @@ import ua.com.foxminded.entity.Lesson;
 @Transactional
 public interface LessonRepository extends JpaRepository<Lesson, Integer>{
 
-    Optional<Lesson> findBySubject(String subjectName);
+    Optional<Lesson> findBySubject_Title(String title);
 }

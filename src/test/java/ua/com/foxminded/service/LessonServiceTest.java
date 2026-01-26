@@ -1,10 +1,12 @@
 package ua.com.foxminded.service;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.BootTest;
+import ua.com.foxminded.dto.LessonDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Classroom;
 import ua.com.foxminded.entity.Faculty;
@@ -53,7 +56,7 @@ class LessonServiceTest {
     @Autowired
     private AcademicDepartmentRepository departmentRepository;
 
-    private Lesson lesson = new Lesson();
+    private LessonDto lesson = new LessonDto();
     private Teacher teacher = new Teacher();
 
     @BeforeEach
@@ -82,8 +85,8 @@ class LessonServiceTest {
         subject.setTeacher(jonTeacher);
         Subject math = subjectRepository.save(subject);
 
-        lesson.setClassroom(secondAClassroom);
-        lesson.setSubject(math);
+        lesson.setClassroomId(secondAClassroom.getId());
+        lesson.setSubjectId(math.getId());
         lesson.setWeekDay(WeekDay.FRIDAY);
         lesson.setClassHour(ClassHour.FIRST_CLASS);
     }
@@ -120,6 +123,17 @@ class LessonServiceTest {
         assertNotNull(allGroups);
 
     }
+    
+    @Test
+    void findByTitle_shouldReturnLessonBySubjectName_whenExists() {
+        Lesson saved = service.addOne(lesson);
+
+        Optional<Lesson> result = service.findByTitle("Math");
+
+        assertTrue(result.isPresent());
+        assertEquals("Math", result.get().getSubject().getTitle());
+        assertEquals(saved.getId(), result.get().getId());
+    }
 
     @Test
     void update_shouldUpdateEntity_whenCalled() {
@@ -130,10 +144,9 @@ class LessonServiceTest {
         subject.setTeacher(teacher);
         Subject history = subjectRepository.save(subject);
 
-        Lesson firstLessonUpdated = new Lesson();
-        firstLessonUpdated.setId(firstLesson.getId());
-        firstLessonUpdated.setSubject(history);
-        Lesson result = service.update(firstLessonUpdated);
+        LessonDto firstLessonUpdated = new LessonDto();
+        firstLessonUpdated.setSubjectId(history.getId());
+        Lesson result = service.update(firstLessonUpdated, firstLesson.getId());
 
         assertEquals(firstLesson.getId(), result.getId());
         assertEquals(history.getId(), result.getSubject().getId());
@@ -146,10 +159,9 @@ class LessonServiceTest {
 
         Lesson firstLesson = service.addOne(lesson);
 
-        Lesson firstLessonUpdated = new Lesson();
-        firstLessonUpdated.setId(firstLesson.getId());
-        firstLessonUpdated.setSubject(null);
-        Lesson result = service.update(firstLessonUpdated);
+        LessonDto firstLessonUpdated = new LessonDto();
+        firstLessonUpdated.setSubjectId(null);
+        Lesson result = service.update(firstLessonUpdated, firstLesson.getId());
 
         assertEquals("Math", result.getSubject().getTitle());
     }

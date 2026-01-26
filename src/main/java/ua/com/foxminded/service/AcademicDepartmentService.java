@@ -19,11 +19,11 @@ import ua.com.foxminded.sdjpa.AcademicDepartmentRepository;
 @Transactional
 public class AcademicDepartmentService {
 
-    private AcademicDepartmentRepository departmentRapository;
+    private AcademicDepartmentRepository departmentRepository;
     private FacultyService facultyService;
 
     public AcademicDepartmentService(AcademicDepartmentRepository departmentRapository, FacultyService facultyService) {
-        this.departmentRapository = departmentRapository;
+        this.departmentRepository = departmentRapository;
         this.facultyService = facultyService;
     }
 
@@ -33,38 +33,39 @@ public class AcademicDepartmentService {
         AcademicDepartment newDepartment = new AcademicDepartment();
         newDepartment.setFaculty(faculty);
         newDepartment.setTitle(dto.getTitle());
-        return departmentRapository.save(newDepartment);
+        return departmentRepository.save(newDepartment);
 
     }
 
     public Optional<AcademicDepartment> findByTitle(String title) {
-        return departmentRapository.findByTitle(title);
+        return departmentRepository.findByTitle(title);
     }
 
     public AcademicDepartment findById(Integer id) {
-        return departmentRapository.findById(id)
+        return departmentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Academic Department not found: " + id));
     }
 
     public List<AcademicDepartment> findAll() {
-        return departmentRapository.findAll();
+        return departmentRepository.findAll();
     }
 
     public AcademicDepartment update(AcademicDepartmentDto updated, Integer id) {
-        
+
         AcademicDepartment department = findById(id);
         SpecializationMapper mapper = new SpecializationMapper();
-        Faculty faculty = facultyService.findById(updated.getFacultyId());
-        
-        UpdateUtil.setIfNotNull(faculty, department::setFaculty);
+
+        if (updated.getFacultyId() != null) {
+            Faculty faculty = facultyService.findById(updated.getFacultyId());
+            UpdateUtil.setIfNotNull(faculty, department::setFaculty);
+        }
         UpdateUtil.updateListIfNotNull(updated.getSpecializations(), department.getSpecializations(), mapper::toEntity);
         UpdateUtil.setIfNotNull(updated.getTitle(), department::setTitle);
         return department;
     }
 
     public void deleteById(Integer id) {
-        departmentRapository.deleteById(id);
+        departmentRepository.deleteById(id);
     }
-    
-    
+
 }
