@@ -13,5 +13,6 @@ import ua.com.foxminded.entity.Faculty;
 public interface FacultyRepository extends JpaRepository<Faculty, Integer>{
     
     Optional<Faculty> findByTitle(String title);
+    boolean existsByTitle(String title);
 
 }

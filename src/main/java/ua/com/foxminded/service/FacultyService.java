@@ -1,7 +1,6 @@
 package ua.com.foxminded.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -10,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.dto.FacultyDto;
 import ua.com.foxminded.entity.Faculty;
+import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.AcademicDepartmentMapper;
 import ua.com.foxminded.sdjpa.FacultyRepository;
@@ -25,6 +25,10 @@ public class FacultyService {
     }
 
     public Faculty addOne(FacultyDto dto) {
+        if (facultyRepository.existsByTitle(dto.getTitle())) {
+            throw new DuplicateEntityException("Faculty with title: " + dto.getTitle() + " alredy exists!");
+
+        }
         Faculty faculty = new Faculty();
         faculty.setTitle(dto.getTitle());
         return facultyRepository.save(faculty);
@@ -35,8 +39,9 @@ public class FacultyService {
                 .orElseThrow(() -> new EntityNotFoundException("Faculty not found: " + id));
     }
 
-    public Optional<Faculty> findByTitle(String title) {
-        return facultyRepository.findByTitle(title);
+    public Faculty findByTitle(String title) {
+        return facultyRepository.findByTitle(title)
+                .orElseThrow(() -> new EntityNotFoundException("Faculty not found: " + title));
     }
 
     public List<Faculty> findAll() {

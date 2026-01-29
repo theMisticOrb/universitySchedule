@@ -61,10 +61,10 @@ class AcademicDepartmentControllerTest {
 
         AcademicDepartment department = createDepartment();
 
-        List<AcademicDepartment> listDepartments = new ArrayList<>();
-        listDepartments.add(department);
+        List<AcademicDepartment> departments = new ArrayList<>();
+        departments.add(department);
 
-        when(service.findAll()).thenReturn(listDepartments);
+        when(service.findAll()).thenReturn(departments);
 
         mvc.perform(get("/api/departments")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].title").value("Computer Science"));
