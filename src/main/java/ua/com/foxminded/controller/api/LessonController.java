@@ -55,7 +55,7 @@ public class LessonController {
     }
 
     @PutMapping("/{id}")
-    public Lesson updateDepartment(@RequestBody LessonDto dto, @PathVariable Integer id) {
+    public Lesson update(@RequestBody LessonDto dto, @PathVariable Integer id) {
         return service.update(dto, id);
     }
 

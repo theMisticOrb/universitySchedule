@@ -19,7 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import ua.com.foxminded.BootTest;
+import ua.com.foxminded.MainApp;
 import ua.com.foxminded.dto.LessonDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Classroom;
@@ -37,7 +37,7 @@ import ua.com.foxminded.sdjpa.TeacherRepository;
 
 @Testcontainers
 @Transactional
-@SpringBootTest(classes = { BootTest.class })
+@SpringBootTest(classes = { MainApp.class })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
 class LessonServiceTest {

@@ -55,7 +55,7 @@ public class FacultyController {
     }
 
     @PutMapping("/{id}")
-    public Faculty updateDepartment(@RequestBody FacultyDto dto, @PathVariable Integer id) {
+    public Faculty update(@RequestBody FacultyDto dto, @PathVariable Integer id) {
         return service.update(dto, id);
     }
 }

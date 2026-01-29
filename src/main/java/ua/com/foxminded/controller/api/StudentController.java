@@ -59,7 +59,7 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
-    public Student updateDepartment(@RequestBody StudentDto dto, @PathVariable Integer id) {
+    public Student update(@RequestBody StudentDto dto, @PathVariable Integer id) {
         return service.update(dto, id);
     }
 }

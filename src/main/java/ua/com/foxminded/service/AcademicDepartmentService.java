@@ -1,7 +1,6 @@
 package ua.com.foxminded.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -11,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.dto.AcademicDepartmentDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
+import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.SpecializationMapper;
 import ua.com.foxminded.sdjpa.AcademicDepartmentRepository;
@@ -28,6 +28,11 @@ public class AcademicDepartmentService {
     }
 
     public AcademicDepartment addOne(AcademicDepartmentDto dto) {
+        
+        if (departmentRepository.existsByTitle(dto.getTitle())) {
+            throw new DuplicateEntityException("Department with title: " + dto.getTitle() + " alredy exists!");
+        }
+
         Faculty faculty = facultyService.findById(dto.getFacultyId());
 
         AcademicDepartment newDepartment = new AcademicDepartment();
@@ -37,8 +42,9 @@ public class AcademicDepartmentService {
 
     }
 
-    public Optional<AcademicDepartment> findByTitle(String title) {
-        return departmentRepository.findByTitle(title);
+    public AcademicDepartment findByTitle(String title) {
+        return departmentRepository.findByTitle(title)
+                .orElseThrow(() -> new EntityNotFoundException("Academic Department not found: " + title));
     }
 
     public AcademicDepartment findById(Integer id) {

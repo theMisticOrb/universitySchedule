@@ -1,7 +1,5 @@
 package ua.com.foxminded.controller.api;
 
-import java.util.Optional;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +31,7 @@ public class AcademicDepartmentController {
     }
 
     @GetMapping("/title/{title}")
-    public Optional<AcademicDepartment> findByTitle(@PathVariable String title) {
+    public AcademicDepartment findByTitle(@PathVariable String title) {
         return service.findByTitle(title);
     }
 
@@ -49,13 +47,14 @@ public class AcademicDepartmentController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id) {
         service.findById(id);
         service.deleteById(id);
     }
 
     @PutMapping("/{id}")
-    public AcademicDepartment updateDepartment(@RequestBody AcademicDepartmentDto dto, @PathVariable Integer id) {
+    public AcademicDepartment update(@RequestBody AcademicDepartmentDto dto, @PathVariable Integer id) {
         return service.update(dto, id);
     }
 

@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
@@ -19,7 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import ua.com.foxminded.BootTest;
+import ua.com.foxminded.MainApp;
 import ua.com.foxminded.dto.AcademicDepartmentDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
@@ -27,7 +26,7 @@ import ua.com.foxminded.sdjpa.FacultyRepository;
 
 @Testcontainers
 @Transactional
-@SpringBootTest(classes = { BootTest.class })
+@SpringBootTest(classes = { MainApp.class })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
 class AcademicDepartmentServiceTest {
@@ -85,11 +84,11 @@ class AcademicDepartmentServiceTest {
 
         service.addOne(multimedia);
 
-        Optional<AcademicDepartment> result = service.findByTitle("Multimedia");
+        AcademicDepartment result = service.findByTitle("Multimedia");
 
-        assertTrue(result.isPresent());
-        assertEquals("Multimedia", result.get().getTitle());
-        assertEquals(savedFaculty.getId(), result.get().getFaculty().getId());
+        assertNotNull(result);
+        assertEquals("Multimedia", result.getTitle());
+        assertEquals(savedFaculty.getId(), result.getFaculty().getId());
     }
 
     @Test

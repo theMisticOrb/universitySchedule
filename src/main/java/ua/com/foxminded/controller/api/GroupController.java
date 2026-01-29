@@ -55,7 +55,7 @@ public class GroupController {
     }
 
     @PutMapping("/{id}")
-    public Group updateDepartment(@RequestBody GroupCreateUpdateDto dto, @PathVariable Integer id) {
+    public Group update(@RequestBody GroupCreateUpdateDto dto, @PathVariable Integer id) {
         return service.update(dto, id);
     }
 

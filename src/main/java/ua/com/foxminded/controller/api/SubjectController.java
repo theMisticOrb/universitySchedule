@@ -55,7 +55,7 @@ public class SubjectController {
     }
 
     @PutMapping("/{id}")
-    public Subject updateDepartment(@RequestBody SubjectDto dto, @PathVariable Integer id) {
+    public Subject update(@RequestBody SubjectDto dto, @PathVariable Integer id) {
         return service.update(dto, id);
     }
 

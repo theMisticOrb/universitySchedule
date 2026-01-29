@@ -56,7 +56,7 @@ public class SpecializationController {
     }
 
     @PutMapping("/{id}")
-    public Specialization updateDepartment(@RequestBody SpecializationDto dto, @PathVariable Integer id) {
+    public Specialization update(@RequestBody SpecializationDto dto, @PathVariable Integer id) {
         return service.update(dto, id);
     }
 }
