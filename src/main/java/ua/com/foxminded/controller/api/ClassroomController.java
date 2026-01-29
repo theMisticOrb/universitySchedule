@@ -1,7 +1,5 @@
 package ua.com.foxminded.controller.api;
 
-import java.util.Optional;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,9 +30,9 @@ public class ClassroomController {
         return service.findAll();
     }
 
-    @GetMapping("/title/{title}")
-    public Optional<Classroom> findByTitle(@PathVariable String title) {
-        return service.findByTitle(title);
+    @GetMapping("/name/{name}")
+    public Classroom findByName(@PathVariable String name) {
+        return service.findByName(name);
     }
 
     @GetMapping("/{id}")
@@ -49,6 +47,7 @@ public class ClassroomController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id) {
         service.findById(id);
         service.deleteById(id);

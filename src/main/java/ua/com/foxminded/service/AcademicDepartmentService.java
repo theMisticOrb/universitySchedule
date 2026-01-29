@@ -28,12 +28,12 @@ public class AcademicDepartmentService {
     }
 
     public AcademicDepartment addOne(AcademicDepartmentDto dto) {
-        
-        if (departmentRepository.existsByTitle(dto.getTitle())) {
-            throw new DuplicateEntityException("Department with title: " + dto.getTitle() + " alredy exists!");
-        }
-
         Faculty faculty = facultyService.findById(dto.getFacultyId());
+
+        if (departmentRepository.existsByFacultyAndTitle(faculty, dto.getTitle())) {
+            throw new DuplicateEntityException(
+                    "Department with title: " + dto.getTitle() + " alredy exists in this faculty!");
+        }
 
         AcademicDepartment newDepartment = new AcademicDepartment();
         newDepartment.setFaculty(faculty);

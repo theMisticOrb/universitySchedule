@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
@@ -72,10 +71,10 @@ class ClassroomServiceTest {
         classroom.setName("2-A");
         service.addOne(classroom);
 
-        Optional<Classroom> result = service.findByTitle("2-A");
+        Classroom result = service.findByName("2-A");
 
-        assertTrue(result.isPresent());
-        assertEquals("2-A", result.get().getName());
+        assertNotNull(result);
+        assertEquals("2-A", result.getName());
     }
 
     @Test

@@ -7,12 +7,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.entity.AcademicDepartment;
+import ua.com.foxminded.entity.Faculty;
 
 @Repository
 @Transactional
 public interface AcademicDepartmentRepository extends JpaRepository<AcademicDepartment, Integer> {
 
     Optional<AcademicDepartment> findByTitle(String title);
-    boolean existsByTitle(String title);
+    boolean existsByFacultyAndTitle(Faculty faculty, String title);
 
 }

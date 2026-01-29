@@ -1,7 +1,6 @@
 package ua.com.foxminded.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -10,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.dto.ClassroomDto;
 import ua.com.foxminded.entity.Classroom;
+import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.LessonMapper;
 import ua.com.foxminded.sdjpa.ClassroomRepository;
@@ -25,6 +25,9 @@ public class ClassroomService {
     }
 
     public Classroom addOne(ClassroomDto dto) {
+        if (classroomRapository.existsByName(dto.getName())) {
+            throw new DuplicateEntityException("Classroom with title: " + dto.getName() + " alredy exists!");
+        }
         Classroom classroom = new Classroom();
         classroom.setName(dto.getName());
         return classroomRapository.save(classroom);
@@ -35,8 +38,9 @@ public class ClassroomService {
                 .orElseThrow(() -> new EntityNotFoundException("Classroom not found: " + id));
     }
 
-    public Optional<Classroom> findByTitle(String name) {
-        return classroomRapository.findByName(name);
+    public Classroom findByName(String name) {
+        return classroomRapository.findByName(name)
+                .orElseThrow(() -> new EntityNotFoundException("Classroom not found: " + name));
     }
 
     public List<Classroom> findAll() {
