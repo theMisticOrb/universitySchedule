@@ -1,7 +1,6 @@
 package ua.com.foxminded.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -42,8 +41,10 @@ public class StudentService {
                 .orElseThrow(() -> new EntityNotFoundException("Student not found: " + id));
     }
 
-    public Optional<Student> findByFullName(String lastName, String firstName, String middleName) {
-        return studentRepository.findByLastNameAndFirstNameAndMiddleName(lastName, firstName, middleName);
+    public Student findByFullName(String lastName, String firstName, String middleName) {
+        return studentRepository.findByLastNameAndFirstNameAndMiddleName(lastName, firstName, middleName)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Student not found: " + lastName + " " + firstName + " " + middleName));
 
     }
 

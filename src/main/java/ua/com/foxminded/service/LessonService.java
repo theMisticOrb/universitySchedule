@@ -1,7 +1,6 @@
 package ua.com.foxminded.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -46,8 +45,9 @@ public class LessonService {
         return lessonRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Lesson not found: " + id));
     }
 
-    public Optional<Lesson> findByTitle(String subjectTitle) {
-        return lessonRepository.findBySubject_Title(subjectTitle);
+    public Lesson findByTitle(String subjectTitle) {
+        return lessonRepository.findBySubject_Title(subjectTitle)
+                .orElseThrow(() -> new EntityNotFoundException("Lesson not found: " + subjectTitle));
     }
 
     public List<Lesson> findAll() {

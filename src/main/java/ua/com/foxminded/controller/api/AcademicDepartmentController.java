@@ -1,5 +1,8 @@
 package ua.com.foxminded.controller.api;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +15,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ua.com.foxminded.dto.department.AcademicDepartmentCreateUpdateDto;
-import ua.com.foxminded.entity.AcademicDepartment;
+import ua.com.foxminded.dto.department.AcademicDepartmentResponseDto;
+import ua.com.foxminded.mapper.AcademicDepartmentMapper;
 import ua.com.foxminded.service.AcademicDepartmentService;
 
 @RestController
@@ -20,30 +24,33 @@ import ua.com.foxminded.service.AcademicDepartmentService;
 public class AcademicDepartmentController {
 
     private final AcademicDepartmentService service;
+    private final AcademicDepartmentMapper mapper;
 
-    public AcademicDepartmentController(AcademicDepartmentService departmentService) {
-        this.service = departmentService;
+    
+    public AcademicDepartmentController(AcademicDepartmentService service, AcademicDepartmentMapper mapper) {
+        this.service = service;
+        this.mapper = mapper;
     }
 
     @GetMapping
-    public Iterable<AcademicDepartment> findAll() {
-        return service.findAll();
+    public List<AcademicDepartmentResponseDto> findAll() {
+        return service.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     @GetMapping("/title/{title}")
-    public AcademicDepartment findByTitle(@PathVariable String title) {
-        return service.findByTitle(title);
+    public AcademicDepartmentResponseDto findByTitle(@PathVariable String title) {
+        return mapper.toDto(service.findByTitle(title)) ;
     }
 
     @GetMapping("/{id}")
-    public AcademicDepartment findOne(@PathVariable Integer id) {
-        return service.findById(id);
+    public AcademicDepartmentResponseDto findOne(@PathVariable Integer id) {
+        return mapper.toDto(service.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AcademicDepartment create(@RequestBody AcademicDepartmentCreateUpdateDto dto) {
-        return service.addOne(dto);
+    public AcademicDepartmentResponseDto create(@RequestBody AcademicDepartmentCreateUpdateDto dto) {
+        return mapper.toDto(service.addOne(dto));
     }
 
     @DeleteMapping("/{id}")
@@ -54,8 +61,8 @@ public class AcademicDepartmentController {
     }
 
     @PutMapping("/{id}")
-    public AcademicDepartment update(@RequestBody AcademicDepartmentCreateUpdateDto dto, @PathVariable Integer id) {
-        return service.update(dto, id);
+    public AcademicDepartmentResponseDto update(@RequestBody AcademicDepartmentCreateUpdateDto dto, @PathVariable Integer id) {
+        return mapper.toDto(service.update(dto, id));
     }
 
 }

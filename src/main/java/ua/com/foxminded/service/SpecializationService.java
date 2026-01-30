@@ -1,7 +1,6 @@
 package ua.com.foxminded.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -44,8 +43,9 @@ public class SpecializationService {
                 .orElseThrow(() -> new EntityNotFoundException("Specialization not found: " + id));
     }
 
-    public Optional<Specialization> findByTitle(String title) {
-        return specializationRepository.findByTitle(title);
+    public Specialization findByTitle(String title) {
+        return specializationRepository.findByTitle(title)
+                .orElseThrow(() -> new EntityNotFoundException("Specialization not found: " + title));
     }
 
     public List<Specialization> findAll() {
@@ -53,14 +53,14 @@ public class SpecializationService {
     }
 
     public Specialization update(SpecializationCreateUpdateDto updated, Integer id) {
-        
+
         Specialization specialization = findById(id);
         GroupMapper mapper = new GroupMapper();
 
         if (updated.getDepartmentId() != null) {
-            
+
             AcademicDepartment department = departmentService.findById(updated.getDepartmentId());
-            
+
             UpdateUtil.setIfNotNull(department, specialization::setDepartment);
 
         }

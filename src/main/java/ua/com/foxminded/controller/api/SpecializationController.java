@@ -1,6 +1,7 @@
 package ua.com.foxminded.controller.api;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,39 +15,41 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ua.com.foxminded.dto.specialization.SpecializationCreateUpdateDto;
-import ua.com.foxminded.entity.Specialization;
+import ua.com.foxminded.dto.specialization.SpecializationResponseDto;
+import ua.com.foxminded.mapper.SpecializationMapper;
 import ua.com.foxminded.service.SpecializationService;
 
 @RestController
 @RequestMapping("/api/specializations")
 public class SpecializationController {
 
-    
     private final SpecializationService service;
+    private final SpecializationMapper mapper;
 
-    public SpecializationController(SpecializationService service) {
+    public SpecializationController(SpecializationService service, SpecializationMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
-    
+
     @GetMapping
-    public Iterable<Specialization> findAll() {
-        return service.findAll();
+    public List<SpecializationResponseDto> findAll() {
+        return service.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     @GetMapping("/title/{title}")
-    public Optional<Specialization> findByTitle(@PathVariable String title) {
-        return service.findByTitle(title);
+    public SpecializationResponseDto findByTitle(@PathVariable String title) {
+        return mapper.toDto(service.findByTitle(title));
     }
 
     @GetMapping("/{id}")
-    public Specialization findOne(@PathVariable Integer id) {
-        return service.findById(id);
+    public SpecializationResponseDto findOne(@PathVariable Integer id) {
+        return  mapper.toDto(service.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Specialization create(@RequestBody SpecializationCreateUpdateDto dto) {
-        return service.addOne(dto);
+    public SpecializationResponseDto create(@RequestBody SpecializationCreateUpdateDto dto) {
+        return  mapper.toDto(service.addOne(dto));
     }
 
     @DeleteMapping("/{id}")
@@ -56,7 +59,7 @@ public class SpecializationController {
     }
 
     @PutMapping("/{id}")
-    public Specialization update(@RequestBody SpecializationCreateUpdateDto dto, @PathVariable Integer id) {
-        return service.update(dto, id);
+    public SpecializationResponseDto update(@RequestBody SpecializationCreateUpdateDto dto, @PathVariable Integer id) {
+        return  mapper.toDto(service.update(dto, id));
     }
 }

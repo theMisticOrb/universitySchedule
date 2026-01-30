@@ -1,6 +1,7 @@
 package ua.com.foxminded.controller.api;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,41 +16,42 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ua.com.foxminded.dto.user.TeacherCreateUpdateDto;
-import ua.com.foxminded.entity.Teacher;
+import ua.com.foxminded.dto.user.TeacherResponseDto;
+import ua.com.foxminded.mapper.TeacherMapper;
 import ua.com.foxminded.service.TeacherService;
 
 @RestController
 @RequestMapping("/api/teachers")
 public class TeacherController {
-    
-    private final TeacherService service;
 
-    public TeacherController(TeacherService service) {
+    private final TeacherService service;
+    private final TeacherMapper mapper;
+
+    public TeacherController(TeacherService service, TeacherMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
-    
+
     @GetMapping
-    public Iterable<Teacher> findAll() {
-        return service.findAll();
+    public List<TeacherResponseDto> findAll() {
+        return service.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     @GetMapping("/search")
-    public Optional<Teacher> findByFullName(
-            @RequestParam String lastName, 
-            @RequestParam String firstName,
+    public TeacherResponseDto findByFullName(@RequestParam String lastName, @RequestParam String firstName,
             @RequestParam String middleName) {
-        return service.findByFullName(lastName, firstName, middleName);
+        return mapper.toDto(service.findByFullName(lastName, firstName, middleName));
     }
 
     @GetMapping("/{id}")
-    public Teacher findOne(@PathVariable Integer id) {
-        return service.findById(id);
+    public TeacherResponseDto findOne(@PathVariable Integer id) {
+        return mapper.toDto(service.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Teacher create(@RequestBody TeacherCreateUpdateDto dto) {
-        return service.addOne(dto);
+    public TeacherResponseDto create(@RequestBody TeacherCreateUpdateDto dto) {
+        return mapper.toDto(service.addOne(dto));
     }
 
     @DeleteMapping("/{id}")
@@ -59,8 +61,8 @@ public class TeacherController {
     }
 
     @PutMapping("/{id}")
-    public Teacher update(@RequestBody TeacherCreateUpdateDto dto, @PathVariable Integer id) {
-        return service.update(dto, id);
+    public TeacherResponseDto update(@RequestBody TeacherCreateUpdateDto dto, @PathVariable Integer id) {
+        return mapper.toDto(service.update(dto, id));
     }
 
 }

@@ -1,7 +1,6 @@
 package ua.com.foxminded.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -43,8 +42,10 @@ public class TeacherService {
                 .orElseThrow(() -> new EntityNotFoundException("Teacher not found: " + id));
     }
 
-    public Optional<Teacher> findByFullName(String lastName, String firstName, String middleName) {
-        return teacherRepository.findByLastNameAndFirstNameAndMiddleName(lastName, firstName, middleName);
+    public Teacher findByFullName(String lastName, String firstName, String middleName) {
+        return teacherRepository.findByLastNameAndFirstNameAndMiddleName(lastName, firstName, middleName)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Teacher not found: " + lastName + " " + firstName + " " + middleName));
 
     }
 
@@ -55,9 +56,9 @@ public class TeacherService {
     public Teacher update(TeacherCreateUpdateDto updated, Integer id) {
         Teacher teacher = findById(id);
         SubjectMapper mapper = new SubjectMapper();
-        
+
         if (updated.getDepartmentId() != null) {
-            
+
             AcademicDepartment department = departmentService.findById(updated.getDepartmentId());
             UpdateUtil.setIfNotNull(department, teacher::setDepartment);
 

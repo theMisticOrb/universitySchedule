@@ -1,7 +1,6 @@
 package ua.com.foxminded.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -41,8 +40,9 @@ public class SubjectService {
                 .orElseThrow(() -> new EntityNotFoundException("Subject not found: " + id));
     }
 
-    public Optional<Subject> findByTitle(String title) {
-        return subjectRepository.findByTitle(title);
+    public Subject findByTitle(String title) {
+        return subjectRepository.findByTitle(title)
+                .orElseThrow(() -> new EntityNotFoundException("Subject not found: " + title));
     }
 
     public List<Subject> findAll() {
@@ -53,13 +53,13 @@ public class SubjectService {
 
         Subject subject = findById(id);
         GroupMapper mapper = new GroupMapper();
-        
+
         if (updated.getTeacherId() != null) {
             Teacher teacher = teacherService.findById(updated.getTeacherId());
             UpdateUtil.setIfNotNull(teacher, subject::setTeacher);
 
         }
-        
+
         UpdateUtil.updateListIfNotNull(updated.getGroups(), subject.getGroups(), mapper::toEntity);
         UpdateUtil.setIfNotNull(updated.getTitle(), subject::setTitle);
         return subject;

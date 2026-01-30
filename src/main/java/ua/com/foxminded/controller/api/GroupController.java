@@ -1,5 +1,8 @@
 package ua.com.foxminded.controller.api;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,38 +15,41 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
-import ua.com.foxminded.entity.Group;
+import ua.com.foxminded.dto.group.GroupResponseDto;
+import ua.com.foxminded.mapper.GroupMapper;
 import ua.com.foxminded.service.GroupService;
 
 @RestController
 @RequestMapping("/api/groups")
 public class GroupController {
-    
-    private final GroupService service;
 
-    public GroupController(GroupService service) {
+    private final GroupService service;
+    private final GroupMapper mapper;
+
+    public GroupController(GroupService service, GroupMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
-    
+
     @GetMapping
-    public Iterable<Group> findAll() {
-        return service.findAll();
+    public List<GroupResponseDto> findAll() {
+        return service.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     @GetMapping("/name/{name:.+}")
-    public Group findByName(@PathVariable String name) {
-        return service.findByName(name);
+    public GroupResponseDto findByName(@PathVariable String name) {
+        return mapper.toDto(service.findByName(name));
     }
 
     @GetMapping("/{id}")
-    public Group findOne(@PathVariable Integer id) {
-        return service.findById(id);
+    public GroupResponseDto findOne(@PathVariable Integer id) {
+        return mapper.toDto(service.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Group create(@RequestBody GroupCreateUpdateDto dto) {
-        return service.addOne(dto);
+    public GroupResponseDto create(@RequestBody GroupCreateUpdateDto dto) {
+        return mapper.toDto(service.addOne(dto));
     }
 
     @DeleteMapping("/{id}")
@@ -54,8 +60,8 @@ public class GroupController {
     }
 
     @PutMapping("/{id}")
-    public Group update(@RequestBody GroupCreateUpdateDto dto, @PathVariable Integer id) {
-        return service.update(dto, id);
+    public GroupResponseDto update(@RequestBody GroupCreateUpdateDto dto, @PathVariable Integer id) {
+        return mapper.toDto(service.update(dto, id));
     }
 
 }

@@ -1,6 +1,7 @@
 package ua.com.foxminded.controller.api;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,7 +15,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
-import ua.com.foxminded.entity.Lesson;
+import ua.com.foxminded.dto.lesson.LessonResponseDto;
+import ua.com.foxminded.mapper.LessonMapper;
 import ua.com.foxminded.service.LessonService;
 
 @RestController
@@ -22,30 +24,32 @@ import ua.com.foxminded.service.LessonService;
 public class LessonController {
 
     private final LessonService service;
+    private final LessonMapper mapper;
 
-    public LessonController(LessonService service) {
+    public LessonController(LessonService service, LessonMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @GetMapping
-    public Iterable<Lesson> findAll() {
-        return service.findAll();
+    public List<LessonResponseDto> findAll() {
+        return service.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     @GetMapping("/title/{title}")
-    public Optional<Lesson> findByTitle(@PathVariable String title) {
-        return service.findByTitle(title);
+    public LessonResponseDto findByTitle(@PathVariable String title) {
+        return mapper.toDto(service.findByTitle(title));
     }
 
     @GetMapping("/{id}")
-    public Lesson findOne(@PathVariable Integer id) {
-        return service.findById(id);
+    public LessonResponseDto findOne(@PathVariable Integer id) {
+        return mapper.toDto(service.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Lesson create(@RequestBody LessonCreateUpdateDto dto) {
-        return service.addOne(dto);
+    public LessonResponseDto create(@RequestBody LessonCreateUpdateDto dto) {
+        return mapper.toDto(service.addOne(dto));
     }
 
     @DeleteMapping("/{id}")
@@ -55,8 +59,8 @@ public class LessonController {
     }
 
     @PutMapping("/{id}")
-    public Lesson update(@RequestBody LessonCreateUpdateDto dto, @PathVariable Integer id) {
-        return service.update(dto, id);
+    public LessonResponseDto update(@RequestBody LessonCreateUpdateDto dto, @PathVariable Integer id) {
+        return mapper.toDto(service.update(dto, id));
     }
 
 }
