@@ -29,7 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ua.com.foxminded.dto.FacultyDto;
+import ua.com.foxminded.dto.faculty.FacultyCreateUpdateDto;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.service.FacultyService;
 
@@ -103,10 +103,10 @@ class FacultyControllerTest {
     void create_shouldReturn201_whenCreated() throws Exception {
 
         Faculty faculty = createFaculty();
-        FacultyDto facultyDto = new FacultyDto();
+        FacultyCreateUpdateDto facultyDto = new FacultyCreateUpdateDto();
         facultyDto.setTitle("IT");
 
-        when(service.addOne(any(FacultyDto.class))).thenReturn(faculty);
+        when(service.addOne(any(FacultyCreateUpdateDto.class))).thenReturn(faculty);
 
         mvc.perform(post("/api/faculties").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(facultyDto))).andExpect(status().isCreated())
@@ -126,10 +126,10 @@ class FacultyControllerTest {
         Faculty faculty = new Faculty();
         faculty.setTitle("IT");
 
-        FacultyDto departmentDto = new FacultyDto();
+        FacultyCreateUpdateDto departmentDto = new FacultyCreateUpdateDto();
         departmentDto.setTitle("IT");
 
-        when(service.update(any(FacultyDto.class), eq(1))).thenReturn(faculty);
+        when(service.update(any(FacultyCreateUpdateDto.class), eq(1))).thenReturn(faculty);
 
         mvc.perform(put("/api/faculties/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(departmentDto))).andExpect(status().isOk())

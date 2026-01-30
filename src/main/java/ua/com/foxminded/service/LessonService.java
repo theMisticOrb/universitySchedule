@@ -8,7 +8,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ua.com.foxminded.dto.LessonDto;
+import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
 import ua.com.foxminded.entity.Classroom;
 import ua.com.foxminded.entity.Lesson;
 import ua.com.foxminded.entity.Subject;
@@ -30,7 +30,7 @@ public class LessonService {
         this.subjectService = subjectService;
     }
 
-    public Lesson addOne(LessonDto dto) {
+    public Lesson addOne(LessonCreateUpdateDto dto) {
         Lesson lesson = new Lesson();
         Classroom classroom = classroomService.findById(dto.getClassroomId());
         Subject subject = subjectService.findById(dto.getSubjectId());
@@ -54,7 +54,7 @@ public class LessonService {
         return lessonRepository.findAll();
     }
 
-    public Lesson update(LessonDto updated, Integer id) {
+    public Lesson update(LessonCreateUpdateDto updated, Integer id) {
         Lesson lesson = findById(id);
 
         if (updated.getClassroomId() != null) {

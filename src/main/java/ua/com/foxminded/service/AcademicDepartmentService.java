@@ -7,7 +7,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ua.com.foxminded.dto.AcademicDepartmentDto;
+import ua.com.foxminded.dto.department.AcademicDepartmentCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.exception.DuplicateEntityException;
@@ -27,7 +27,7 @@ public class AcademicDepartmentService {
         this.facultyService = facultyService;
     }
 
-    public AcademicDepartment addOne(AcademicDepartmentDto dto) {
+    public AcademicDepartment addOne(AcademicDepartmentCreateUpdateDto dto) {
         Faculty faculty = facultyService.findById(dto.getFacultyId());
 
         if (departmentRepository.existsByFacultyAndTitle(faculty, dto.getTitle())) {
@@ -56,7 +56,7 @@ public class AcademicDepartmentService {
         return departmentRepository.findAll();
     }
 
-    public AcademicDepartment update(AcademicDepartmentDto updated, Integer id) {
+    public AcademicDepartment update(AcademicDepartmentCreateUpdateDto updated, Integer id) {
 
         AcademicDepartment department = findById(id);
         SpecializationMapper mapper = new SpecializationMapper();

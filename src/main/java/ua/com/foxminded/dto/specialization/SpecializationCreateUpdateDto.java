@@ -1,32 +1,22 @@
-package ua.com.foxminded.dto;
+package ua.com.foxminded.dto.specialization;
 
 import java.util.List;
 
-import ua.com.foxminded.dto.groupdto.GroupCreateUpdateDto;
+import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
 
-public class SpecializationDto {
+public class SpecializationCreateUpdateDto {
 
-    private Integer id;
     private String title;
     private Integer departmentId;
     private List<GroupCreateUpdateDto> groups;
 
-    public SpecializationDto() {
+    public SpecializationCreateUpdateDto() {
     }
 
-    public SpecializationDto(Integer id, String title, Integer departmentId, List<GroupCreateUpdateDto> groups) {
-        this.id = id;
+    public SpecializationCreateUpdateDto(String title, Integer departmentId, List<GroupCreateUpdateDto> groups) {
         this.title = title;
         this.departmentId = departmentId;
         this.groups = groups;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -52,7 +42,5 @@ public class SpecializationDto {
     public void setGroups(List<GroupCreateUpdateDto> groups) {
         this.groups = groups;
     }
-
-    
 
 }

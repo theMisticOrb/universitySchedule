@@ -1,23 +1,33 @@
-package ua.com.foxminded.dto;
+package ua.com.foxminded.dto.lesson;
 
 import ua.com.foxminded.enums.ClassHour;
 import ua.com.foxminded.enums.WeekDay;
 
-public class LessonDto {
+public class LessonResponseDto {
 
+    private Integer id;
     private Integer classroomId;
     private Integer subjectId;
     private ClassHour classHour;
     private WeekDay weekDay;
 
-    public LessonDto() {
+    public LessonResponseDto() {
     }
 
-    public LessonDto(Integer classroomId, Integer subjectId, ClassHour classHour, WeekDay weekDay) {
+    public LessonResponseDto(Integer id, Integer classroomId, Integer subjectId, ClassHour classHour, WeekDay weekDay) {
+        this.id = id;
         this.classroomId = classroomId;
         this.subjectId = subjectId;
         this.classHour = classHour;
         this.weekDay = weekDay;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Integer getClassroomId() {
@@ -51,7 +61,5 @@ public class LessonDto {
     public void setWeekDay(WeekDay weekDay) {
         this.weekDay = weekDay;
     }
-
-    
 
 }

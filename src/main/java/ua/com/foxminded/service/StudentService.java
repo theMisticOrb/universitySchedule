@@ -8,7 +8,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ua.com.foxminded.dto.StudentDto;
+import ua.com.foxminded.dto.user.StudentCreateUpdateDto;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Student;
 import ua.com.foxminded.helpers.UpdateUtil;
@@ -26,7 +26,7 @@ public class StudentService {
         this.groupService = groupService;
     }
 
-    public Student addOne(StudentDto dto) {
+    public Student addOne(StudentCreateUpdateDto dto) {
         Student student = new Student();
         Group group = groupService.findById(dto.getGroupId());
 
@@ -51,7 +51,7 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
-    public Student update(StudentDto updated, Integer id) {
+    public Student update(StudentCreateUpdateDto updated, Integer id) {
 
         Student student = findById(id);
 

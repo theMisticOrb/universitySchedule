@@ -8,7 +8,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ua.com.foxminded.dto.SpecializationDto;
+import ua.com.foxminded.dto.specialization.SpecializationCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Specialization;
 import ua.com.foxminded.helpers.UpdateUtil;
@@ -28,7 +28,7 @@ public class SpecializationService {
         this.departmentService = departmentService;
     }
 
-    public Specialization addOne(SpecializationDto dto) {
+    public Specialization addOne(SpecializationCreateUpdateDto dto) {
         Specialization specialization = new Specialization();
 
         AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
@@ -52,7 +52,7 @@ public class SpecializationService {
         return specializationRepository.findAll();
     }
 
-    public Specialization update(SpecializationDto updated, Integer id) {
+    public Specialization update(SpecializationCreateUpdateDto updated, Integer id) {
         
         Specialization specialization = findById(id);
         GroupMapper mapper = new GroupMapper();

@@ -1,7 +1,7 @@
 package ua.com.foxminded.mapper;
 
-import ua.com.foxminded.dto.groupdto.GroupCreateUpdateDto;
-import ua.com.foxminded.dto.groupdto.GroupResponseDto;
+import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
+import ua.com.foxminded.dto.group.GroupResponseDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Group;

@@ -20,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.MainApp;
-import ua.com.foxminded.dto.StudentDto;
-import ua.com.foxminded.dto.groupdto.GroupCreateUpdateDto;
+import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
+import ua.com.foxminded.dto.user.StudentCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Group;
@@ -50,7 +50,7 @@ class StudentServiceTest {
     @Autowired
     private GroupService groupService;
 
-    private StudentDto student = new StudentDto();
+    private StudentCreateUpdateDto student = new StudentCreateUpdateDto();
 
     @BeforeEach
     void setUp() {
@@ -132,7 +132,7 @@ class StudentServiceTest {
     void update_shouldUpdateEntity_whenCalled() {
         Student firstStudent = service.addOne(student);
 
-        StudentDto firstStudentUpdated = new StudentDto();
+        StudentCreateUpdateDto firstStudentUpdated = new StudentCreateUpdateDto();
         firstStudentUpdated.setFirstName("Gibbs");
         Student result = service.update(firstStudentUpdated, firstStudent.getId());
 
@@ -145,7 +145,7 @@ class StudentServiceTest {
     void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
         Student firstStudent = service.addOne(student);
 
-        StudentDto firstStudentUpdated = new StudentDto();
+        StudentCreateUpdateDto firstStudentUpdated = new StudentCreateUpdateDto();
         firstStudentUpdated.setFirstName(null);
         Student result = service.update(firstStudentUpdated, firstStudent.getId());
 

@@ -120,7 +120,7 @@ public class Group {
     }
 
     public String getName() {
-        return toString();
+        return name;
     }
 
     public void setName(String name) {
@@ -143,9 +143,5 @@ public class Group {
         this.subjects = subjects;
     }
 
-    @Override
-    public String toString() {
-        return faculty.getId().toString() + "." + department.getId().toString() + "."
-                + specialization.getId().toString() + "." + getYearOfUniv().getCurentYearInUniv();
-    }
+   
 }

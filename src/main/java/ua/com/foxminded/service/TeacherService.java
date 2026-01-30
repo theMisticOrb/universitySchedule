@@ -8,7 +8,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ua.com.foxminded.dto.TeacherDto;
+import ua.com.foxminded.dto.user.TeacherCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.helpers.UpdateUtil;
@@ -27,7 +27,7 @@ public class TeacherService {
         this.departmentService = departmentService;
     }
 
-    public Teacher addOne(TeacherDto dto) {
+    public Teacher addOne(TeacherCreateUpdateDto dto) {
         Teacher teacher = new Teacher();
         AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
 
@@ -52,7 +52,7 @@ public class TeacherService {
         return teacherRepository.findAll();
     }
 
-    public Teacher update(TeacherDto updated, Integer id) {
+    public Teacher update(TeacherCreateUpdateDto updated, Integer id) {
         Teacher teacher = findById(id);
         SubjectMapper mapper = new SubjectMapper();
         

@@ -1,17 +1,19 @@
-package ua.com.foxminded.dto;
+package ua.com.foxminded.dto.department;
 
 import java.util.List;
 
-public class AcademicDepartmentDto {
+import ua.com.foxminded.dto.specialization.SpecializationCreateUpdateDto;
+
+public class AcademicDepartmentCreateUpdateDto {
 
     private String title;
     private Integer facultyId;
-    private List<SpecializationDto> specializations;
+    private List<SpecializationCreateUpdateDto> specializations;
 
-    public AcademicDepartmentDto() {
+    public AcademicDepartmentCreateUpdateDto() {
     }
 
-    public AcademicDepartmentDto(String title, Integer facultyId, List<SpecializationDto> specializations) {
+    public AcademicDepartmentCreateUpdateDto(String title, Integer facultyId, List<SpecializationCreateUpdateDto> specializations) {
         this.title = title;
         this.facultyId = facultyId;
         this.specializations = specializations;
@@ -33,11 +35,11 @@ public class AcademicDepartmentDto {
         this.facultyId = facultyId;
     }
 
-    public List<SpecializationDto> getSpecializations() {
+    public List<SpecializationCreateUpdateDto> getSpecializations() {
         return specializations;
     }
 
-    public void setSpecializations(List<SpecializationDto> specializations) {
+    public void setSpecializations(List<SpecializationCreateUpdateDto> specializations) {
         this.specializations = specializations;
     }
 

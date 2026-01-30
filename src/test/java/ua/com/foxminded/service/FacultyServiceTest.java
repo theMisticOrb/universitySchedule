@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.MainApp;
-import ua.com.foxminded.dto.FacultyDto;
+import ua.com.foxminded.dto.faculty.FacultyCreateUpdateDto;
 import ua.com.foxminded.entity.Faculty;
 
 @Testcontainers
@@ -35,7 +35,7 @@ class FacultyServiceTest {
     @Test
     void addOne_shouldSaveNewEntity_whenCalled() {
 
-        FacultyDto faculty = new FacultyDto();
+        FacultyCreateUpdateDto faculty = new FacultyCreateUpdateDto();
         faculty.setTitle("Engineering");
         Faculty savedFaculty = service.addOne(faculty);
 
@@ -45,7 +45,7 @@ class FacultyServiceTest {
 
     @Test
     void findById_shouldFindEntityById_whenCalledIfEntityExists() {
-        FacultyDto faculty = new FacultyDto();
+        FacultyCreateUpdateDto faculty = new FacultyCreateUpdateDto();
         faculty.setTitle("Engineering");
         Faculty saved = service.addOne(faculty);
 
@@ -65,11 +65,11 @@ class FacultyServiceTest {
 
     @Test
     void findAll_shouldGetListOfAllEntities_whenCalledIfNotEmpty() {
-        FacultyDto facultyEngineering = new FacultyDto();
+        FacultyCreateUpdateDto facultyEngineering = new FacultyCreateUpdateDto();
         facultyEngineering.setTitle("Engineering");
         service.addOne(facultyEngineering);
 
-        FacultyDto facultyEconomy = new FacultyDto();
+        FacultyCreateUpdateDto facultyEconomy = new FacultyCreateUpdateDto();
         facultyEconomy.setTitle("Economy");
         service.addOne(facultyEconomy);
         List<Faculty> allFaculties = service.findAll();
@@ -90,7 +90,7 @@ class FacultyServiceTest {
 
     @Test
     void findByTitle_shouldReturnFaculty_whenExists() {
-        FacultyDto faculty = new FacultyDto();
+        FacultyCreateUpdateDto faculty = new FacultyCreateUpdateDto();
         faculty.setTitle("Engineering");
 
         service.addOne(faculty);
@@ -103,11 +103,11 @@ class FacultyServiceTest {
 
     @Test
     void update_shouldUpdateEntity_whenCalled() {
-        FacultyDto engineeging = new FacultyDto();
+        FacultyCreateUpdateDto engineeging = new FacultyCreateUpdateDto();
         engineeging.setTitle("Engineering");
         Faculty engineegingFaculty = service.addOne(engineeging);
 
-        FacultyDto economy = new FacultyDto();
+        FacultyCreateUpdateDto economy = new FacultyCreateUpdateDto();
         economy.setTitle("Economy");
         Faculty economyFacultyUpdated = service.update(economy, engineegingFaculty.getId());
 
@@ -118,11 +118,11 @@ class FacultyServiceTest {
 
     @Test
     void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
-        FacultyDto engineeging = new FacultyDto();
+        FacultyCreateUpdateDto engineeging = new FacultyCreateUpdateDto();
         engineeging.setTitle("Engineering");
         Faculty engineegingFaculty = service.addOne(engineeging);
 
-        FacultyDto economy = new FacultyDto();
+        FacultyCreateUpdateDto economy = new FacultyCreateUpdateDto();
         economy.setTitle(null);
         Faculty economyFacultyUpdated = service.update(engineeging, engineegingFaculty.getId());
 
@@ -132,7 +132,7 @@ class FacultyServiceTest {
 
     @Test
     void delete_shouldDeleteEntityById_whenEntityExists() {
-        FacultyDto engineeging = new FacultyDto();
+        FacultyCreateUpdateDto engineeging = new FacultyCreateUpdateDto();
         engineeging.setTitle("Engineering");
         Faculty engineegingFaculty = service.addOne(engineeging);
 

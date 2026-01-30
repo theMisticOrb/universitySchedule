@@ -1,12 +1,10 @@
 package ua.com.foxminded.service;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -20,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.MainApp;
-import ua.com.foxminded.dto.groupdto.GroupCreateUpdateDto;
+import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Group;
@@ -110,11 +108,11 @@ class GroupServiceTest {
         Group saved = service.addOne(group);
         String groupName = saved.getName();
         
-        Optional<Group> result = service.findByTitle(groupName);
+        Group result = service.findByName(groupName);
         
-        assertTrue(result.isPresent());
-        assertEquals(groupName, result.get().getName());
-        assertEquals(saved.getId(), result.get().getId());
+        assertNotNull(result);
+        assertEquals(groupName, result.getName());
+        assertEquals(saved.getId(), result.getId());
     }
 
     @Test

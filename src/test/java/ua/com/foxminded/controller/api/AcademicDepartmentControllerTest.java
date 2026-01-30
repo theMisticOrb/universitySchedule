@@ -29,7 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ua.com.foxminded.dto.AcademicDepartmentDto;
+import ua.com.foxminded.dto.department.AcademicDepartmentCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.service.AcademicDepartmentService;
@@ -105,11 +105,11 @@ class AcademicDepartmentControllerTest {
     void create_shouldReturn201_whenCreated() throws Exception {
 
         AcademicDepartment department = createDepartment();
-        AcademicDepartmentDto departmentDto = new AcademicDepartmentDto();
+        AcademicDepartmentCreateUpdateDto departmentDto = new AcademicDepartmentCreateUpdateDto();
         departmentDto.setFacultyId(1);
         departmentDto.setTitle("Computer Science");
 
-        when(service.addOne(any(AcademicDepartmentDto.class))).thenReturn(department);
+        when(service.addOne(any(AcademicDepartmentCreateUpdateDto.class))).thenReturn(department);
 
         mvc.perform(post("/api/departments").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(departmentDto))).andExpect(status().isCreated())
@@ -129,11 +129,11 @@ class AcademicDepartmentControllerTest {
         AcademicDepartment department2 = new AcademicDepartment();
         department2.setTitle("Security");
 
-        AcademicDepartmentDto departmentDto = new AcademicDepartmentDto();
+        AcademicDepartmentCreateUpdateDto departmentDto = new AcademicDepartmentCreateUpdateDto();
         departmentDto.setFacultyId(1);
         departmentDto.setTitle("Security");
 
-        when(service.update(any(AcademicDepartmentDto.class), eq(1))).thenReturn(department2);
+        when(service.update(any(AcademicDepartmentCreateUpdateDto.class), eq(1))).thenReturn(department2);
 
         mvc.perform(put("/api/departments/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(departmentDto))).andExpect(status().isOk())

@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.MainApp;
-import ua.com.foxminded.dto.SubjectDto;
+import ua.com.foxminded.dto.subject.SubjectCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Subject;
@@ -46,7 +46,7 @@ class SubjectServiceTest {
     @Autowired
     private AcademicDepartmentRepository departmentRepository;
 
-    private SubjectDto subject = new SubjectDto();
+    private SubjectCreateUpdateDto subject = new SubjectCreateUpdateDto();
 
     @BeforeEach
     void setUp() {
@@ -122,7 +122,7 @@ class SubjectServiceTest {
     void update_shouldUpdateEntity_whenCalled() {
         Subject firstSubject = service.addOne(subject);
 
-        SubjectDto firstSubjectUpdated = new SubjectDto();
+        SubjectCreateUpdateDto firstSubjectUpdated = new SubjectCreateUpdateDto();
         firstSubjectUpdated.setTitle("History");
         Subject result = service.update(firstSubjectUpdated, firstSubject.getId());
 
@@ -135,7 +135,7 @@ class SubjectServiceTest {
     void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
         Subject firstSubject = service.addOne(subject);
 
-        SubjectDto firstSubjectUpdated = new SubjectDto();
+        SubjectCreateUpdateDto firstSubjectUpdated = new SubjectCreateUpdateDto();
         firstSubjectUpdated.setTitle(null);
         Subject result = service.update(firstSubjectUpdated, firstSubject.getId());
 

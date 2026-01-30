@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import ua.com.foxminded.dto.StudentDto;
+import ua.com.foxminded.dto.user.StudentCreateUpdateDto;
 import ua.com.foxminded.entity.Student;
 import ua.com.foxminded.service.StudentService;
 
@@ -48,7 +48,7 @@ public class StudentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Student create(@RequestBody StudentDto dto) {
+    public Student create(@RequestBody StudentCreateUpdateDto dto) {
         return service.addOne(dto);
     }
 
@@ -59,7 +59,7 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
-    public Student update(@RequestBody StudentDto dto, @PathVariable Integer id) {
+    public Student update(@RequestBody StudentCreateUpdateDto dto, @PathVariable Integer id) {
         return service.update(dto, id);
     }
 }

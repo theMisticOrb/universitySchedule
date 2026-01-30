@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import ua.com.foxminded.dto.LessonDto;
+import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
 import ua.com.foxminded.entity.Lesson;
 import ua.com.foxminded.service.LessonService;
 
@@ -44,7 +44,7 @@ public class LessonController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Lesson create(@RequestBody LessonDto dto) {
+    public Lesson create(@RequestBody LessonCreateUpdateDto dto) {
         return service.addOne(dto);
     }
 
@@ -55,7 +55,7 @@ public class LessonController {
     }
 
     @PutMapping("/{id}")
-    public Lesson update(@RequestBody LessonDto dto, @PathVariable Integer id) {
+    public Lesson update(@RequestBody LessonCreateUpdateDto dto, @PathVariable Integer id) {
         return service.update(dto, id);
     }
 

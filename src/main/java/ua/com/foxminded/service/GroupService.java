@@ -2,7 +2,6 @@ package ua.com.foxminded.service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -10,12 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.config.UniversityProperties;
-import ua.com.foxminded.dto.groupdto.GroupCreateUpdateDto;
+import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Specialization;
 import ua.com.foxminded.entity.YearOfUniv;
+import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.StudentMapper;
 import ua.com.foxminded.mapper.SubjectMapper;
@@ -55,7 +55,13 @@ public class GroupService {
         group.setStartDate(LocalDate.now());
         int maxYears = properties.getTotalYearsOfStudy();
         group.setYearOfUniv(new YearOfUniv(group.getStartDate(), maxYears));
-        group.setName(group.getName());
+        String groupName = buildGroupName(group);
+        group.setName(groupName);
+
+        if (groupRepository.existsByFacultyAndDepartmentAndSpecializationAndName(faculty, department, specialization,
+                group.getName())) {
+            throw new DuplicateEntityException("Group with name: " + group.getName() + " alredy exists!");
+        }
         return groupRepository.save(group);
     }
 
@@ -63,8 +69,9 @@ public class GroupService {
         return groupRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Group not found: " + id));
     }
 
-    public Optional<Group> findByTitle(String title) {
-        return groupRepository.findByName(title);
+    public Group findByName(String name) {
+        return groupRepository.findByName(name)
+                .orElseThrow(() -> new EntityNotFoundException("Group not found: " + name));
     }
 
     public List<Group> findAll() {
@@ -97,6 +104,11 @@ public class GroupService {
 
     public void deleteById(Integer id) {
         groupRepository.deleteById(id);
+    }
+
+    private String buildGroupName(Group group) {
+        return group.getFaculty().getId() + "." + group.getDepartment().getId() + "."
+                + group.getSpecialization().getId() + "." + group.getYearOfUniv().getCurentYearInUniv();
     }
 
 }

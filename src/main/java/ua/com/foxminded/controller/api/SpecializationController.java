@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import ua.com.foxminded.dto.SpecializationDto;
+import ua.com.foxminded.dto.specialization.SpecializationCreateUpdateDto;
 import ua.com.foxminded.entity.Specialization;
 import ua.com.foxminded.service.SpecializationService;
 
@@ -45,7 +45,7 @@ public class SpecializationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Specialization create(@RequestBody SpecializationDto dto) {
+    public Specialization create(@RequestBody SpecializationCreateUpdateDto dto) {
         return service.addOne(dto);
     }
 
@@ -56,7 +56,7 @@ public class SpecializationController {
     }
 
     @PutMapping("/{id}")
-    public Specialization update(@RequestBody SpecializationDto dto, @PathVariable Integer id) {
+    public Specialization update(@RequestBody SpecializationCreateUpdateDto dto, @PathVariable Integer id) {
         return service.update(dto, id);
     }
 }

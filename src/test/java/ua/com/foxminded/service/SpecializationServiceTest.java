@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.MainApp;
-import ua.com.foxminded.dto.SpecializationDto;
+import ua.com.foxminded.dto.specialization.SpecializationCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Specialization;
@@ -42,7 +42,7 @@ class SpecializationServiceTest {
     @Autowired
     private AcademicDepartmentRepository departmentRepository;
 
-    private SpecializationDto specialization = new SpecializationDto();
+    private SpecializationCreateUpdateDto specialization = new SpecializationCreateUpdateDto();
 
     @BeforeEach
     void setUp() {
@@ -120,7 +120,7 @@ class SpecializationServiceTest {
         analysis.setFaculty(mathFaculty);
         AcademicDepartment csDepartment = departmentRepository.save(analysis);
 
-        SpecializationDto securitySpecialUpdated = new SpecializationDto();
+        SpecializationCreateUpdateDto securitySpecialUpdated = new SpecializationCreateUpdateDto();
         securitySpecialUpdated.setDepartmentId(csDepartment.getId());
         Specialization result = service.update(securitySpecialUpdated, securitySpecial.getId());
 
@@ -135,7 +135,7 @@ class SpecializationServiceTest {
 
         Specialization securitySpecial = service.addOne(specialization);
 
-        SpecializationDto securitySpecialUpdated = new SpecializationDto();
+        SpecializationCreateUpdateDto securitySpecialUpdated = new SpecializationCreateUpdateDto();
         securitySpecialUpdated.setDepartmentId(null);
         Specialization result = service.update(securitySpecialUpdated, securitySpecial.getId());
 

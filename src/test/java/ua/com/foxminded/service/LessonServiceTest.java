@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.MainApp;
-import ua.com.foxminded.dto.LessonDto;
+import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Classroom;
 import ua.com.foxminded.entity.Faculty;
@@ -56,7 +56,7 @@ class LessonServiceTest {
     @Autowired
     private AcademicDepartmentRepository departmentRepository;
 
-    private LessonDto lesson = new LessonDto();
+    private LessonCreateUpdateDto lesson = new LessonCreateUpdateDto();
     private Teacher teacher = new Teacher();
 
     @BeforeEach
@@ -144,7 +144,7 @@ class LessonServiceTest {
         subject.setTeacher(teacher);
         Subject history = subjectRepository.save(subject);
 
-        LessonDto firstLessonUpdated = new LessonDto();
+        LessonCreateUpdateDto firstLessonUpdated = new LessonCreateUpdateDto();
         firstLessonUpdated.setSubjectId(history.getId());
         Lesson result = service.update(firstLessonUpdated, firstLesson.getId());
 
@@ -159,7 +159,7 @@ class LessonServiceTest {
 
         Lesson firstLesson = service.addOne(lesson);
 
-        LessonDto firstLessonUpdated = new LessonDto();
+        LessonCreateUpdateDto firstLessonUpdated = new LessonCreateUpdateDto();
         firstLessonUpdated.setSubjectId(null);
         Lesson result = service.update(firstLessonUpdated, firstLesson.getId());
 

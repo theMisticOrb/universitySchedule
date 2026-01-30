@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.MainApp;
-import ua.com.foxminded.dto.ClassroomDto;
+import ua.com.foxminded.dto.classroom.ClassroomCreateUpdateDto;
 import ua.com.foxminded.entity.Classroom;
 
 @Testcontainers
@@ -35,7 +35,7 @@ class ClassroomServiceTest {
     @Test
     void addOne_shouldSaveNewEntity_whenCalled() {
 
-        ClassroomDto classroom = new ClassroomDto();
+        ClassroomCreateUpdateDto classroom = new ClassroomCreateUpdateDto();
         classroom.setName("2-A");
         Classroom savedClassroom = service.addOne(classroom);
 
@@ -46,7 +46,7 @@ class ClassroomServiceTest {
     @Test
     void findById_shouldFindEntityById_whenCalledIfEntityExists() {
 
-        ClassroomDto classroom = new ClassroomDto();
+        ClassroomCreateUpdateDto classroom = new ClassroomCreateUpdateDto();
         classroom.setName("2-A");
         Classroom savedClassroom = service.addOne(classroom);
 
@@ -67,7 +67,7 @@ class ClassroomServiceTest {
     @Test
     void findByTitle_shouldReturnClassroom_whenExists() {
 
-        ClassroomDto classroom = new ClassroomDto();
+        ClassroomCreateUpdateDto classroom = new ClassroomCreateUpdateDto();
         classroom.setName("2-A");
         service.addOne(classroom);
 
@@ -80,11 +80,11 @@ class ClassroomServiceTest {
     @Test
     void findAll_shouldGetListOfAllEntities_whenCalledIfNotEmpty() {
 
-        ClassroomDto classroom = new ClassroomDto();
+        ClassroomCreateUpdateDto classroom = new ClassroomCreateUpdateDto();
         classroom.setName("2-A");
         service.addOne(classroom);
 
-        ClassroomDto classroom2 = new ClassroomDto();
+        ClassroomCreateUpdateDto classroom2 = new ClassroomCreateUpdateDto();
         classroom2.setName("3-A");
         service.addOne(classroom2);
 
@@ -107,11 +107,11 @@ class ClassroomServiceTest {
     @Test
     void update_shouldUpdateEntity_whenCalled() {
 
-        ClassroomDto classroom = new ClassroomDto();
+        ClassroomCreateUpdateDto classroom = new ClassroomCreateUpdateDto();
         classroom.setName("2-A");
         Classroom classroomSaved = service.addOne(classroom);
 
-        ClassroomDto updated = new ClassroomDto();
+        ClassroomCreateUpdateDto updated = new ClassroomCreateUpdateDto();
         updated.setName("3-A");
         Classroom classroomUpdated = service.update(updated, classroomSaved.getId());
 
@@ -122,11 +122,11 @@ class ClassroomServiceTest {
 
     @Test
     void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
-        ClassroomDto classroom = new ClassroomDto();
+        ClassroomCreateUpdateDto classroom = new ClassroomCreateUpdateDto();
         classroom.setName("2-A");
         Classroom classroomSaved = service.addOne(classroom);
 
-        ClassroomDto updated = new ClassroomDto();
+        ClassroomCreateUpdateDto updated = new ClassroomCreateUpdateDto();
         updated.setName(null);
         Classroom classroomUpdated = service.update(updated, classroomSaved.getId());
 
@@ -135,7 +135,7 @@ class ClassroomServiceTest {
 
     @Test
     void delete_shouldDeleteEntityById_whenEntityExists() {
-        ClassroomDto classroom = new ClassroomDto();
+        ClassroomCreateUpdateDto classroom = new ClassroomCreateUpdateDto();
         classroom.setName("2-A");
         Classroom classroomSaved = service.addOne(classroom);
         int id = classroomSaved.getId();

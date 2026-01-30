@@ -29,7 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ua.com.foxminded.dto.ClassroomDto;
+import ua.com.foxminded.dto.classroom.ClassroomCreateUpdateDto;
 import ua.com.foxminded.entity.Classroom;
 import ua.com.foxminded.service.ClassroomService;
 
@@ -103,10 +103,10 @@ class ClassroomControllerTest {
     void create_shouldReturn201_whenCreated() throws Exception {
 
         Classroom classroom = createClassroom();
-        ClassroomDto classroomDto = new ClassroomDto();
+        ClassroomCreateUpdateDto classroomDto = new ClassroomCreateUpdateDto();
         classroomDto.setName("2A");
 
-        when(service.addOne(any(ClassroomDto.class))).thenReturn(classroom);
+        when(service.addOne(any(ClassroomCreateUpdateDto.class))).thenReturn(classroom);
 
         mvc.perform(post("/api/classrooms").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(classroomDto))).andExpect(status().isCreated())
@@ -126,10 +126,10 @@ class ClassroomControllerTest {
         Classroom classroom = new Classroom();
         classroom.setName("3B");
 
-        ClassroomDto classroomDto = new ClassroomDto();
+        ClassroomCreateUpdateDto classroomDto = new ClassroomCreateUpdateDto();
         classroomDto.setName("3B");
 
-        when(service.update(any(ClassroomDto.class), eq(1))).thenReturn(classroom);
+        when(service.update(any(ClassroomCreateUpdateDto.class), eq(1))).thenReturn(classroom);
 
         mvc.perform(put("/api/classrooms/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(classroomDto))).andExpect(status().isOk())

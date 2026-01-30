@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import ua.com.foxminded.dto.SubjectDto;
+import ua.com.foxminded.dto.subject.SubjectCreateUpdateDto;
 import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.service.SubjectService;
 
@@ -44,7 +44,7 @@ public class SubjectController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Subject create(@RequestBody SubjectDto dto) {
+    public Subject create(@RequestBody SubjectCreateUpdateDto dto) {
         return service.addOne(dto);
     }
 
@@ -55,7 +55,7 @@ public class SubjectController {
     }
 
     @PutMapping("/{id}")
-    public Subject update(@RequestBody SubjectDto dto, @PathVariable Integer id) {
+    public Subject update(@RequestBody SubjectCreateUpdateDto dto, @PathVariable Integer id) {
         return service.update(dto, id);
     }
 

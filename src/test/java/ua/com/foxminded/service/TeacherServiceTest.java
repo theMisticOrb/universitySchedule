@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.MainApp;
-import ua.com.foxminded.dto.TeacherDto;
+import ua.com.foxminded.dto.user.TeacherCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Teacher;
@@ -40,7 +40,7 @@ class TeacherServiceTest {
     @Autowired
     private AcademicDepartmentRepository departmentRepository;
 
-    private TeacherDto teacher = new TeacherDto();
+    private TeacherCreateUpdateDto teacher = new TeacherCreateUpdateDto();
 
     @BeforeEach
     void setUp() {
@@ -99,7 +99,7 @@ class TeacherServiceTest {
     void update_shouldUpdateEntity_whenCalled() {
         Teacher firstTeacher = service.addOne(teacher);
 
-        TeacherDto firstTeacherUpdated = new TeacherDto();
+        TeacherCreateUpdateDto firstTeacherUpdated = new TeacherCreateUpdateDto();
         firstTeacherUpdated.setFirstName("Gibbs");
         Teacher result = service.update(firstTeacherUpdated, firstTeacher.getId());
 
@@ -112,7 +112,7 @@ class TeacherServiceTest {
     void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
         Teacher firstTeacher = service.addOne(teacher);
 
-        TeacherDto firstTeacherUpdated = new TeacherDto();
+        TeacherCreateUpdateDto firstTeacherUpdated = new TeacherCreateUpdateDto();
         firstTeacherUpdated.setFirstName(null);
         Teacher result = service.update(firstTeacherUpdated, firstTeacher.getId());
 

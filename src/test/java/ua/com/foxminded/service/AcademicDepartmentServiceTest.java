@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.com.foxminded.MainApp;
-import ua.com.foxminded.dto.AcademicDepartmentDto;
+import ua.com.foxminded.dto.department.AcademicDepartmentCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.sdjpa.FacultyRepository;
@@ -43,7 +43,7 @@ class AcademicDepartmentServiceTest {
         faculty.setTitle("Engineering");
         Faculty savedFaculty = facultyRepository.save(faculty);
 
-        AcademicDepartmentDto computerScience = new AcademicDepartmentDto();
+        AcademicDepartmentCreateUpdateDto computerScience = new AcademicDepartmentCreateUpdateDto();
         computerScience.setTitle("Computer Science");
         computerScience.setFacultyId(savedFaculty.getId());
 
@@ -59,7 +59,7 @@ class AcademicDepartmentServiceTest {
         faculty.setTitle("Engineering");
         Faculty savedFaculty = facultyRepository.save(faculty);
 
-        AcademicDepartmentDto multimedia = new AcademicDepartmentDto();
+        AcademicDepartmentCreateUpdateDto multimedia = new AcademicDepartmentCreateUpdateDto();
         multimedia.setTitle("Multimedia");
         multimedia.setFacultyId(savedFaculty.getId());
 
@@ -78,7 +78,7 @@ class AcademicDepartmentServiceTest {
         faculty.setTitle("Engineering");
         Faculty savedFaculty = facultyRepository.save(faculty);
 
-        AcademicDepartmentDto multimedia = new AcademicDepartmentDto();
+        AcademicDepartmentCreateUpdateDto multimedia = new AcademicDepartmentCreateUpdateDto();
         multimedia.setTitle("Multimedia");
         multimedia.setFacultyId(savedFaculty.getId());
 
@@ -104,12 +104,12 @@ class AcademicDepartmentServiceTest {
         faculty.setTitle("Engineering");
         Faculty savedFaculty = facultyRepository.save(faculty);
 
-        AcademicDepartmentDto computerScience = new AcademicDepartmentDto();
+        AcademicDepartmentCreateUpdateDto computerScience = new AcademicDepartmentCreateUpdateDto();
         computerScience.setTitle("Computer Science");
         computerScience.setFacultyId(savedFaculty.getId());
         service.addOne(computerScience);
 
-        AcademicDepartmentDto multimedia = new AcademicDepartmentDto();
+        AcademicDepartmentCreateUpdateDto multimedia = new AcademicDepartmentCreateUpdateDto();
         multimedia.setTitle("Multimedia");
         multimedia.setFacultyId(savedFaculty.getId());
         service.addOne(multimedia);
@@ -140,12 +140,12 @@ class AcademicDepartmentServiceTest {
         economy.setTitle("Economy");
         Faculty economyFaculty = facultyRepository.save(economy);
 
-        AcademicDepartmentDto computerScience = new AcademicDepartmentDto();
+        AcademicDepartmentCreateUpdateDto computerScience = new AcademicDepartmentCreateUpdateDto();
         computerScience.setTitle("Computer Science");
         computerScience.setFacultyId(engineegingFaculty.getId());
         AcademicDepartment department = service.addOne(computerScience);
 
-        AcademicDepartmentDto computerScienceUpdated = new AcademicDepartmentDto();
+        AcademicDepartmentCreateUpdateDto computerScienceUpdated = new AcademicDepartmentCreateUpdateDto();
         computerScienceUpdated.setFacultyId(economyFaculty.getId());
         AcademicDepartment result = service.update(computerScienceUpdated, department.getId());
 
@@ -161,12 +161,12 @@ class AcademicDepartmentServiceTest {
         engineeging.setTitle("Engineering");
         Faculty engineegingFaculty = facultyRepository.save(engineeging);
 
-        AcademicDepartmentDto computerScience = new AcademicDepartmentDto();
+        AcademicDepartmentCreateUpdateDto computerScience = new AcademicDepartmentCreateUpdateDto();
         computerScience.setTitle("Computer Science");
         computerScience.setFacultyId(engineegingFaculty.getId());
         AcademicDepartment department = service.addOne(computerScience);
 
-        AcademicDepartmentDto computerScienceUpdated = new AcademicDepartmentDto();
+        AcademicDepartmentCreateUpdateDto computerScienceUpdated = new AcademicDepartmentCreateUpdateDto();
         computerScienceUpdated.setFacultyId(engineegingFaculty.getId());
         computerScience.setTitle(null);
         AcademicDepartment result = service.update(computerScienceUpdated, department.getId());
@@ -181,7 +181,7 @@ class AcademicDepartmentServiceTest {
         engineeging.setTitle("Engineering");
         Faculty engineegingFaculty = facultyRepository.save(engineeging);
 
-        AcademicDepartmentDto computerScience = new AcademicDepartmentDto();
+        AcademicDepartmentCreateUpdateDto computerScience = new AcademicDepartmentCreateUpdateDto();
         computerScience.setTitle("Computer Science");
         computerScience.setFacultyId(engineegingFaculty.getId());
         AcademicDepartment department = service.addOne(computerScience);

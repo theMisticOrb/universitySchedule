@@ -1,15 +1,15 @@
-package ua.com.foxminded.dto;
+package ua.com.foxminded.dto.user;
 
-public class UserDto {
+public class UserCreateUpdateDto {
 
     private String firstName;
     private String middleName;
     private String lastName;
 
-    public UserDto() {
+    public UserCreateUpdateDto() {
     }
 
-    public UserDto(String firstName, String middleName, String lastName) {
+    public UserCreateUpdateDto(String firstName, String middleName, String lastName) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;

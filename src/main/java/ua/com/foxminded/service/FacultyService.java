@@ -7,7 +7,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ua.com.foxminded.dto.FacultyDto;
+import ua.com.foxminded.dto.faculty.FacultyCreateUpdateDto;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
@@ -24,7 +24,7 @@ public class FacultyService {
         this.facultyRepository = facultyRepository;
     }
 
-    public Faculty addOne(FacultyDto dto) {
+    public Faculty addOne(FacultyCreateUpdateDto dto) {
         if (facultyRepository.existsByTitle(dto.getTitle())) {
             throw new DuplicateEntityException("Faculty with title: " + dto.getTitle() + " alredy exists!");
 
@@ -48,7 +48,7 @@ public class FacultyService {
         return facultyRepository.findAll();
     }
 
-    public Faculty update(FacultyDto updated, Integer id) {
+    public Faculty update(FacultyCreateUpdateDto updated, Integer id) {
         Faculty faculty = findById(id);
         AcademicDepartmentMapper mapper = new AcademicDepartmentMapper();
         UpdateUtil.updateListIfNotNull(updated.getDepartments(), faculty.getDepartments(), mapper::toEntity);

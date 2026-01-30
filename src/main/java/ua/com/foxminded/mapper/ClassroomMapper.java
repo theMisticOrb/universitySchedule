@@ -2,13 +2,14 @@ package ua.com.foxminded.mapper;
 
 import org.springframework.stereotype.Component;
 
-import ua.com.foxminded.dto.ClassroomDto;
+import ua.com.foxminded.dto.classroom.ClassroomCreateUpdateDto;
+import ua.com.foxminded.dto.classroom.ClassroomResponseDto;
 import ua.com.foxminded.entity.Classroom;
 
 @Component
 public class ClassroomMapper {
 
-    public Classroom toEntity(ClassroomDto dto) {
+    public Classroom toEntity(ClassroomCreateUpdateDto dto) {
         if (dto == null) {
             return null;
         }
@@ -18,4 +19,14 @@ public class ClassroomMapper {
         return entity;
     }
 
+    public ClassroomResponseDto toDto(Classroom entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        ClassroomResponseDto dto = new ClassroomResponseDto();
+        dto.setId(entity.getId());
+        dto.setName(entity.getName());
+        return dto;
+    }
 }

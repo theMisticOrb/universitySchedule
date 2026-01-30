@@ -1,13 +1,13 @@
-package ua.com.foxminded.dto;
+package ua.com.foxminded.dto.user;
 
-public class StudentDto extends UserDto {
+public class StudentResponseDto extends UserResponseDto {
 
     private Integer groupId;
 
-    public StudentDto() {
+    public StudentResponseDto() {
     }
 
-    public StudentDto(Integer groupId) {
+    public StudentResponseDto(Integer groupId) {
         this.groupId = groupId;
     }
 

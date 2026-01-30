@@ -7,7 +7,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ua.com.foxminded.dto.ClassroomDto;
+import ua.com.foxminded.dto.classroom.ClassroomCreateUpdateDto;
 import ua.com.foxminded.entity.Classroom;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
@@ -24,7 +24,7 @@ public class ClassroomService {
         this.classroomRapository = classroomRapository;
     }
 
-    public Classroom addOne(ClassroomDto dto) {
+    public Classroom addOne(ClassroomCreateUpdateDto dto) {
         if (classroomRapository.existsByName(dto.getName())) {
             throw new DuplicateEntityException("Classroom with title: " + dto.getName() + " alredy exists!");
         }
@@ -47,7 +47,7 @@ public class ClassroomService {
         return classroomRapository.findAll();
     }
 
-    public Classroom update(ClassroomDto updated, Integer id) {
+    public Classroom update(ClassroomCreateUpdateDto updated, Integer id) {
         Classroom classroom = findById(id);
 
         LessonMapper mapper = new LessonMapper();
