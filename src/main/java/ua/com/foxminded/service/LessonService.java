@@ -11,6 +11,7 @@ import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
 import ua.com.foxminded.entity.Classroom;
 import ua.com.foxminded.entity.Lesson;
 import ua.com.foxminded.entity.Subject;
+import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.sdjpa.LessonRepository;
 
@@ -33,6 +34,12 @@ public class LessonService {
         Lesson lesson = new Lesson();
         Classroom classroom = classroomService.findById(dto.getClassroomId());
         Subject subject = subjectService.findById(dto.getSubjectId());
+
+        if (lessonRepository.existsBySubject_TitleAndClassroom_Name(subject.getTitle(), classroom.getName())) {
+            throw new DuplicateEntityException("Lesson with subject: " + subject.getTitle()
+                    + " alredy exists in classroom: " + classroom.getName() + "!");
+
+        }
 
         lesson.setClassHour(dto.getClassHour());
         lesson.setClassroom(classroom);

@@ -13,4 +13,5 @@ import ua.com.foxminded.entity.Lesson;
 public interface LessonRepository extends JpaRepository<Lesson, Integer>{
 
     Optional<Lesson> findBySubject_Title(String title);
+    boolean existsBySubject_TitleAndClassroom_Name(String subjectTitle, String classroomName);
 }

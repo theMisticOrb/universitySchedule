@@ -13,4 +13,5 @@ import ua.com.foxminded.entity.Specialization;
 public interface SpecializationRepository extends JpaRepository<Specialization, Integer>{
 
     Optional<Specialization> findByTitle(String title);
+    boolean existsByTitleAndDepartment_Id(String title, Integer departmentId);
 }

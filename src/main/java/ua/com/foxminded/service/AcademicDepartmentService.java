@@ -30,7 +30,7 @@ public class AcademicDepartmentService {
     public AcademicDepartment addOne(AcademicDepartmentCreateUpdateDto dto) {
         Faculty faculty = facultyService.findById(dto.getFacultyId());
 
-        if (departmentRepository.existsByFacultyAndTitle(faculty, dto.getTitle())) {
+        if (departmentRepository.existsByFaculty_IdAndTitle(faculty.getId(), dto.getTitle())) {
             throw new DuplicateEntityException(
                     "Department with title: " + dto.getTitle() + " alredy exists in this faculty!");
         }

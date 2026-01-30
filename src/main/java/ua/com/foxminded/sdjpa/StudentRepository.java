@@ -16,4 +16,10 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
             String lastName, 
             String firstName, 
             String middleName);
+
+    boolean existsByLastNameAndFirstNameAndMiddleNameAndGroup_Id(
+            String lastName, 
+            String firstName, 
+            String middleName,
+            Integer groupId);
 }

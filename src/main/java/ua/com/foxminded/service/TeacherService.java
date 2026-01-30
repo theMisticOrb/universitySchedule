@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.dto.user.TeacherCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Teacher;
+import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.SubjectMapper;
 import ua.com.foxminded.sdjpa.TeacherRepository;
@@ -30,6 +31,11 @@ public class TeacherService {
         Teacher teacher = new Teacher();
         AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
 
+        if (teacherRepository.existsByLastNameAndFirstNameAndMiddleNameAndDepartment_Id(dto.getLastName(),
+                dto.getFirstName(), dto.getMiddleName(), department.getId())) {
+            throw new DuplicateEntityException("Teacher with name: " + dto.getLastName() + " " + dto.getFirstName()
+            + " " + dto.getMiddleName() + " alredy exists in this academic department!");
+        }
         teacher.setFirstName(dto.getFirstName());
         teacher.setLastName(dto.getLastName());
         teacher.setMiddleName(dto.getMiddleName());

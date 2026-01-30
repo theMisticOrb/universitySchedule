@@ -58,8 +58,8 @@ public class GroupService {
         String groupName = buildGroupName(group);
         group.setName(groupName);
 
-        if (groupRepository.existsByFacultyAndDepartmentAndSpecializationAndName(faculty, department, specialization,
-                group.getName())) {
+        if (groupRepository.existsByFaculty_IdAndDepartment_IdAndSpecialization_IdAndName(faculty.getId(),
+                department.getId(), specialization.getId(), group.getName())) {
             throw new DuplicateEntityException("Group with name: " + group.getName() + " alredy exists!");
         }
         return groupRepository.save(group);

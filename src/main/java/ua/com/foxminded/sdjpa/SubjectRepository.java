@@ -13,4 +13,5 @@ import ua.com.foxminded.entity.Subject;
 public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 
     Optional<Subject> findByTitle(String title);
+    boolean existsByTitle(String title);
 }

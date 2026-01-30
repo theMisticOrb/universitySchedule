@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.dto.specialization.SpecializationCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Specialization;
+import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.GroupMapper;
 import ua.com.foxminded.sdjpa.SpecializationRepository;
@@ -31,6 +32,11 @@ public class SpecializationService {
         Specialization specialization = new Specialization();
 
         AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
+
+        if (specializationRepository.existsByTitleAndDepartment_Id(dto.getTitle(), department.getId())) {
+            throw new DuplicateEntityException(
+                    "Specialization with title: " + dto.getTitle() + " alredy exists in this academic department!");
+        }
 
         specialization.setDepartment(department);
         specialization.setTitle(dto.getTitle());

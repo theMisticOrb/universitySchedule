@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.dto.user.StudentCreateUpdateDto;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Student;
+import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.sdjpa.StudentRepository;
 
@@ -28,6 +29,13 @@ public class StudentService {
     public Student addOne(StudentCreateUpdateDto dto) {
         Student student = new Student();
         Group group = groupService.findById(dto.getGroupId());
+
+        if (studentRepository.existsByLastNameAndFirstNameAndMiddleNameAndGroup_Id(dto.getLastName(),
+                dto.getFirstName(), dto.getMiddleName(), group.getId())) {
+            throw new DuplicateEntityException("Student with name: " + dto.getLastName() + " " + dto.getFirstName()
+                    + " " + dto.getMiddleName() + " alredy exists in this group!");
+
+        }
 
         student.setFirstName(dto.getFirstName());
         student.setLastName(dto.getLastName());

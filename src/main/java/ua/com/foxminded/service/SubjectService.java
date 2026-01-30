@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.dto.subject.SubjectCreateUpdateDto;
 import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
+import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.GroupMapper;
 import ua.com.foxminded.sdjpa.SubjectRepository;
@@ -29,6 +30,10 @@ public class SubjectService {
     public Subject addOne(SubjectCreateUpdateDto dto) {
         Subject subject = new Subject();
         Teacher teacher = teacherService.findById(dto.getTeacherId());
+
+        if (subjectRepository.existsByTitle(dto.getTitle())) {
+            throw new DuplicateEntityException("Subject with name: " + dto.getTitle() + " alredy exists!");
+        }
 
         subject.setTeacher(teacher);
         subject.setTitle(dto.getTitle());
