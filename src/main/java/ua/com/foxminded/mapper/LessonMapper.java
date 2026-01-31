@@ -1,11 +1,14 @@
 package ua.com.foxminded.mapper;
 
+import org.springframework.stereotype.Component;
+
 import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
 import ua.com.foxminded.dto.lesson.LessonResponseDto;
 import ua.com.foxminded.entity.Classroom;
 import ua.com.foxminded.entity.Lesson;
 import ua.com.foxminded.entity.Subject;
 
+@Component
 public class LessonMapper {
 
     public Lesson toEntity(LessonCreateUpdateDto dto) {
@@ -35,9 +38,9 @@ public class LessonMapper {
 
         LessonResponseDto dto = new LessonResponseDto();
         dto.setId(entity.getId());
-        dto.setSubjectId(entity.getSubject().getId());
+        dto.setSubjectTitle(entity.getSubject().getTitle());
         dto.setClassHour(entity.getClassHour());
-        dto.setClassroomId(entity.getClassroom().getId());
+        dto.setClassroomName(entity.getClassroom().getName());
         dto.setWeekDay(entity.getWeekDay());
         return dto;
     }

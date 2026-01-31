@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
 import ua.com.foxminded.dto.lesson.LessonResponseDto;
+import ua.com.foxminded.enums.WeekDay;
 import ua.com.foxminded.mapper.LessonMapper;
 import ua.com.foxminded.service.LessonService;
 
@@ -36,9 +38,11 @@ public class LessonController {
         return service.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
-    @GetMapping("/title/{title}")
-    public LessonResponseDto findByTitle(@PathVariable String title) {
-        return mapper.toDto(service.findByTitle(title));
+    @GetMapping(params = { "subjectTitle", "weekDay" })
+    public List<LessonResponseDto> findBySubjectTitleAndWeekDay(@RequestParam String subjectTitle,
+            @RequestParam WeekDay weekDay) {
+        return service.findBySubjectTitleAndWeekDay(subjectTitle, weekDay).stream().map(mapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
@@ -53,6 +57,7 @@ public class LessonController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id) {
         service.findById(id);
         service.deleteById(id);

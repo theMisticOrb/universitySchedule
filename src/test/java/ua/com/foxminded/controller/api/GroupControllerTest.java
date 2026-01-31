@@ -30,7 +30,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
+import ua.com.foxminded.dto.group.GroupResponseDto;
 import ua.com.foxminded.entity.Group;
+import ua.com.foxminded.mapper.GroupMapper;
 import ua.com.foxminded.service.GroupService;
 
 @ExtendWith(SpringExtension.class)
@@ -43,7 +45,9 @@ class GroupControllerTest {
 
     @MockBean
     private GroupService service;
-
+    @MockBean
+    private GroupMapper groupMapper;
+    
     @Autowired
     private ObjectMapper mapper;
 
@@ -53,16 +57,25 @@ class GroupControllerTest {
         group.setName("1.1.1.1");
         return group;
     }
+    
+    private GroupResponseDto createResponseDto() {
+        GroupResponseDto dto = new GroupResponseDto();
+        dto.setId(1);
+        dto.setName("1.1.1.1");
+        return dto;
+    }
 
     @Test
     void findAll_shouldReturn200_whenCalled() throws Exception {
 
         Group group = createGroup();
-
+        GroupResponseDto responseDto = createResponseDto();
+        
         List<Group> groups = new ArrayList<>();
         groups.add(group);
 
         when(service.findAll()).thenReturn(groups);
+        when(groupMapper.toDto(any(Group.class))).thenReturn(responseDto);
 
         mvc.perform(get("/api/groups")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].name").value(group.getName()));
@@ -72,8 +85,10 @@ class GroupControllerTest {
     void findByTitle_shouldReturn200_whenCalled() throws Exception {
 
         Group group = createGroup();
+        GroupResponseDto responseDto = createResponseDto();
 
         when(service.findByName("1.1.1.1")).thenReturn(group);
+        when(groupMapper.toDto(group)).thenReturn(responseDto);
 
         mvc.perform(get("/api/groups/name/1.1.1.1")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("1.1.1.1"));
@@ -92,8 +107,10 @@ class GroupControllerTest {
     void findById_shouldReturn200_whenCalled() throws Exception {
 
         Group group = createGroup();
+        GroupResponseDto responseDto = createResponseDto();
 
         when(service.findById(1)).thenReturn(group);
+        when(groupMapper.toDto(group)).thenReturn(responseDto);
 
         mvc.perform(get("/api/groups/1")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(group.getName()));
@@ -103,18 +120,21 @@ class GroupControllerTest {
     void create_shouldReturn201_whenCreated() throws Exception {
 
         Group group = createGroup();
-        GroupCreateUpdateDto groupDto = new GroupCreateUpdateDto();
-        groupDto.setFacultyId(1);
+        GroupResponseDto responseDto = createResponseDto();
+        GroupCreateUpdateDto requestDto = new GroupCreateUpdateDto();
+        requestDto.setFacultyId(1);
 
         when(service.addOne(any(GroupCreateUpdateDto.class))).thenReturn(group);
+        when(groupMapper.toDto(group)).thenReturn(responseDto);
 
         mvc.perform(post("/api/groups").contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(groupDto))).andExpect(status().isCreated())
+                .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value(group.getName()));
     }
 
     @Test
     void delete_shouldReturn204_whenCalled() throws Exception {
+        when(service.findById(1)).thenReturn(createGroup());
         doNothing().when(service).deleteById(1);
         mvc.perform(delete("/api/groups/1")).andExpect(status().isNoContent());
         verify(service).deleteById(1);
@@ -124,14 +144,16 @@ class GroupControllerTest {
     void update_shouldReturn200_whenCalled() throws Exception {
 
         Group group = createGroup();
+        GroupResponseDto responseDto = createResponseDto();
 
-        GroupCreateUpdateDto groupDto = new GroupCreateUpdateDto();
-        groupDto.setFacultyId(1);
+        GroupCreateUpdateDto requestDto = new GroupCreateUpdateDto();
+        requestDto.setFacultyId(1);
 
         when(service.update(any(GroupCreateUpdateDto.class), eq(1))).thenReturn(group);
+        when(groupMapper.toDto(group)).thenReturn(responseDto);
 
         mvc.perform(put("/api/groups/1").contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(groupDto))).andExpect(status().isOk())
+                .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(group.getName()));
 
     }

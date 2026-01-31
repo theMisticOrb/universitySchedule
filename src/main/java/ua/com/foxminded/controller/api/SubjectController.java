@@ -53,6 +53,7 @@ public class SubjectController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id) {
         service.findById(id);
         service.deleteById(id);

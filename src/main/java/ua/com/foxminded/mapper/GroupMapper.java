@@ -1,5 +1,7 @@
 package ua.com.foxminded.mapper;
 
+import org.springframework.stereotype.Component;
+
 import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
 import ua.com.foxminded.dto.group.GroupResponseDto;
 import ua.com.foxminded.entity.AcademicDepartment;
@@ -7,6 +9,8 @@ import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Specialization;
 
+
+@Component
 public class GroupMapper {
 
     public Group toEntity(GroupCreateUpdateDto dto) {

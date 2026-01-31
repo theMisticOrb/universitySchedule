@@ -30,8 +30,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ua.com.foxminded.dto.department.AcademicDepartmentCreateUpdateDto;
+import ua.com.foxminded.dto.department.AcademicDepartmentResponseDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
+import ua.com.foxminded.mapper.AcademicDepartmentMapper;
 import ua.com.foxminded.service.AcademicDepartmentService;
 
 @ExtendWith(SpringExtension.class)
@@ -45,6 +47,9 @@ class AcademicDepartmentControllerTest {
     @MockBean
     private AcademicDepartmentService service;
 
+    @MockBean
+    private AcademicDepartmentMapper departmentMapper;
+
     @Autowired
     private ObjectMapper mapper;
 
@@ -56,15 +61,25 @@ class AcademicDepartmentControllerTest {
         return department;
     }
 
+    private AcademicDepartmentResponseDto createResponseDto() {
+        AcademicDepartmentResponseDto dto = new AcademicDepartmentResponseDto();
+        dto.setId(1);
+        dto.setFacultyId(1);
+        dto.setTitle("Computer Science");
+        return dto;
+    }
+
     @Test
     void findAll_shouldReturn200_whenCalled() throws Exception {
 
         AcademicDepartment department = createDepartment();
+        AcademicDepartmentResponseDto dto = createResponseDto();
 
         List<AcademicDepartment> departments = new ArrayList<>();
         departments.add(department);
 
         when(service.findAll()).thenReturn(departments);
+        when(departmentMapper.toDto(any(AcademicDepartment.class))).thenReturn(dto);
 
         mvc.perform(get("/api/departments")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].title").value("Computer Science"));
@@ -74,9 +89,10 @@ class AcademicDepartmentControllerTest {
     void findByTitle_shouldReturn200_whenCalled() throws Exception {
 
         AcademicDepartment department = createDepartment();
+        AcademicDepartmentResponseDto dto = createResponseDto();
 
         when(service.findByTitle("Computer Science")).thenReturn(department);
-
+        when(departmentMapper.toDto(department)).thenReturn(dto);
         mvc.perform(get("/api/departments/title/Computer Science")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
     }
@@ -94,9 +110,10 @@ class AcademicDepartmentControllerTest {
     void findById_shouldReturn200_whenCalled() throws Exception {
 
         AcademicDepartment department = createDepartment();
+        AcademicDepartmentResponseDto dto = createResponseDto();
 
         when(service.findById(1)).thenReturn(department);
-
+        when(departmentMapper.toDto(department)).thenReturn(dto);
         mvc.perform(get("/api/departments/1")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
     }
@@ -105,19 +122,23 @@ class AcademicDepartmentControllerTest {
     void create_shouldReturn201_whenCreated() throws Exception {
 
         AcademicDepartment department = createDepartment();
-        AcademicDepartmentCreateUpdateDto departmentDto = new AcademicDepartmentCreateUpdateDto();
-        departmentDto.setFacultyId(1);
-        departmentDto.setTitle("Computer Science");
+        AcademicDepartmentResponseDto responseDto = createResponseDto();
+        
+        AcademicDepartmentCreateUpdateDto requestDto = new AcademicDepartmentCreateUpdateDto();
+        requestDto.setFacultyId(1);
+        requestDto.setTitle("Computer Science");
 
         when(service.addOne(any(AcademicDepartmentCreateUpdateDto.class))).thenReturn(department);
+        when(departmentMapper.toDto(department)).thenReturn(responseDto);
 
         mvc.perform(post("/api/departments").contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(departmentDto))).andExpect(status().isCreated())
+                .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
     }
 
     @Test
     void delete_shouldReturn204_whenCalled() throws Exception {
+        when(service.findById(1)).thenReturn(createDepartment());
         doNothing().when(service).deleteById(1);
         mvc.perform(delete("/api/departments/1")).andExpect(status().isNoContent());
         verify(service).deleteById(1);
@@ -126,18 +147,23 @@ class AcademicDepartmentControllerTest {
     @Test
     void update_shouldReturn200_whenCalled() throws Exception {
 
-        AcademicDepartment department2 = new AcademicDepartment();
-        department2.setTitle("Security");
+        AcademicDepartment department = createDepartment();
 
-        AcademicDepartmentCreateUpdateDto departmentDto = new AcademicDepartmentCreateUpdateDto();
-        departmentDto.setFacultyId(1);
-        departmentDto.setTitle("Security");
+        AcademicDepartmentResponseDto responseDto = createResponseDto();
 
-        when(service.update(any(AcademicDepartmentCreateUpdateDto.class), eq(1))).thenReturn(department2);
+        AcademicDepartmentCreateUpdateDto requestDto = new AcademicDepartmentCreateUpdateDto();
+        requestDto.setFacultyId(1);
+        requestDto.setTitle("Computer Science");
+
+        when(service.update(any(AcademicDepartmentCreateUpdateDto.class), eq(1))).thenReturn(department);
+        when(departmentMapper.toDto(department)).thenReturn(responseDto);
 
         mvc.perform(put("/api/departments/1").contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(departmentDto))).andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Security"));
+                .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Computer Science"));
+
+        verify(service).update(any(AcademicDepartmentCreateUpdateDto.class), eq(1));
+        verify(departmentMapper).toDto(department);
 
     }
 }

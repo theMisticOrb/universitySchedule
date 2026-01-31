@@ -11,6 +11,7 @@ import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
 import ua.com.foxminded.entity.Classroom;
 import ua.com.foxminded.entity.Lesson;
 import ua.com.foxminded.entity.Subject;
+import ua.com.foxminded.enums.WeekDay;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.sdjpa.LessonRepository;
@@ -52,9 +53,8 @@ public class LessonService {
         return lessonRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Lesson not found: " + id));
     }
 
-    public Lesson findByTitle(String subjectTitle) {
-        return lessonRepository.findBySubject_Title(subjectTitle)
-                .orElseThrow(() -> new EntityNotFoundException("Lesson not found: " + subjectTitle));
+    public List<Lesson> findBySubjectTitleAndWeekDay(String subjectTitle, WeekDay weekDay) {
+        return lessonRepository.findBySubject_TitleAndWeekDay(subjectTitle, weekDay);
     }
 
     public List<Lesson> findAll() {

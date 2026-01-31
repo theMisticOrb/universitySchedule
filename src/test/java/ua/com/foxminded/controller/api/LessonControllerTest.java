@@ -1,0 +1,155 @@
+package ua.com.foxminded.controller.api;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
+import ua.com.foxminded.dto.lesson.LessonResponseDto;
+import ua.com.foxminded.entity.Lesson;
+import ua.com.foxminded.entity.Subject;
+import ua.com.foxminded.enums.WeekDay;
+import ua.com.foxminded.mapper.LessonMapper;
+import ua.com.foxminded.service.LessonService;
+
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(controllers = LessonController.class)
+@AutoConfigureMockMvc(addFilters = false)
+class LessonControllerTest {
+
+    @Autowired
+    private MockMvc mvc;
+
+    @MockBean
+    private LessonService service;
+    @MockBean
+    private LessonMapper groupMapper;
+
+    @Autowired
+    private ObjectMapper mapper;
+
+    private Lesson createLesson() {
+        Lesson lesson = new Lesson();
+        lesson.setId(1);
+        lesson.setSubject(new Subject(1, "Math", null, null));
+        lesson.setWeekDay(WeekDay.FRIDAY);
+        return lesson;
+    }
+
+    private LessonResponseDto createResponseDto() {
+        LessonResponseDto dto = new LessonResponseDto();
+        dto.setId(1);
+        dto.setSubjectTitle("Math");
+        dto.setWeekDay(WeekDay.FRIDAY);
+        return dto;
+    }
+
+    @Test
+    void findAll_shouldReturn200_whenCalled() throws Exception {
+
+        Lesson lesson = createLesson();
+        LessonResponseDto responseDto = createResponseDto();
+
+        List<Lesson> lessons = new ArrayList<>();
+        lessons.add(lesson);
+
+        when(service.findAll()).thenReturn(lessons);
+        when(groupMapper.toDto(any(Lesson.class))).thenReturn(responseDto);
+
+        mvc.perform(get("/api/lessons").param("subjectTitle", "Math")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(1)).andExpect(jsonPath("$[0].subjectTitle").value("Math"));
+    }
+
+    @Test
+    void findByTitleAndWeekDay_shouldReturn200_whenCalled() throws Exception {
+
+        Lesson lesson = createLesson();
+        LessonResponseDto responseDto = createResponseDto();
+
+        List<Lesson> lessons = new ArrayList<>();
+        lessons.add(lesson);
+
+        when(service.findBySubjectTitleAndWeekDay("Math", WeekDay.FRIDAY)).thenReturn(lessons);
+        when(groupMapper.toDto(any(Lesson.class))).thenReturn(responseDto);
+
+        mvc.perform(get("/api/lessons").param("subjectTitle", "Math").param("weekDay", "FRIDAY"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$[0].subjectTitle").value("Math"));
+    }
+
+    @Test
+    void findById_shouldReturn200_whenCalled() throws Exception {
+
+        Lesson lesson = createLesson();
+        LessonResponseDto responseDto = createResponseDto();
+
+        when(service.findById(1)).thenReturn(lesson);
+        when(groupMapper.toDto(lesson)).thenReturn(responseDto);
+
+        mvc.perform(get("/api/lessons/1")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.subjectTitle").value(lesson.getSubject().getTitle()));
+    }
+
+    @Test
+    void create_shouldReturn201_whenCreated() throws Exception {
+
+        Lesson lesson = createLesson();
+        LessonResponseDto responseDto = createResponseDto();
+        LessonCreateUpdateDto requestDto = new LessonCreateUpdateDto();
+        requestDto.setSubjectId(1);
+
+        when(service.addOne(any(LessonCreateUpdateDto.class))).thenReturn(lesson);
+        when(groupMapper.toDto(lesson)).thenReturn(responseDto);
+
+        mvc.perform(post("/api/lessons").contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
+                .andExpect(jsonPath("$.subjectTitle").value(lesson.getSubject().getTitle()));
+    }
+
+    @Test
+    void delete_shouldReturn204_whenCalled() throws Exception {
+        when(service.findById(1)).thenReturn(createLesson());
+        doNothing().when(service).deleteById(1);
+        mvc.perform(delete("/api/lessons/1")).andExpect(status().isNoContent());
+        verify(service).deleteById(1);
+    }
+
+    @Test
+    void update_shouldReturn200_whenCalled() throws Exception {
+
+        Lesson lesson = createLesson();
+        LessonResponseDto responseDto = createResponseDto();
+        LessonCreateUpdateDto requestDto = new LessonCreateUpdateDto();
+        requestDto.setSubjectId(1);
+
+        when(service.update(any(LessonCreateUpdateDto.class), eq(1))).thenReturn(lesson);
+        when(groupMapper.toDto(lesson)).thenReturn(responseDto);
+
+        mvc.perform(put("/api/lessons/1").contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
+                .andExpect(jsonPath("$.subjectTitle").value(lesson.getSubject().getTitle()));
+
+    }
+}

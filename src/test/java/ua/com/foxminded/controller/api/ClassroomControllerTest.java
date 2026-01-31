@@ -30,7 +30,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ua.com.foxminded.dto.classroom.ClassroomCreateUpdateDto;
+import ua.com.foxminded.dto.classroom.ClassroomResponseDto;
 import ua.com.foxminded.entity.Classroom;
+import ua.com.foxminded.mapper.ClassroomMapper;
 import ua.com.foxminded.service.ClassroomService;
 
 @ExtendWith(SpringExtension.class)
@@ -44,6 +46,9 @@ class ClassroomControllerTest {
     @MockBean
     private ClassroomService service;
 
+    @MockBean
+    private ClassroomMapper classroomMapper;
+
     @Autowired
     private ObjectMapper mapper;
 
@@ -54,15 +59,24 @@ class ClassroomControllerTest {
         return classroom;
     }
 
+    private ClassroomResponseDto createResponseDto() {
+        ClassroomResponseDto dto = new ClassroomResponseDto();
+        dto.setId(1);
+        dto.setName("2A");
+        return dto;
+    }
+
     @Test
     void findAll_shouldReturn200_whenCalled() throws Exception {
 
         Classroom classroom = createClassroom();
+        ClassroomResponseDto responseDto = createResponseDto();
 
         List<Classroom> listClassrooms = new ArrayList<>();
         listClassrooms.add(classroom);
 
         when(service.findAll()).thenReturn(listClassrooms);
+        when(classroomMapper.toDto(any(Classroom.class))).thenReturn(responseDto);
 
         mvc.perform(get("/api/classrooms")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].name").value("2A"));
@@ -72,8 +86,10 @@ class ClassroomControllerTest {
     void findByTitle_shouldReturn200_whenCalled() throws Exception {
 
         Classroom classroom = createClassroom();
+        ClassroomResponseDto responseDto = createResponseDto();
 
         when(service.findByName("2A")).thenReturn(classroom);
+        when(classroomMapper.toDto(classroom)).thenReturn(responseDto);
 
         mvc.perform(get("/api/classrooms/name/2A")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("2A"));
@@ -92,29 +108,34 @@ class ClassroomControllerTest {
     void findById_shouldReturn200_whenCalled() throws Exception {
 
         Classroom classroom = createClassroom();
+        ClassroomResponseDto responseDto = createResponseDto();
 
         when(service.findById(1)).thenReturn(classroom);
+        when(classroomMapper.toDto(classroom)).thenReturn(responseDto);
 
-        mvc.perform(get("/api/classrooms/1")).andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("2A"));
+        mvc.perform(get("/api/classrooms/1")).andExpect(status().isOk()).andExpect(jsonPath("$.name").value("2A"));
     }
 
     @Test
     void create_shouldReturn201_whenCreated() throws Exception {
 
         Classroom classroom = createClassroom();
-        ClassroomCreateUpdateDto classroomDto = new ClassroomCreateUpdateDto();
-        classroomDto.setName("2A");
+        ClassroomResponseDto responseDto = createResponseDto();
+
+        ClassroomCreateUpdateDto requestDto = new ClassroomCreateUpdateDto();
+        requestDto.setName("2A");
 
         when(service.addOne(any(ClassroomCreateUpdateDto.class))).thenReturn(classroom);
+        when(classroomMapper.toDto(classroom)).thenReturn(responseDto);
 
         mvc.perform(post("/api/classrooms").contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(classroomDto))).andExpect(status().isCreated())
+                .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("2A"));
     }
 
     @Test
     void delete_shouldReturn204_whenCalled() throws Exception {
+        when(service.findById(1)).thenReturn(createClassroom());
         doNothing().when(service).deleteById(1);
         mvc.perform(delete("/api/classrooms/1")).andExpect(status().isNoContent());
         verify(service).deleteById(1);
@@ -123,17 +144,18 @@ class ClassroomControllerTest {
     @Test
     void update_shouldReturn200_whenCalled() throws Exception {
 
-        Classroom classroom = new Classroom();
-        classroom.setName("3B");
+        Classroom classroom = createClassroom();
+        ClassroomResponseDto responseDto = createResponseDto();
 
-        ClassroomCreateUpdateDto classroomDto = new ClassroomCreateUpdateDto();
-        classroomDto.setName("3B");
+        ClassroomCreateUpdateDto requestDto = new ClassroomCreateUpdateDto();
+        requestDto.setName("2A");
 
         when(service.update(any(ClassroomCreateUpdateDto.class), eq(1))).thenReturn(classroom);
+        when(classroomMapper.toDto(classroom)).thenReturn(responseDto);
 
         mvc.perform(put("/api/classrooms/1").contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(classroomDto))).andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("3B"));
+                .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("2A"));
 
     }
 }

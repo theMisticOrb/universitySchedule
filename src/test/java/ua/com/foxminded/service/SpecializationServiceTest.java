@@ -3,10 +3,8 @@ package ua.com.foxminded.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -99,11 +97,11 @@ class SpecializationServiceTest {
     void findByTitle_shouldReturnSpecialization_whenExists() {
         Specialization saved = service.addOne(specialization);
 
-        Optional<Specialization> result = service.findByTitle("Security");
+        Specialization result = service.findByTitle("Security");
 
-        assertTrue(result.isPresent());
-        assertEquals("Security", result.get().getTitle());
-        assertEquals(saved.getId(), result.get().getId());
+        assertNotNull(result);
+        assertEquals("Security", result.getTitle());
+        assertEquals(saved.getId(), result.getId());
     }
 
     @Test

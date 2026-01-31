@@ -3,10 +3,8 @@ package ua.com.foxminded.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -120,12 +118,12 @@ class StudentServiceTest {
     void findByTitle_shouldReturnStudent_whenExists() {
         Student saved = service.addOne(student);
 
-        Optional<Student> result = service.findByFullName("Sparrow", "Jack", null);
+        Student result = service.findByFullName("Sparrow", "Jack", null);
 
-        assertTrue(result.isPresent());
-        assertEquals("Jack", result.get().getFirstName());
-        assertEquals("Sparrow", result.get().getLastName());
-        assertEquals(saved.getId(), result.get().getId());
+        assertNotNull(result);
+        assertEquals("Jack", result.getFirstName());
+        assertEquals("Sparrow", result.getLastName());
+        assertEquals(saved.getId(), result.getId());
     }
 
     @Test
