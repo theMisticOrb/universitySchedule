@@ -25,13 +25,24 @@ public class AcademicDepartmentMapper {
         return entity;
     }
 
-    public AcademicDepartmentResponseDto toDto(AcademicDepartment entity) {
+    public AcademicDepartmentResponseDto toResponseDto(AcademicDepartment entity) {
         if (entity == null) {
             return null;
         }
 
         AcademicDepartmentResponseDto dto = new AcademicDepartmentResponseDto();
         dto.setId(entity.getId());
+        dto.setFacultyId(entity.getFaculty().getId());
+        dto.setTitle(entity.getTitle());
+        return dto;
+    }
+    
+    public AcademicDepartmentCreateUpdateDto toCreateUpdateDto(AcademicDepartment entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        AcademicDepartmentCreateUpdateDto dto = new AcademicDepartmentCreateUpdateDto();
         dto.setFacultyId(entity.getFaculty().getId());
         dto.setTitle(entity.getTitle());
         return dto;

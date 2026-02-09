@@ -79,7 +79,7 @@ class AcademicDepartmentControllerTest {
         departments.add(department);
 
         when(service.findAll()).thenReturn(departments);
-        when(departmentMapper.toDto(any(AcademicDepartment.class))).thenReturn(dto);
+        when(departmentMapper.toResponseDto(any(AcademicDepartment.class))).thenReturn(dto);
 
         mvc.perform(get("/api/departments")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].title").value("Computer Science"));
@@ -92,7 +92,7 @@ class AcademicDepartmentControllerTest {
         AcademicDepartmentResponseDto dto = createResponseDto();
 
         when(service.findByTitle("Computer Science")).thenReturn(department);
-        when(departmentMapper.toDto(department)).thenReturn(dto);
+        when(departmentMapper.toResponseDto(department)).thenReturn(dto);
         mvc.perform(get("/api/departments/title/Computer Science")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
     }
@@ -113,7 +113,7 @@ class AcademicDepartmentControllerTest {
         AcademicDepartmentResponseDto dto = createResponseDto();
 
         when(service.findById(1)).thenReturn(department);
-        when(departmentMapper.toDto(department)).thenReturn(dto);
+        when(departmentMapper.toResponseDto(department)).thenReturn(dto);
         mvc.perform(get("/api/departments/1")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
     }
@@ -129,7 +129,7 @@ class AcademicDepartmentControllerTest {
         requestDto.setTitle("Computer Science");
 
         when(service.addOne(any(AcademicDepartmentCreateUpdateDto.class))).thenReturn(department);
-        when(departmentMapper.toDto(department)).thenReturn(responseDto);
+        when(departmentMapper.toResponseDto(department)).thenReturn(responseDto);
 
         mvc.perform(post("/api/departments").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
@@ -156,14 +156,14 @@ class AcademicDepartmentControllerTest {
         requestDto.setTitle("Computer Science");
 
         when(service.update(any(AcademicDepartmentCreateUpdateDto.class), eq(1))).thenReturn(department);
-        when(departmentMapper.toDto(department)).thenReturn(responseDto);
+        when(departmentMapper.toResponseDto(department)).thenReturn(responseDto);
 
         mvc.perform(put("/api/departments/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
 
         verify(service).update(any(AcademicDepartmentCreateUpdateDto.class), eq(1));
-        verify(departmentMapper).toDto(department);
+        verify(departmentMapper).toResponseDto(department);
 
     }
 }

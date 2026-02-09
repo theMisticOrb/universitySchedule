@@ -33,4 +33,8 @@ public class FacultyCreateUpdateDto {
         this.departments = departments;
     }
 
+    
+
+    
+
 }

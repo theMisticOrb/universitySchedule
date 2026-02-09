@@ -19,13 +19,24 @@ public class SpecializationMapper {
         return entity;
     }
     
-    public SpecializationResponseDto toDto(Specialization entity) {
+    public SpecializationResponseDto toResponseDto(Specialization entity) {
         if(entity==null) {
             return null;
         }
         
         SpecializationResponseDto dto = new SpecializationResponseDto();
         dto.setId(entity.getId());
+        dto.setDepartmentId(entity.getDepartment().getId());
+        dto.setTitle(entity.getTitle());
+        return dto;
+    }
+    
+    public SpecializationCreateUpdateDto toCreateUpdateDto(Specialization entity) {
+        if(entity==null) {
+            return null;
+        }
+        
+        SpecializationCreateUpdateDto dto = new SpecializationCreateUpdateDto();
         dto.setDepartmentId(entity.getDepartment().getId());
         dto.setTitle(entity.getTitle());
         return dto;

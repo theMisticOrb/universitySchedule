@@ -59,4 +59,8 @@ public class FacultyService {
     public void deleteById(Integer id) {
         facultyRepository.deleteById(id);
     }
+    
+    public long count() {
+        return facultyRepository.count();
+    }
 }

@@ -34,23 +34,23 @@ public class AcademicDepartmentController {
 
     @GetMapping
     public List<AcademicDepartmentResponseDto> findAll() {
-        return service.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
+        return service.findAll().stream().map(mapper::toResponseDto).collect(Collectors.toList());
     }
 
     @GetMapping("/title/{title}")
     public AcademicDepartmentResponseDto findByTitle(@PathVariable String title) {
-        return mapper.toDto(service.findByTitle(title)) ;
+        return mapper.toResponseDto(service.findByTitle(title)) ;
     }
 
     @GetMapping("/{id}")
     public AcademicDepartmentResponseDto findOne(@PathVariable Integer id) {
-        return mapper.toDto(service.findById(id));
+        return mapper.toResponseDto(service.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AcademicDepartmentResponseDto create(@RequestBody AcademicDepartmentCreateUpdateDto dto) {
-        return mapper.toDto(service.addOne(dto));
+        return mapper.toResponseDto(service.addOne(dto));
     }
 
     @DeleteMapping("/{id}")
@@ -62,7 +62,7 @@ public class AcademicDepartmentController {
 
     @PutMapping("/{id}")
     public AcademicDepartmentResponseDto update(@RequestBody AcademicDepartmentCreateUpdateDto dto, @PathVariable Integer id) {
-        return mapper.toDto(service.update(dto, id));
+        return mapper.toResponseDto(service.update(dto, id));
     }
 
 }

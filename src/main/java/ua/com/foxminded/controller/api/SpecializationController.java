@@ -33,23 +33,23 @@ public class SpecializationController {
 
     @GetMapping
     public List<SpecializationResponseDto> findAll() {
-        return service.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
+        return service.findAll().stream().map(mapper::toResponseDto).collect(Collectors.toList());
     }
 
     @GetMapping("/title/{title}")
     public SpecializationResponseDto findByTitle(@PathVariable String title) {
-        return mapper.toDto(service.findByTitle(title));
+        return mapper.toResponseDto(service.findByTitle(title));
     }
 
     @GetMapping("/{id}")
     public SpecializationResponseDto findOne(@PathVariable Integer id) {
-        return  mapper.toDto(service.findById(id));
+        return  mapper.toResponseDto(service.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SpecializationResponseDto create(@RequestBody SpecializationCreateUpdateDto dto) {
-        return  mapper.toDto(service.addOne(dto));
+        return  mapper.toResponseDto(service.addOne(dto));
     }
 
     @DeleteMapping("/{id}")
@@ -61,6 +61,6 @@ public class SpecializationController {
 
     @PutMapping("/{id}")
     public SpecializationResponseDto update(@RequestBody SpecializationCreateUpdateDto dto, @PathVariable Integer id) {
-        return  mapper.toDto(service.update(dto, id));
+        return  mapper.toResponseDto(service.update(dto, id));
     }
 }
