@@ -14,42 +14,43 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import ua.com.foxminded.dto.specialization.SpecializationCreateUpdateDto;
-import ua.com.foxminded.dto.specialization.SpecializationResponseDto;
-import ua.com.foxminded.mapper.SpecializationMapper;
-import ua.com.foxminded.service.SpecializationService;
+import ua.com.foxminded.dto.department.AcademicDepartmentCreateUpdateDto;
+import ua.com.foxminded.dto.department.AcademicDepartmentResponseDto;
+import ua.com.foxminded.mapper.AcademicDepartmentMapper;
+import ua.com.foxminded.service.AcademicDepartmentService;
 
 @RestController
-@RequestMapping("/api/specializations")
-public class SpecializationController {
+@RequestMapping("/api/departments")
+public class AcademicDepartmentRestController {
 
-    private final SpecializationService service;
-    private final SpecializationMapper mapper;
+    private final AcademicDepartmentService service;
+    private final AcademicDepartmentMapper mapper;
 
-    public SpecializationController(SpecializationService service, SpecializationMapper mapper) {
+    
+    public AcademicDepartmentRestController(AcademicDepartmentService service, AcademicDepartmentMapper mapper) {
         this.service = service;
         this.mapper = mapper;
     }
 
     @GetMapping
-    public List<SpecializationResponseDto> findAll() {
+    public List<AcademicDepartmentResponseDto> findAll() {
         return service.findAll().stream().map(mapper::toResponseDto).collect(Collectors.toList());
     }
 
     @GetMapping("/title/{title}")
-    public SpecializationResponseDto findByTitle(@PathVariable String title) {
-        return mapper.toResponseDto(service.findByTitle(title));
+    public AcademicDepartmentResponseDto findByTitle(@PathVariable String title) {
+        return mapper.toResponseDto(service.findByTitle(title)) ;
     }
 
     @GetMapping("/{id}")
-    public SpecializationResponseDto findOne(@PathVariable Integer id) {
-        return  mapper.toResponseDto(service.findById(id));
+    public AcademicDepartmentResponseDto findOne(@PathVariable Integer id) {
+        return mapper.toResponseDto(service.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SpecializationResponseDto create(@RequestBody SpecializationCreateUpdateDto dto) {
-        return  mapper.toResponseDto(service.addOne(dto));
+    public AcademicDepartmentResponseDto create(@RequestBody AcademicDepartmentCreateUpdateDto dto) {
+        return mapper.toResponseDto(service.addOne(dto));
     }
 
     @DeleteMapping("/{id}")
@@ -60,7 +61,8 @@ public class SpecializationController {
     }
 
     @PutMapping("/{id}")
-    public SpecializationResponseDto update(@RequestBody SpecializationCreateUpdateDto dto, @PathVariable Integer id) {
-        return  mapper.toResponseDto(service.update(dto, id));
+    public AcademicDepartmentResponseDto update(@RequestBody AcademicDepartmentCreateUpdateDto dto, @PathVariable Integer id) {
+        return mapper.toResponseDto(service.update(dto, id));
     }
+
 }

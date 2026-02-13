@@ -38,7 +38,7 @@ import ua.com.foxminded.mapper.SpecializationMapper;
 import ua.com.foxminded.service.SpecializationService;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(controllers = SpecializationController.class)
+@WebMvcTest(controllers = SpecializationRestController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class SpecializationControllerTest {
     

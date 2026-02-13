@@ -3,6 +3,8 @@ package ua.com.foxminded.data.generator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.github.javafaker.Faker;
 
 import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
@@ -14,6 +16,7 @@ import ua.com.foxminded.enums.WeekDay;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.service.LessonService;
 
+@Component
 public class LessonGenerator {
 
     private final LessonService service;
@@ -29,6 +32,10 @@ public class LessonGenerator {
 
         for (int i = 0; i < lessonCount; i++) {
 
+            if(classrooms.isEmpty()) {
+                throw new IllegalStateException("Classroom list is empty ");
+            }
+            
             Classroom classroom = classrooms.get(faker.random().nextInt(classrooms.size()));
 
             LessonCreateUpdateDto dto = new LessonCreateUpdateDto();

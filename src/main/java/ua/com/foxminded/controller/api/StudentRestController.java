@@ -11,45 +11,47 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import ua.com.foxminded.dto.classroom.ClassroomCreateUpdateDto;
-import ua.com.foxminded.dto.classroom.ClassroomResponseDto;
-import ua.com.foxminded.mapper.ClassroomMapper;
-import ua.com.foxminded.service.ClassroomService;
+import ua.com.foxminded.dto.user.StudentCreateUpdateDto;
+import ua.com.foxminded.dto.user.StudentResponseDto;
+import ua.com.foxminded.mapper.StudentMapper;
+import ua.com.foxminded.service.StudentService;
 
 @RestController
-@RequestMapping("/api/classrooms")
-public class ClassroomController {
+@RequestMapping("/api/students")
+public class StudentRestController {
 
-    private final ClassroomService service;
-    private final ClassroomMapper mapper;
+    private final StudentService service;
+    private final StudentMapper mapper;
 
-    public ClassroomController(ClassroomService service, ClassroomMapper mapper) {
+    public StudentRestController(StudentService service, StudentMapper mapper) {
         this.service = service;
         this.mapper = mapper;
     }
 
     @GetMapping
-    public List<ClassroomResponseDto> findAll() {
+    public List<StudentResponseDto> findAll() {
         return service.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
-    @GetMapping("/name/{name}")
-    public ClassroomResponseDto findByName(@PathVariable String name) {
-        return mapper.toDto(service.findByName(name));
+    @GetMapping("/search")
+    public StudentResponseDto findByFullName(@RequestParam String lastName, @RequestParam String firstName,
+            @RequestParam String middleName) {
+        return  mapper.toDto(service.findByFullName(lastName, firstName, middleName));
     }
 
     @GetMapping("/{id}")
-    public ClassroomResponseDto findOne(@PathVariable Integer id) {
-        return mapper.toDto(service.findById(id));
+    public StudentResponseDto findOne(@PathVariable Integer id) {
+        return  mapper.toDto(service.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ClassroomResponseDto create(@RequestBody ClassroomCreateUpdateDto dto) {
-        return mapper.toDto(service.addOne(dto));
+    public StudentResponseDto create(@RequestBody StudentCreateUpdateDto dto) {
+        return  mapper.toDto(service.addOne(dto));
     }
 
     @DeleteMapping("/{id}")
@@ -60,7 +62,7 @@ public class ClassroomController {
     }
 
     @PutMapping("/{id}")
-    public ClassroomResponseDto update(@RequestBody ClassroomCreateUpdateDto dto, @PathVariable Integer id) {
-        return mapper.toDto(service.update(dto, id));
+    public StudentResponseDto update(@RequestBody StudentCreateUpdateDto dto, @PathVariable Integer id) {
+        return  mapper.toDto(service.update(dto, id));
     }
 }

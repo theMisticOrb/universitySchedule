@@ -11,47 +11,45 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import ua.com.foxminded.dto.user.TeacherCreateUpdateDto;
-import ua.com.foxminded.dto.user.TeacherResponseDto;
-import ua.com.foxminded.mapper.TeacherMapper;
-import ua.com.foxminded.service.TeacherService;
+import ua.com.foxminded.dto.subject.SubjectCreateUpdateDto;
+import ua.com.foxminded.dto.subject.SubjectResponseDto;
+import ua.com.foxminded.mapper.SubjectMapper;
+import ua.com.foxminded.service.SubjectService;
 
 @RestController
-@RequestMapping("/api/teachers")
-public class TeacherController {
+@RequestMapping("/api/subjects")
+public class SubjectRestController {
 
-    private final TeacherService service;
-    private final TeacherMapper mapper;
+    private final SubjectService service;
+    private final SubjectMapper mapper;
 
-    public TeacherController(TeacherService service, TeacherMapper mapper) {
+    public SubjectRestController(SubjectService service, SubjectMapper mapper) {
         this.service = service;
         this.mapper = mapper;
     }
 
     @GetMapping
-    public List<TeacherResponseDto> findAll() {
+    public List<SubjectResponseDto> findAll() {
         return service.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
-    @GetMapping("/search")
-    public TeacherResponseDto findByFullName(@RequestParam String lastName, @RequestParam String firstName,
-            @RequestParam String middleName) {
-        return mapper.toDto(service.findByFullName(lastName, firstName, middleName));
+    @GetMapping("/title/{title}")
+    public SubjectResponseDto findByTitle(@PathVariable String title) {
+        return  mapper.toDto(service.findByTitle(title));
     }
 
     @GetMapping("/{id}")
-    public TeacherResponseDto findOne(@PathVariable Integer id) {
-        return mapper.toDto(service.findById(id));
+    public SubjectResponseDto findOne(@PathVariable Integer id) {
+        return  mapper.toDto(service.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TeacherResponseDto create(@RequestBody TeacherCreateUpdateDto dto) {
-        return mapper.toDto(service.addOne(dto));
+    public SubjectResponseDto create(@RequestBody SubjectCreateUpdateDto dto) {
+        return  mapper.toDto(service.addOne(dto));
     }
 
     @DeleteMapping("/{id}")
@@ -62,8 +60,8 @@ public class TeacherController {
     }
 
     @PutMapping("/{id}")
-    public TeacherResponseDto update(@RequestBody TeacherCreateUpdateDto dto, @PathVariable Integer id) {
-        return mapper.toDto(service.update(dto, id));
+    public SubjectResponseDto update(@RequestBody SubjectCreateUpdateDto dto, @PathVariable Integer id) {
+        return  mapper.toDto(service.update(dto, id));
     }
 
 }

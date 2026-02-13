@@ -3,12 +3,15 @@ package ua.com.foxminded.data.generator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Specialization;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.service.GroupService;
 
+@Component
 public class GroupGenerator {
     private final GroupService service;
 

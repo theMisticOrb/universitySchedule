@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.stereotype.Component;
+
 import com.github.javafaker.Faker;
 
 import ua.com.foxminded.dto.subject.SubjectCreateUpdateDto;
@@ -12,7 +14,7 @@ import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.service.SubjectService;
-
+@Component
 public class SubjectGenerator {
 
     private final SubjectService service;

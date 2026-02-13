@@ -11,48 +11,44 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
-import ua.com.foxminded.dto.lesson.LessonResponseDto;
-import ua.com.foxminded.enums.WeekDay;
-import ua.com.foxminded.mapper.LessonMapper;
-import ua.com.foxminded.service.LessonService;
+import ua.com.foxminded.dto.faculty.FacultyCreateUpdateDto;
+import ua.com.foxminded.dto.faculty.FacultyResponseDto;
+import ua.com.foxminded.mapper.FacultyMapper;
+import ua.com.foxminded.service.FacultyService;
 
 @RestController
-@RequestMapping("/api/lessons")
-public class LessonController {
+@RequestMapping("/api/faculties")
+public class FacultyRestController {
 
-    private final LessonService service;
-    private final LessonMapper mapper;
+    private final FacultyService service;
+    private final FacultyMapper mapper;
 
-    public LessonController(LessonService service, LessonMapper mapper) {
+    public FacultyRestController(FacultyService service, FacultyMapper mapper) {
         this.service = service;
         this.mapper = mapper;
     }
 
     @GetMapping
-    public List<LessonResponseDto> findAll() {
+    public List<FacultyResponseDto> findAll() {
         return service.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
-    @GetMapping(params = { "subjectTitle", "weekDay" })
-    public List<LessonResponseDto> findBySubjectTitleAndWeekDay(@RequestParam String subjectTitle,
-            @RequestParam WeekDay weekDay) {
-        return service.findBySubjectTitleAndWeekDay(subjectTitle, weekDay).stream().map(mapper::toDto)
-                .collect(Collectors.toList());
+    @GetMapping("/title/{title}")
+    public FacultyResponseDto findByTitle(@PathVariable String title) {
+        return mapper.toDto(service.findByTitle(title));
     }
 
     @GetMapping("/{id}")
-    public LessonResponseDto findOne(@PathVariable Integer id) {
+    public FacultyResponseDto findOne(@PathVariable Integer id) {
         return mapper.toDto(service.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public LessonResponseDto create(@RequestBody LessonCreateUpdateDto dto) {
+    public FacultyResponseDto create(@RequestBody FacultyCreateUpdateDto dto) {
         return mapper.toDto(service.addOne(dto));
     }
 
@@ -64,8 +60,7 @@ public class LessonController {
     }
 
     @PutMapping("/{id}")
-    public LessonResponseDto update(@RequestBody LessonCreateUpdateDto dto, @PathVariable Integer id) {
+    public FacultyResponseDto update(@RequestBody FacultyCreateUpdateDto dto, @PathVariable Integer id) {
         return mapper.toDto(service.update(dto, id));
     }
-
 }

@@ -36,7 +36,7 @@ import ua.com.foxminded.mapper.GroupMapper;
 import ua.com.foxminded.service.GroupService;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(controllers = GroupController.class)
+@WebMvcTest(controllers = GroupRestController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class GroupControllerTest {
 

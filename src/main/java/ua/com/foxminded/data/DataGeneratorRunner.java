@@ -20,7 +20,7 @@ public class DataGeneratorRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        generator.generateAll();
+        generator.generate();
     }
 
 }

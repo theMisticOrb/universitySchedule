@@ -15,43 +15,45 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import ua.com.foxminded.dto.user.StudentCreateUpdateDto;
-import ua.com.foxminded.dto.user.StudentResponseDto;
-import ua.com.foxminded.mapper.StudentMapper;
-import ua.com.foxminded.service.StudentService;
+import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
+import ua.com.foxminded.dto.lesson.LessonResponseDto;
+import ua.com.foxminded.enums.WeekDay;
+import ua.com.foxminded.mapper.LessonMapper;
+import ua.com.foxminded.service.LessonService;
 
 @RestController
-@RequestMapping("/api/students")
-public class StudentController {
+@RequestMapping("/api/lessons")
+public class LessonRestController {
 
-    private final StudentService service;
-    private final StudentMapper mapper;
+    private final LessonService service;
+    private final LessonMapper mapper;
 
-    public StudentController(StudentService service, StudentMapper mapper) {
+    public LessonRestController(LessonService service, LessonMapper mapper) {
         this.service = service;
         this.mapper = mapper;
     }
 
     @GetMapping
-    public List<StudentResponseDto> findAll() {
+    public List<LessonResponseDto> findAll() {
         return service.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
-    @GetMapping("/search")
-    public StudentResponseDto findByFullName(@RequestParam String lastName, @RequestParam String firstName,
-            @RequestParam String middleName) {
-        return  mapper.toDto(service.findByFullName(lastName, firstName, middleName));
+    @GetMapping(params = { "subjectTitle", "weekDay" })
+    public List<LessonResponseDto> findBySubjectTitleAndWeekDay(@RequestParam String subjectTitle,
+            @RequestParam WeekDay weekDay) {
+        return service.findBySubjectTitleAndWeekDay(subjectTitle, weekDay).stream().map(mapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public StudentResponseDto findOne(@PathVariable Integer id) {
-        return  mapper.toDto(service.findById(id));
+    public LessonResponseDto findOne(@PathVariable Integer id) {
+        return mapper.toDto(service.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public StudentResponseDto create(@RequestBody StudentCreateUpdateDto dto) {
-        return  mapper.toDto(service.addOne(dto));
+    public LessonResponseDto create(@RequestBody LessonCreateUpdateDto dto) {
+        return mapper.toDto(service.addOne(dto));
     }
 
     @DeleteMapping("/{id}")
@@ -62,7 +64,8 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
-    public StudentResponseDto update(@RequestBody StudentCreateUpdateDto dto, @PathVariable Integer id) {
-        return  mapper.toDto(service.update(dto, id));
+    public LessonResponseDto update(@RequestBody LessonCreateUpdateDto dto, @PathVariable Integer id) {
+        return mapper.toDto(service.update(dto, id));
     }
+
 }

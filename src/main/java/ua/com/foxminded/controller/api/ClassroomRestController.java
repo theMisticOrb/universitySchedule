@@ -14,41 +14,41 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import ua.com.foxminded.dto.faculty.FacultyCreateUpdateDto;
-import ua.com.foxminded.dto.faculty.FacultyResponseDto;
-import ua.com.foxminded.mapper.FacultyMapper;
-import ua.com.foxminded.service.FacultyService;
+import ua.com.foxminded.dto.classroom.ClassroomCreateUpdateDto;
+import ua.com.foxminded.dto.classroom.ClassroomResponseDto;
+import ua.com.foxminded.mapper.ClassroomMapper;
+import ua.com.foxminded.service.ClassroomService;
 
 @RestController
-@RequestMapping("/api/faculties")
-public class FacultyController {
+@RequestMapping("/api/classrooms")
+public class ClassroomRestController {
 
-    private final FacultyService service;
-    private final FacultyMapper mapper;
+    private final ClassroomService service;
+    private final ClassroomMapper mapper;
 
-    public FacultyController(FacultyService service, FacultyMapper mapper) {
+    public ClassroomRestController(ClassroomService service, ClassroomMapper mapper) {
         this.service = service;
         this.mapper = mapper;
     }
 
     @GetMapping
-    public List<FacultyResponseDto> findAll() {
+    public List<ClassroomResponseDto> findAll() {
         return service.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
-    @GetMapping("/title/{title}")
-    public FacultyResponseDto findByTitle(@PathVariable String title) {
-        return mapper.toDto(service.findByTitle(title));
+    @GetMapping("/name/{name}")
+    public ClassroomResponseDto findByName(@PathVariable String name) {
+        return mapper.toDto(service.findByName(name));
     }
 
     @GetMapping("/{id}")
-    public FacultyResponseDto findOne(@PathVariable Integer id) {
+    public ClassroomResponseDto findOne(@PathVariable Integer id) {
         return mapper.toDto(service.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public FacultyResponseDto create(@RequestBody FacultyCreateUpdateDto dto) {
+    public ClassroomResponseDto create(@RequestBody ClassroomCreateUpdateDto dto) {
         return mapper.toDto(service.addOne(dto));
     }
 
@@ -60,7 +60,7 @@ public class FacultyController {
     }
 
     @PutMapping("/{id}")
-    public FacultyResponseDto update(@RequestBody FacultyCreateUpdateDto dto, @PathVariable Integer id) {
+    public ClassroomResponseDto update(@RequestBody ClassroomCreateUpdateDto dto, @PathVariable Integer id) {
         return mapper.toDto(service.update(dto, id));
     }
 }

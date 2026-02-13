@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import ua.com.foxminded.config.GeneratorConfig;
 import ua.com.foxminded.data.generator.AcademicDepartmentGenerator;
@@ -24,6 +25,8 @@ import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.service.FacultyService;
 
+
+@Component
 public class DataStructureGenerator {
 
     private final FacultyGenerator facultyGen;

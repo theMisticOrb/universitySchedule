@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.stereotype.Component;
+
 import com.github.javafaker.Faker;
 
 import ua.com.foxminded.dto.specialization.SpecializationCreateUpdateDto;
@@ -12,7 +14,7 @@ import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Specialization;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.service.SpecializationService;
-
+@Component
 public class SpecializationGenerator {
 
     private final SpecializationService service;

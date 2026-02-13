@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.stereotype.Component;
+
 import com.github.javafaker.Faker;
 
 import ua.com.foxminded.dto.user.StudentCreateUpdateDto;
@@ -13,6 +15,8 @@ import ua.com.foxminded.entity.Student;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.service.StudentService;
 
+
+@Component
 public class StudentGenerator {
 
     private final StudentService service;

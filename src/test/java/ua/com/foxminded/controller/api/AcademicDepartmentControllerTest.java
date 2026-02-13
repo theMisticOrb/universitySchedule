@@ -37,7 +37,7 @@ import ua.com.foxminded.mapper.AcademicDepartmentMapper;
 import ua.com.foxminded.service.AcademicDepartmentService;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(controllers = AcademicDepartmentController.class)
+@WebMvcTest(controllers = AcademicDepartmentRestController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class AcademicDepartmentControllerTest {
 

@@ -11,44 +11,46 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
-import ua.com.foxminded.dto.group.GroupResponseDto;
-import ua.com.foxminded.mapper.GroupMapper;
-import ua.com.foxminded.service.GroupService;
+import ua.com.foxminded.dto.user.TeacherCreateUpdateDto;
+import ua.com.foxminded.dto.user.TeacherResponseDto;
+import ua.com.foxminded.mapper.TeacherMapper;
+import ua.com.foxminded.service.TeacherService;
 
 @RestController
-@RequestMapping("/api/groups")
-public class GroupController {
+@RequestMapping("/api/teachers")
+public class TeacherRestController {
 
-    private final GroupService service;
-    private final GroupMapper mapper;
+    private final TeacherService service;
+    private final TeacherMapper mapper;
 
-    public GroupController(GroupService service, GroupMapper mapper) {
+    public TeacherRestController(TeacherService service, TeacherMapper mapper) {
         this.service = service;
         this.mapper = mapper;
     }
 
     @GetMapping
-    public List<GroupResponseDto> findAll() {
+    public List<TeacherResponseDto> findAll() {
         return service.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
-    @GetMapping("/name/{name:.+}")
-    public GroupResponseDto findByName(@PathVariable String name) {
-        return mapper.toDto(service.findByName(name));
+    @GetMapping("/search")
+    public TeacherResponseDto findByFullName(@RequestParam String lastName, @RequestParam String firstName,
+            @RequestParam String middleName) {
+        return mapper.toDto(service.findByFullName(lastName, firstName, middleName));
     }
 
     @GetMapping("/{id}")
-    public GroupResponseDto findOne(@PathVariable Integer id) {
+    public TeacherResponseDto findOne(@PathVariable Integer id) {
         return mapper.toDto(service.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public GroupResponseDto create(@RequestBody GroupCreateUpdateDto dto) {
+    public TeacherResponseDto create(@RequestBody TeacherCreateUpdateDto dto) {
         return mapper.toDto(service.addOne(dto));
     }
 
@@ -60,7 +62,7 @@ public class GroupController {
     }
 
     @PutMapping("/{id}")
-    public GroupResponseDto update(@RequestBody GroupCreateUpdateDto dto, @PathVariable Integer id) {
+    public TeacherResponseDto update(@RequestBody TeacherCreateUpdateDto dto, @PathVariable Integer id) {
         return mapper.toDto(service.update(dto, id));
     }
 
