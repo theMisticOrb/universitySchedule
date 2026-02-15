@@ -82,7 +82,7 @@ class SubjectControllerTest {
         specializations.add(subject);
 
         when(service.findAll()).thenReturn(specializations);
-        when(specializationMapper.toDto(any(Subject.class))).thenReturn(responseDto);
+        when(specializationMapper.toResponseDto(any(Subject.class))).thenReturn(responseDto);
 
         mvc.perform(get("/api/subjects")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].title").value("Computer Science"));
@@ -95,7 +95,7 @@ class SubjectControllerTest {
         SubjectResponseDto responseDto = createResponseDto();
 
         when(service.findByTitle("Computer Science")).thenReturn(subject);
-        when(specializationMapper.toDto(subject)).thenReturn(responseDto);
+        when(specializationMapper.toResponseDto(subject)).thenReturn(responseDto);
         mvc.perform(get("/api/subjects/title/Computer Science")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
     }
@@ -116,7 +116,7 @@ class SubjectControllerTest {
         SubjectResponseDto responseDto = createResponseDto();
 
         when(service.findById(1)).thenReturn(subject);
-        when(specializationMapper.toDto(subject)).thenReturn(responseDto);
+        when(specializationMapper.toResponseDto(subject)).thenReturn(responseDto);
         mvc.perform(get("/api/subjects/1")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
     }
@@ -132,7 +132,7 @@ class SubjectControllerTest {
         requestDto.setTitle("Computer Science");
 
         when(service.addOne(any(SubjectCreateUpdateDto.class))).thenReturn(subject);
-        when(specializationMapper.toDto(subject)).thenReturn(responseDto);
+        when(specializationMapper.toResponseDto(subject)).thenReturn(responseDto);
 
         mvc.perform(post("/api/subjects").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
@@ -158,14 +158,14 @@ class SubjectControllerTest {
         requestDto.setTitle("Computer Science");
 
         when(service.update(any(SubjectCreateUpdateDto.class), eq(1))).thenReturn(subject);
-        when(specializationMapper.toDto(subject)).thenReturn(responseDto);
+        when(specializationMapper.toResponseDto(subject)).thenReturn(responseDto);
 
         mvc.perform(put("/api/subjects/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
 
         verify(service).update(any(SubjectCreateUpdateDto.class), eq(1));
-        verify(specializationMapper).toDto(subject);
+        verify(specializationMapper).toResponseDto(subject);
 
     }
 

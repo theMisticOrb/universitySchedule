@@ -31,7 +31,7 @@ public class LessonMapper {
         return entity;
     }
 
-    public LessonResponseDto toDto(Lesson entity) {
+    public LessonResponseDto toResponseDto(Lesson entity) {
         if (entity == null) {
             return null;
         }

@@ -75,7 +75,7 @@ class GroupControllerTest {
         groups.add(group);
 
         when(service.findAll()).thenReturn(groups);
-        when(groupMapper.toDto(any(Group.class))).thenReturn(responseDto);
+        when(groupMapper.toResponseDto(any(Group.class))).thenReturn(responseDto);
 
         mvc.perform(get("/api/groups")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].name").value(group.getName()));
@@ -88,7 +88,7 @@ class GroupControllerTest {
         GroupResponseDto responseDto = createResponseDto();
 
         when(service.findByName("1.1.1.1")).thenReturn(group);
-        when(groupMapper.toDto(group)).thenReturn(responseDto);
+        when(groupMapper.toResponseDto(group)).thenReturn(responseDto);
 
         mvc.perform(get("/api/groups/name/1.1.1.1")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("1.1.1.1"));
@@ -110,7 +110,7 @@ class GroupControllerTest {
         GroupResponseDto responseDto = createResponseDto();
 
         when(service.findById(1)).thenReturn(group);
-        when(groupMapper.toDto(group)).thenReturn(responseDto);
+        when(groupMapper.toResponseDto(group)).thenReturn(responseDto);
 
         mvc.perform(get("/api/groups/1")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(group.getName()));
@@ -125,7 +125,7 @@ class GroupControllerTest {
         requestDto.setFacultyId(1);
 
         when(service.addOne(any(GroupCreateUpdateDto.class))).thenReturn(group);
-        when(groupMapper.toDto(group)).thenReturn(responseDto);
+        when(groupMapper.toResponseDto(group)).thenReturn(responseDto);
 
         mvc.perform(post("/api/groups").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
@@ -150,7 +150,7 @@ class GroupControllerTest {
         requestDto.setFacultyId(1);
 
         when(service.update(any(GroupCreateUpdateDto.class), eq(1))).thenReturn(group);
-        when(groupMapper.toDto(group)).thenReturn(responseDto);
+        when(groupMapper.toResponseDto(group)).thenReturn(responseDto);
 
         mvc.perform(put("/api/groups/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())

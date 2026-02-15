@@ -13,12 +13,12 @@ import com.github.javafaker.Faker;
 @Profile("dev")
 public class GeneratorConfig {
 
-    private int facultyCount = 5;
-    private int departmentsPerFaculty = 8;
+    private int facultyCount = 2;
+    private int departmentsPerFaculty = 2;
     private int specializationsPerDepartment = 3;
     private int groupsPerSpecialization = 5;
-    private int studentsPerGroup = 10;
-    private int teachersPerDepartment = 20;
+    private int studentsPerGroup = 5;
+    private int teachersPerDepartment = 5;
     private int subjectsPerTeacher = 3;
     private int classroomsPerTeacher = 3;
     private int lessonsPerSubject = 3;

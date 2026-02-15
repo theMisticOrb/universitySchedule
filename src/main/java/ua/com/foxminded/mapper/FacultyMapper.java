@@ -18,12 +18,12 @@ public class FacultyMapper {
         entity.setTitle(dto.getTitle());
         return entity;
     }
-    
-    public FacultyResponseDto toDto(Faculty entity) {
-        if(entity==null) {
+
+    public FacultyResponseDto toResponseDto(Faculty entity) {
+        if (entity == null) {
             return null;
         }
-        
+
         FacultyResponseDto dto = new FacultyResponseDto();
         dto.setId(entity.getId());
         dto.setTitle(entity.getTitle());

@@ -24,12 +24,12 @@ public class SubjectMapper {
         return entity;
 
     }
-    
-    public SubjectResponseDto toDto(Subject entity) {
-        if(entity==null) {
+
+    public SubjectResponseDto toResponseDto(Subject entity) {
+        if (entity == null) {
             return null;
         }
-        
+
         SubjectResponseDto dto = new SubjectResponseDto();
         dto.setId(entity.getId());
         dto.setTeacherId(entity.getTeacher().getId());

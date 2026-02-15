@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lessons</title>
+</head>
+
+<body>
+
+    <div th:replace="fragments/header :: header"></div>
+    <div th:replace="fragments/menu :: menu"></div>
+
+    <h2> All Planned Lessons Of University</h2>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Week day</th>
+                <th>Class hour</th>
+                <th>Classroom name</th>
+                <th>Subject title</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="lesson : ${lessons}">
+                <td th:text="${lesson.weekDay}"></td>
+                <td th:text="${lesson.classHour}"></td>
+                <td th:text="${lesson.classroomName}"></td>
+                <td th:text="${lesson.subjectTitle}"></td>
+            </tr>
+        </tbody>
+
+    </table>
+
+
+</body>
+
+</html>

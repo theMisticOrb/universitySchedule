@@ -9,7 +9,6 @@ import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Specialization;
 
-
 @Component
 public class GroupMapper {
 
@@ -35,7 +34,7 @@ public class GroupMapper {
         return entity;
     }
 
-    public GroupResponseDto toDto(Group entity) {
+    public GroupResponseDto toResponseDto(Group entity) {
         if (entity == null) {
             return null;
         }

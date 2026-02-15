@@ -36,16 +36,5 @@ public class AcademicDepartmentMapper {
         dto.setTitle(entity.getTitle());
         return dto;
     }
-    
-    public AcademicDepartmentCreateUpdateDto toCreateUpdateDto(AcademicDepartment entity) {
-        if (entity == null) {
-            return null;
-        }
-
-        AcademicDepartmentCreateUpdateDto dto = new AcademicDepartmentCreateUpdateDto();
-        dto.setFacultyId(entity.getFaculty().getId());
-        dto.setTitle(entity.getTitle());
-        return dto;
-    }
 
 }

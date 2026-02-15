@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import com.github.javafaker.Faker;
@@ -16,10 +19,12 @@ import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.service.TeacherService;
 
 @Component
+@Profile("dev")
 public class TeacherGenerator {
 
     private final TeacherService service;
     private final Faker faker;
+    private final Logger log = LoggerFactory.getLogger(TeacherGenerator.class);
 
     public TeacherGenerator(TeacherService service, Faker faker) {
         this.service = service;
@@ -60,7 +65,7 @@ public class TeacherGenerator {
                 Teacher teacher = service.addOne(dto);
                 teachers.add(teacher);
             } catch (DuplicateEntityException e) {
-                e.printStackTrace();
+                log.warn("Duplicate entity: {}", fullName);
             }
 
         }

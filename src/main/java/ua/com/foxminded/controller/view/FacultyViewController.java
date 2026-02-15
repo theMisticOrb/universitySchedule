@@ -13,7 +13,7 @@ import ua.com.foxminded.service.FacultyService;
 @Controller
 @RequestMapping("/faculties")
 public class FacultyViewController {
-    
+
     private final FacultyService service;
     private final FacultyMapper mapper;
 
@@ -21,10 +21,11 @@ public class FacultyViewController {
         this.service = service;
         this.mapper = mapper;
     }
-    
+
     @GetMapping
     public String listFaculties(Model model) {
-        model.addAttribute("faculties", service.findAll().stream().map(mapper::toDto).collect(Collectors.toList()));
+        model.addAttribute("faculties",
+                service.findAll().stream().map(mapper::toResponseDto).collect(Collectors.toList()));
         return "faculty/list";
     }
 }

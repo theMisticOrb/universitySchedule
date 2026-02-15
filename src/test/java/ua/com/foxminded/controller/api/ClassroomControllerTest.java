@@ -76,7 +76,7 @@ class ClassroomControllerTest {
         listClassrooms.add(classroom);
 
         when(service.findAll()).thenReturn(listClassrooms);
-        when(classroomMapper.toDto(any(Classroom.class))).thenReturn(responseDto);
+        when(classroomMapper.toResponseDto(any(Classroom.class))).thenReturn(responseDto);
 
         mvc.perform(get("/api/classrooms")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].name").value("2A"));
@@ -89,7 +89,7 @@ class ClassroomControllerTest {
         ClassroomResponseDto responseDto = createResponseDto();
 
         when(service.findByName("2A")).thenReturn(classroom);
-        when(classroomMapper.toDto(classroom)).thenReturn(responseDto);
+        when(classroomMapper.toResponseDto(classroom)).thenReturn(responseDto);
 
         mvc.perform(get("/api/classrooms/name/2A")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("2A"));
@@ -111,7 +111,7 @@ class ClassroomControllerTest {
         ClassroomResponseDto responseDto = createResponseDto();
 
         when(service.findById(1)).thenReturn(classroom);
-        when(classroomMapper.toDto(classroom)).thenReturn(responseDto);
+        when(classroomMapper.toResponseDto(classroom)).thenReturn(responseDto);
 
         mvc.perform(get("/api/classrooms/1")).andExpect(status().isOk()).andExpect(jsonPath("$.name").value("2A"));
     }
@@ -126,7 +126,7 @@ class ClassroomControllerTest {
         requestDto.setName("2A");
 
         when(service.addOne(any(ClassroomCreateUpdateDto.class))).thenReturn(classroom);
-        when(classroomMapper.toDto(classroom)).thenReturn(responseDto);
+        when(classroomMapper.toResponseDto(classroom)).thenReturn(responseDto);
 
         mvc.perform(post("/api/classrooms").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
@@ -151,7 +151,7 @@ class ClassroomControllerTest {
         requestDto.setName("2A");
 
         when(service.update(any(ClassroomCreateUpdateDto.class), eq(1))).thenReturn(classroom);
-        when(classroomMapper.toDto(classroom)).thenReturn(responseDto);
+        when(classroomMapper.toResponseDto(classroom)).thenReturn(responseDto);
 
         mvc.perform(put("/api/classrooms/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())

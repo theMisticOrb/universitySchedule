@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import ua.com.foxminded.config.GeneratorConfig;
@@ -25,8 +26,8 @@ import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.service.FacultyService;
 
-
 @Component
+@Profile("dev")
 public class DataStructureGenerator {
 
     private final FacultyGenerator facultyGen;
@@ -42,6 +43,8 @@ public class DataStructureGenerator {
 
     private final FacultyService facultyService;
     private final Logger log = LoggerFactory.getLogger(DataStructureGenerator.class);
+
+    private List<Classroom> classrooms;
 
     public DataStructureGenerator(FacultyGenerator facultyGen, AcademicDepartmentGenerator departmentGen,
             SpecializationGenerator specializationGen, GroupGenerator groupGen, StudentGenerator studentGen,
@@ -65,10 +68,14 @@ public class DataStructureGenerator {
             log.info("Database is not empty. Skipping data generation.");
             return;
         }
+        try {
+            log.info("Database empty. Starting data generation...");
+            generateAll();
+            log.info("Data generation completed successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        log.info("Database empty. Starting data generation...");
-        generateAll();
-        log.info("Data generation completed successfully.");
     }
 
     private boolean isDatabaseEmpty() {
@@ -78,6 +85,7 @@ public class DataStructureGenerator {
     public void generateAll() {
 
         GeneratorConfig count = config;
+        classrooms = classroomGen.generateClassrooms(count.getClassroomsPerTeacher());
 
         List<Faculty> faculties = facultyGen.generateFaculty(count.getFacultyCount());
         faculties.forEach(faculty -> generateFacultyStructure(faculty, count));
@@ -112,7 +120,6 @@ public class DataStructureGenerator {
 
     private void generateTeacherLoad(Teacher teacher, GeneratorConfig count) {
         List<Subject> subjects = subjectGen.generateSubjects(count.getSubjectsPerTeacher(), teacher);
-        List<Classroom> classrooms = classroomGen.generateClassrooms(count.getClassroomsPerTeacher());
         subjects.forEach(subject -> lessonGen.generateLesson(count.getLessonsPerSubject(), subject, classrooms));
     }
 

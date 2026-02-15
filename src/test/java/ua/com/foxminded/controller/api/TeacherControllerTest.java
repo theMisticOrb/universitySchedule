@@ -83,7 +83,7 @@ class TeacherControllerTest {
         students.add(entity);
 
         when(service.findAll()).thenReturn(students);
-        when(studentMapper.toDto(any(Teacher.class))).thenReturn(responseDto);
+        when(studentMapper.toResponseDto(any(Teacher.class))).thenReturn(responseDto);
 
         mvc.perform(get("/api/teachers")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1));
     }
@@ -95,7 +95,7 @@ class TeacherControllerTest {
         TeacherResponseDto dto = createResponseDto();
 
         when(service.findByFullName("Bobinski", "Bob", "Bobovitch")).thenReturn(student);
-        when(studentMapper.toDto(student)).thenReturn(dto);
+        when(studentMapper.toResponseDto(student)).thenReturn(dto);
 
         mvc.perform(get("/api/teachers/search").param("lastName", "Bobinski").param("firstName", "Bob")
                 .param("middleName", "Bobovitch")).andExpect(status().isOk())
@@ -123,7 +123,7 @@ class TeacherControllerTest {
         TeacherResponseDto responseDto = createResponseDto();
 
         when(service.findById(1)).thenReturn(entity);
-        when(studentMapper.toDto(entity)).thenReturn(responseDto);
+        when(studentMapper.toResponseDto(entity)).thenReturn(responseDto);
         mvc.perform(get("/api/teachers/1")).andExpect(status().isOk());
     }
 
@@ -140,7 +140,7 @@ class TeacherControllerTest {
         requestDto.setLastName("Bobinski");
 
         when(service.addOne(any(TeacherCreateUpdateDto.class))).thenReturn(entity);
-        when(studentMapper.toDto(entity)).thenReturn(responseDto);
+        when(studentMapper.toResponseDto(entity)).thenReturn(responseDto);
 
         mvc.perform(post("/api/teachers").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated());
@@ -167,13 +167,13 @@ class TeacherControllerTest {
         requestDto.setLastName("Bobinski");
 
         when(service.update(any(TeacherCreateUpdateDto.class), eq(1))).thenReturn(entity);
-        when(studentMapper.toDto(entity)).thenReturn(responseDto);
+        when(studentMapper.toResponseDto(entity)).thenReturn(responseDto);
 
         mvc.perform(put("/api/teachers/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk());
 
         verify(service).update(any(TeacherCreateUpdateDto.class), eq(1));
-        verify(studentMapper).toDto(entity);
+        verify(studentMapper).toResponseDto(entity);
 
     }
 

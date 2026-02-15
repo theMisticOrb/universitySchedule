@@ -75,7 +75,7 @@ class FacultyControllerTest {
         faculties.add(faculty);
 
         when(service.findAll()).thenReturn(faculties);
-        when(facultyMapper.toDto(any(Faculty.class))).thenReturn(responseDto);
+        when(facultyMapper.toResponseDto(any(Faculty.class))).thenReturn(responseDto);
 
         mvc.perform(get("/api/faculties")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].title").value("IT"));
@@ -88,7 +88,7 @@ class FacultyControllerTest {
         FacultyResponseDto responseDto = createResponseDto();
 
         when(service.findByTitle("IT")).thenReturn(faculty);
-        when(facultyMapper.toDto(faculty)).thenReturn(responseDto);
+        when(facultyMapper.toResponseDto(faculty)).thenReturn(responseDto);
 
         mvc.perform(get("/api/faculties/title/IT")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("IT"));
@@ -110,7 +110,7 @@ class FacultyControllerTest {
         FacultyResponseDto responseDto = createResponseDto();
 
         when(service.findById(1)).thenReturn(faculty);
-        when(facultyMapper.toDto(faculty)).thenReturn(responseDto);
+        when(facultyMapper.toResponseDto(faculty)).thenReturn(responseDto);
 
         mvc.perform(get("/api/faculties/1")).andExpect(status().isOk()).andExpect(jsonPath("$.title").value("IT"));
     }
@@ -125,7 +125,7 @@ class FacultyControllerTest {
         requestDto.setTitle("IT");
 
         when(service.addOne(any(FacultyCreateUpdateDto.class))).thenReturn(faculty);
-        when(facultyMapper.toDto(faculty)).thenReturn(responseDto);
+        when(facultyMapper.toResponseDto(faculty)).thenReturn(responseDto);
 
         mvc.perform(post("/api/faculties").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
@@ -150,7 +150,7 @@ class FacultyControllerTest {
         requestDto.setTitle("IT");
 
         when(service.update(any(FacultyCreateUpdateDto.class), eq(1))).thenReturn(faculty);
-        when(facultyMapper.toDto(faculty)).thenReturn(responseDto);
+        when(facultyMapper.toResponseDto(faculty)).thenReturn(responseDto);
 
         mvc.perform(put("/api/faculties/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())

@@ -77,7 +77,7 @@ class LessonControllerTest {
         lessons.add(lesson);
 
         when(service.findAll()).thenReturn(lessons);
-        when(groupMapper.toDto(any(Lesson.class))).thenReturn(responseDto);
+        when(groupMapper.toResponseDto(any(Lesson.class))).thenReturn(responseDto);
 
         mvc.perform(get("/api/lessons").param("subjectTitle", "Math")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(1)).andExpect(jsonPath("$[0].subjectTitle").value("Math"));
@@ -93,7 +93,7 @@ class LessonControllerTest {
         lessons.add(lesson);
 
         when(service.findBySubjectTitleAndWeekDay("Math", WeekDay.FRIDAY)).thenReturn(lessons);
-        when(groupMapper.toDto(any(Lesson.class))).thenReturn(responseDto);
+        when(groupMapper.toResponseDto(any(Lesson.class))).thenReturn(responseDto);
 
         mvc.perform(get("/api/lessons").param("subjectTitle", "Math").param("weekDay", "FRIDAY"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$[0].subjectTitle").value("Math"));
@@ -106,7 +106,7 @@ class LessonControllerTest {
         LessonResponseDto responseDto = createResponseDto();
 
         when(service.findById(1)).thenReturn(lesson);
-        when(groupMapper.toDto(lesson)).thenReturn(responseDto);
+        when(groupMapper.toResponseDto(lesson)).thenReturn(responseDto);
 
         mvc.perform(get("/api/lessons/1")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.subjectTitle").value(lesson.getSubject().getTitle()));
@@ -121,7 +121,7 @@ class LessonControllerTest {
         requestDto.setSubjectId(1);
 
         when(service.addOne(any(LessonCreateUpdateDto.class))).thenReturn(lesson);
-        when(groupMapper.toDto(lesson)).thenReturn(responseDto);
+        when(groupMapper.toResponseDto(lesson)).thenReturn(responseDto);
 
         mvc.perform(post("/api/lessons").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
@@ -145,7 +145,7 @@ class LessonControllerTest {
         requestDto.setSubjectId(1);
 
         when(service.update(any(LessonCreateUpdateDto.class), eq(1))).thenReturn(lesson);
-        when(groupMapper.toDto(lesson)).thenReturn(responseDto);
+        when(groupMapper.toResponseDto(lesson)).thenReturn(responseDto);
 
         mvc.perform(put("/api/lessons/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())

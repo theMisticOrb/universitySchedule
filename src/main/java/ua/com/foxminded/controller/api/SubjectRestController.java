@@ -33,23 +33,23 @@ public class SubjectRestController {
 
     @GetMapping
     public List<SubjectResponseDto> findAll() {
-        return service.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
+        return service.findAll().stream().map(mapper::toResponseDto).collect(Collectors.toList());
     }
 
     @GetMapping("/title/{title}")
     public SubjectResponseDto findByTitle(@PathVariable String title) {
-        return  mapper.toDto(service.findByTitle(title));
+        return  mapper.toResponseDto(service.findByTitle(title));
     }
 
     @GetMapping("/{id}")
     public SubjectResponseDto findOne(@PathVariable Integer id) {
-        return  mapper.toDto(service.findById(id));
+        return  mapper.toResponseDto(service.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SubjectResponseDto create(@RequestBody SubjectCreateUpdateDto dto) {
-        return  mapper.toDto(service.addOne(dto));
+        return  mapper.toResponseDto(service.addOne(dto));
     }
 
     @DeleteMapping("/{id}")
@@ -61,7 +61,7 @@ public class SubjectRestController {
 
     @PutMapping("/{id}")
     public SubjectResponseDto update(@RequestBody SubjectCreateUpdateDto dto, @PathVariable Integer id) {
-        return  mapper.toDto(service.update(dto, id));
+        return  mapper.toResponseDto(service.update(dto, id));
     }
 
 }

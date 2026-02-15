@@ -34,24 +34,24 @@ public class StudentRestController {
 
     @GetMapping
     public List<StudentResponseDto> findAll() {
-        return service.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
+        return service.findAll().stream().map(mapper::toResponseDto).collect(Collectors.toList());
     }
 
     @GetMapping("/search")
     public StudentResponseDto findByFullName(@RequestParam String lastName, @RequestParam String firstName,
             @RequestParam String middleName) {
-        return  mapper.toDto(service.findByFullName(lastName, firstName, middleName));
+        return  mapper.toResponseDto(service.findByFullName(lastName, firstName, middleName));
     }
 
     @GetMapping("/{id}")
     public StudentResponseDto findOne(@PathVariable Integer id) {
-        return  mapper.toDto(service.findById(id));
+        return  mapper.toResponseDto(service.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public StudentResponseDto create(@RequestBody StudentCreateUpdateDto dto) {
-        return  mapper.toDto(service.addOne(dto));
+        return  mapper.toResponseDto(service.addOne(dto));
     }
 
     @DeleteMapping("/{id}")
@@ -63,6 +63,6 @@ public class StudentRestController {
 
     @PutMapping("/{id}")
     public StudentResponseDto update(@RequestBody StudentCreateUpdateDto dto, @PathVariable Integer id) {
-        return  mapper.toDto(service.update(dto, id));
+        return  mapper.toResponseDto(service.update(dto, id));
     }
 }

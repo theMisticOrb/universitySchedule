@@ -33,23 +33,23 @@ public class GroupRestController {
 
     @GetMapping
     public List<GroupResponseDto> findAll() {
-        return service.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
+        return service.findAll().stream().map(mapper::toResponseDto).collect(Collectors.toList());
     }
 
     @GetMapping("/name/{name:.+}")
     public GroupResponseDto findByName(@PathVariable String name) {
-        return mapper.toDto(service.findByName(name));
+        return mapper.toResponseDto(service.findByName(name));
     }
 
     @GetMapping("/{id}")
     public GroupResponseDto findOne(@PathVariable Integer id) {
-        return mapper.toDto(service.findById(id));
+        return mapper.toResponseDto(service.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public GroupResponseDto create(@RequestBody GroupCreateUpdateDto dto) {
-        return mapper.toDto(service.addOne(dto));
+        return mapper.toResponseDto(service.addOne(dto));
     }
 
     @DeleteMapping("/{id}")
@@ -61,7 +61,7 @@ public class GroupRestController {
 
     @PutMapping("/{id}")
     public GroupResponseDto update(@RequestBody GroupCreateUpdateDto dto, @PathVariable Integer id) {
-        return mapper.toDto(service.update(dto, id));
+        return mapper.toResponseDto(service.update(dto, id));
     }
 
 }

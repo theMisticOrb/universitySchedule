@@ -9,7 +9,7 @@ import ua.com.foxminded.entity.Student;
 
 @Component
 public class StudentMapper {
-    
+
     public Student toEntity(StudentCreateUpdateDto dto) {
         if (dto == null) {
             return null;
@@ -18,19 +18,19 @@ public class StudentMapper {
         Student entity = new Student();
         Group group = new Group();
         group.setId(dto.getGroupId());
-        
+
         entity.setFirstName(dto.getFirstName());
         entity.setMiddleName(dto.getMiddleName());
         entity.setLastName(dto.getLastName());
         entity.setGroup(group);
         return entity;
     }
-    
-    public StudentResponseDto toDto(Student entity) {
-        if(entity==null) {
+
+    public StudentResponseDto toResponseDto(Student entity) {
+        if (entity == null) {
             return null;
         }
-        
+
         StudentResponseDto dto = new StudentResponseDto();
         dto.setId(entity.getId());
         dto.setFirstName(entity.getFirstName());
@@ -39,4 +39,5 @@ public class StudentMapper {
         dto.setGroupId(entity.getGroup().getId());
         return dto;
     }
+
 }

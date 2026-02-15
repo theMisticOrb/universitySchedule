@@ -26,7 +26,7 @@ import ua.com.foxminded.entity.Faculty;
 @Transactional
 @SpringBootTest(classes = { MainApp.class })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
+@ActiveProfiles({"test"})
 class FacultyServiceTest {
 
     @Autowired

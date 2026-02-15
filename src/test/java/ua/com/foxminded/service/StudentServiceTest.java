@@ -33,7 +33,7 @@ import ua.com.foxminded.sdjpa.SpecializationRepository;
 @Transactional
 @SpringBootTest(classes = { MainApp.class })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
+@ActiveProfiles({"test"})
 class StudentServiceTest {
 
     @Autowired

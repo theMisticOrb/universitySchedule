@@ -9,7 +9,7 @@ import ua.com.foxminded.entity.Teacher;
 
 @Component
 public class TeacherMapper {
-    
+
     public Teacher toEntity(TeacherCreateUpdateDto dto) {
         if (dto == null) {
             return null;
@@ -18,19 +18,19 @@ public class TeacherMapper {
         Teacher entity = new Teacher();
         AcademicDepartment department = new AcademicDepartment();
         department.setId(dto.getDepartmentId());
-        
+
         entity.setFirstName(dto.getFirstName());
         entity.setMiddleName(dto.getMiddleName());
         entity.setLastName(dto.getLastName());
         entity.setDepartment(department);
         return entity;
     }
-    
-    public TeacherResponseDto toDto(Teacher entity) {
-        if(entity==null) {
+
+    public TeacherResponseDto toResponseDto(Teacher entity) {
+        if (entity == null) {
             return null;
         }
-        
+
         TeacherResponseDto dto = new TeacherResponseDto();
         dto.setId(entity.getId());
         dto.setFirstName(entity.getFirstName());

@@ -19,7 +19,7 @@ public class ClassroomMapper {
         return entity;
     }
 
-    public ClassroomResponseDto toDto(Classroom entity) {
+    public ClassroomResponseDto toResponseDto(Classroom entity) {
         if (entity == null) {
             return null;
         }
@@ -29,4 +29,5 @@ public class ClassroomMapper {
         dto.setName(entity.getName());
         return dto;
     }
+
 }
