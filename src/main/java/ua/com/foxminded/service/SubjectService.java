@@ -1,0 +1,49 @@
+package ua.com.foxminded.service;
+
+import java.util.List;
+
+import javax.persistence.EntityNotFoundException;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import ua.com.foxminded.entity.Subject;
+import ua.com.foxminded.helpers.UpdateUtil;
+import ua.com.foxminded.sdjpa.SubjectRepository;
+
+@Service
+@Transactional
+public class SubjectService {
+
+    private SubjectRepository subjectRepository;
+
+    public SubjectService(SubjectRepository subjectRepository) {
+        this.subjectRepository = subjectRepository;
+    }
+
+    public Subject addOne(Subject subject) {
+        return subjectRepository.save(subject);
+    }
+
+    public Subject findById(Integer id) {
+        return subjectRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Subject not found: " + id));
+    }
+
+    public List<Subject> findAll() {
+        return subjectRepository.findAll();
+    }
+
+    public Subject update(Subject updated) {
+        Subject subject = findById(updated.getId());
+        UpdateUtil.setIfNotNull(updated.getGroups(), subject::setGroups);
+        UpdateUtil.setIfNotNull(updated.getTeacher(), subject::setTeacher);
+        UpdateUtil.setIfNotNull(updated.getTitle(), subject::setTitle);
+        return subject;
+    }
+
+    public void deleteById(Integer id) {
+        subjectRepository.deleteById(id);
+    }
+
+}
