@@ -22,7 +22,7 @@ import ua.com.foxminded.mapper.LessonMapper;
 import ua.com.foxminded.service.LessonService;
 
 @RestController
-@RequestMapping("/api/lessons")
+@RequestMapping("/api/v1/lessons")
 public class LessonRestController {
 
     private final LessonService service;

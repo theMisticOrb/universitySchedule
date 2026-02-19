@@ -3,25 +3,25 @@ package ua.com.foxminded.config;
 import java.util.Locale;
 import java.util.Random;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 import com.github.javafaker.Faker;
 
 @Configuration
-@Profile("dev")
+@ConfigurationProperties(prefix = "dev")
 public class GeneratorConfig {
 
-    private int facultyCount = 2;
-    private int departmentsPerFaculty = 2;
-    private int specializationsPerDepartment = 3;
-    private int groupsPerSpecialization = 5;
-    private int studentsPerGroup = 5;
-    private int teachersPerDepartment = 5;
-    private int subjectsPerTeacher = 3;
-    private int classroomsPerTeacher = 3;
-    private int lessonsPerSubject = 3;
+    private int facultyCount;
+    private int departmentsPerFaculty;
+    private int specializationsPerDepartment;
+    private int groupsPerSpecialization;
+    private int studentsPerGroup;
+    private int teachersPerDepartment;
+    private int subjectsPerTeacher;
+    private int classroomsPerTeacher;
+    private int lessonsPerSubject;
 
     @Bean
     public Faker faker() {
@@ -63,7 +63,5 @@ public class GeneratorConfig {
     public int getLessonsPerSubject() {
         return lessonsPerSubject;
     }
-    
-    
 
 }

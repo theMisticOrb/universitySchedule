@@ -20,7 +20,7 @@ import ua.com.foxminded.mapper.AcademicDepartmentMapper;
 import ua.com.foxminded.service.AcademicDepartmentService;
 
 @RestController
-@RequestMapping("/api/departments")
+@RequestMapping("/api/v1/departments")
 public class AcademicDepartmentRestController {
 
     private final AcademicDepartmentService service;

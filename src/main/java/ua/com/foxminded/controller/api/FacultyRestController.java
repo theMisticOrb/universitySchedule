@@ -20,7 +20,7 @@ import ua.com.foxminded.mapper.FacultyMapper;
 import ua.com.foxminded.service.FacultyService;
 
 @RestController
-@RequestMapping("/api/faculties")
+@RequestMapping("/api/v1/faculties")
 public class FacultyRestController {
 
     private final FacultyService service;

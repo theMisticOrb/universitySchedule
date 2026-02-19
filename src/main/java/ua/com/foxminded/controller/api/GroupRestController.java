@@ -20,7 +20,7 @@ import ua.com.foxminded.mapper.GroupMapper;
 import ua.com.foxminded.service.GroupService;
 
 @RestController
-@RequestMapping("/api/groups")
+@RequestMapping("/api/v1/groups")
 public class GroupRestController {
 
     private final GroupService service;

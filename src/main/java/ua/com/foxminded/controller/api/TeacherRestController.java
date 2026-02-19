@@ -21,7 +21,7 @@ import ua.com.foxminded.mapper.TeacherMapper;
 import ua.com.foxminded.service.TeacherService;
 
 @RestController
-@RequestMapping("/api/teachers")
+@RequestMapping("/api/v1/teachers")
 public class TeacherRestController {
 
     private final TeacherService service;

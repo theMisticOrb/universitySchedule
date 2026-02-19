@@ -20,7 +20,7 @@ import ua.com.foxminded.mapper.SubjectMapper;
 import ua.com.foxminded.service.SubjectService;
 
 @RestController
-@RequestMapping("/api/subjects")
+@RequestMapping("/api/v1/subjects")
 public class SubjectRestController {
 
     private final SubjectService service;

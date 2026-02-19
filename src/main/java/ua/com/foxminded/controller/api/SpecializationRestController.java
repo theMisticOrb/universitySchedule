@@ -20,7 +20,7 @@ import ua.com.foxminded.mapper.SpecializationMapper;
 import ua.com.foxminded.service.SpecializationService;
 
 @RestController
-@RequestMapping("/api/specializations")
+@RequestMapping("/api/v1/specializations")
 public class SpecializationRestController {
 
     private final SpecializationService service;
