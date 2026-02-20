@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import com.github.javafaker.Faker;
 
 import ua.com.foxminded.entity.Faculty;
-import ua.com.foxminded.sdjpa.FacultyRepository;
+import ua.com.foxminded.repository.FacultyRepository;
 
 @Component
 @Profile("dev")
@@ -34,7 +34,7 @@ public class FacultyGenerator {
             faculties.add(faculty);
 
         }
-        repository.saveAll(faculties);
+        faculties = repository.saveAll(faculties);
 
         return faculties;
     }

@@ -14,7 +14,7 @@ import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.enums.WeekDay;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
-import ua.com.foxminded.sdjpa.LessonRepository;
+import ua.com.foxminded.repository.LessonRepository;
 
 @Service
 @Transactional

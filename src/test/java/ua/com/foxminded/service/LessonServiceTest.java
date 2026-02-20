@@ -28,11 +28,11 @@ import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.enums.ClassHour;
 import ua.com.foxminded.enums.WeekDay;
-import ua.com.foxminded.sdjpa.AcademicDepartmentRepository;
-import ua.com.foxminded.sdjpa.ClassroomRepository;
-import ua.com.foxminded.sdjpa.FacultyRepository;
-import ua.com.foxminded.sdjpa.SubjectRepository;
-import ua.com.foxminded.sdjpa.TeacherRepository;
+import ua.com.foxminded.repository.AcademicDepartmentRepository;
+import ua.com.foxminded.repository.ClassroomRepository;
+import ua.com.foxminded.repository.FacultyRepository;
+import ua.com.foxminded.repository.SubjectRepository;
+import ua.com.foxminded.repository.TeacherRepository;
 
 @Testcontainers
 @Transactional

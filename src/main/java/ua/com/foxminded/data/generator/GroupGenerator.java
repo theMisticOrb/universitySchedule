@@ -6,35 +6,34 @@ import java.util.List;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Specialization;
-import ua.com.foxminded.sdjpa.GroupRepository;
+import ua.com.foxminded.service.GroupService;
 
 @Component
 @Profile("dev")
 public class GroupGenerator {
-    private final GroupRepository repository;
+    private final GroupService service;
 
-    public GroupGenerator(GroupRepository repository) {
-        this.repository = repository;
+    public GroupGenerator(GroupService service) {
+        this.service = service;
     }
 
-    public List<Group> generateGroup(int specializationCount, Specialization specialization) {
-        List<Group> groups = new ArrayList<>();
+    public List<Group> generateGroup(int groupCount, Specialization specialization) {
+        List<GroupCreateUpdateDto> groups = new ArrayList<>();
 
-        for (int i = 0; i < specializationCount; i++) {
+        for (int i = 0; i < groupCount; i++) {
 
-            Group group = new Group();
-            group.setFaculty(specialization.getDepartment().getFaculty());
-            group.setDepartment(specialization.getDepartment());
-            group.setSpecialization(specialization);
+            GroupCreateUpdateDto group = new GroupCreateUpdateDto();
+            group.setFacultyId(specialization.getDepartment().getFaculty().getId());
+            group.setDepartmentId(specialization.getDepartment().getId());
+            group.setSpecializationId(specialization.getId());
 
             groups.add(group);
 
         }
-        repository.saveAll(groups);
-
-        return groups;
+        return service.addAll(groups);
     }
 
 }

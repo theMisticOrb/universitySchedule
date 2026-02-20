@@ -1,4 +1,4 @@
-package ua.com.foxminded.sdjpa;
+package ua.com.foxminded.repository;
 
 import java.util.List;
 

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import com.github.javafaker.Faker;
 
 import ua.com.foxminded.entity.Classroom;
-import ua.com.foxminded.sdjpa.ClassroomRepository;
+import ua.com.foxminded.repository.ClassroomRepository;
 
 @Component
 @Profile("dev")
@@ -23,18 +23,18 @@ public class ClassroomGenerator {
         this.faker = faker;
     }
 
-    public List<Classroom> generateClassrooms(int lessonCount) {
+    public List<Classroom> generateClassrooms(int classroomCount) {
         List<Classroom> classrooms = new ArrayList<>();
 
-        for (int i = 0; i < lessonCount; i++) {
+        for (int i = 0; i < classroomCount; i++) {
 
             Classroom classroom = new Classroom();
-            classroom.setName(faker.educator().campus());
+            classroom.setName(faker.code().ean8());
 
             classrooms.add(classroom);
 
         }
-        repository.saveAll(classrooms);
+        classrooms = repository.saveAll(classrooms);
 
         return classrooms;
     }

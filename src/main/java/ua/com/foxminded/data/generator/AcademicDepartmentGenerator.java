@@ -11,7 +11,7 @@ import com.github.javafaker.Faker;
 
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
-import ua.com.foxminded.sdjpa.AcademicDepartmentRepository;
+import ua.com.foxminded.repository.AcademicDepartmentRepository;
 
 @Component
 @Profile("dev")
@@ -37,7 +37,7 @@ public class AcademicDepartmentGenerator {
             departments.add(department);
 
         }
-        repository.saveAll(departments);
+        departments = repository.saveAll(departments);
         return departments;
     }
 

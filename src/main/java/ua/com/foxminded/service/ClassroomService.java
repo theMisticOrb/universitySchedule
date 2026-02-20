@@ -12,7 +12,7 @@ import ua.com.foxminded.entity.Classroom;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.LessonMapper;
-import ua.com.foxminded.sdjpa.ClassroomRepository;
+import ua.com.foxminded.repository.ClassroomRepository;
 
 @Service
 @Transactional

@@ -13,7 +13,7 @@ import ua.com.foxminded.entity.Lesson;
 import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.enums.ClassHour;
 import ua.com.foxminded.enums.WeekDay;
-import ua.com.foxminded.sdjpa.LessonRepository;
+import ua.com.foxminded.repository.LessonRepository;
 
 @Component
 @Profile("dev")
@@ -43,7 +43,7 @@ public class LessonGenerator {
             lessons.add(lesson);
 
         }
-        repository.saveAll(lessons);
+        lessons = repository.saveAll(lessons);
 
         return lessons;
     }

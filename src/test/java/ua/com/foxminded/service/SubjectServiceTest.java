@@ -23,9 +23,9 @@ import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
-import ua.com.foxminded.sdjpa.AcademicDepartmentRepository;
-import ua.com.foxminded.sdjpa.FacultyRepository;
-import ua.com.foxminded.sdjpa.TeacherRepository;
+import ua.com.foxminded.repository.AcademicDepartmentRepository;
+import ua.com.foxminded.repository.FacultyRepository;
+import ua.com.foxminded.repository.TeacherRepository;
 
 @Testcontainers
 @Transactional

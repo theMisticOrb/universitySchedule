@@ -13,7 +13,7 @@ import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.SpecializationMapper;
-import ua.com.foxminded.sdjpa.AcademicDepartmentRepository;
+import ua.com.foxminded.repository.AcademicDepartmentRepository;
 
 @Service
 @Transactional

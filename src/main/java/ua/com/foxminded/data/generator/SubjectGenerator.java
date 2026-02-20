@@ -11,8 +11,7 @@ import com.github.javafaker.Faker;
 
 import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
-import ua.com.foxminded.sdjpa.SubjectRepository;
-
+import ua.com.foxminded.repository.SubjectRepository;
 
 @Component
 @Profile("dev")
@@ -38,7 +37,7 @@ public class SubjectGenerator {
             subjects.add(subject);
 
         }
-        repository.saveAll(subjects);
+        subjects = repository.saveAll(subjects);
 
         return subjects;
     }

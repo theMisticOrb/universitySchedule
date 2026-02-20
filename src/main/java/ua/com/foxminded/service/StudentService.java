@@ -12,7 +12,7 @@ import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Student;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
-import ua.com.foxminded.sdjpa.StudentRepository;
+import ua.com.foxminded.repository.StudentRepository;
 
 @Service
 @Transactional

@@ -1,7 +1,10 @@
 package ua.com.foxminded.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -19,7 +22,7 @@ import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.StudentMapper;
 import ua.com.foxminded.mapper.SubjectMapper;
-import ua.com.foxminded.sdjpa.GroupRepository;
+import ua.com.foxminded.repository.GroupRepository;
 
 @Service
 @Transactional
@@ -44,25 +47,50 @@ public class GroupService {
 
     public Group addOne(GroupCreateUpdateDto dto) {
         Group group = new Group();
+        Map<Integer, Integer> counter = new HashMap<>();
 
         Faculty faculty = facultyService.findById(dto.getFacultyId());
         AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
         Specialization specialization = specializationService.findById(dto.getSpecializationId());
 
-        group.setFaculty(faculty);
-        group.setDepartment(department);
-        group.setSpecialization(specialization);
-        group.setStartDate(LocalDate.now());
-        int maxYears = properties.getTotalYearsOfStudy();
-        group.setYearOfUniv(new YearOfUniv(group.getStartDate(), maxYears));
-        String groupName = buildGroupName(group);
-        group.setName(groupName);
+        int nextGroupNumber = counter.compute(specialization.getId(), (specializationId, currentValue) -> {
+            if (currentValue == null) {
+                return groupRepository.countBySpecialization_Id(specializationId) + 1;
+            }
+            return currentValue + 1;
+        });
 
-        if (groupRepository.existsByFaculty_IdAndDepartment_IdAndSpecialization_IdAndName(faculty.getId(),
-                department.getId(), specialization.getId(), group.getName())) {
-            throw new DuplicateEntityException("Group with name: " + group.getName() + " alredy exists!");
-        }
+        setGroupValues(faculty, department, specialization, group, nextGroupNumber);
+
         return groupRepository.save(group);
+    }
+
+    public List<Group> addAll(List<GroupCreateUpdateDto> groupsDto) {
+        List<Group> groups = new ArrayList<>();
+        Map<Integer, Integer> counter = new HashMap<>();
+        for (GroupCreateUpdateDto dto : groupsDto) {
+
+            Group group = new Group();
+
+            Faculty faculty = facultyService.findById(dto.getFacultyId());
+            AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
+            Specialization specialization = specializationService.findById(dto.getSpecializationId());
+
+            int nextGroupNumber = counter.compute(specialization.getId(), (specializationId, currentValue) -> {
+                if (currentValue == null) {
+                    return groupRepository.countBySpecialization_Id(specializationId) + 1;
+                }
+                return currentValue + 1;
+            });
+
+            setGroupValues(faculty, department, specialization, group, nextGroupNumber);
+
+            groups.add(group);
+
+        }
+
+        return groupRepository.saveAll(groups);
+
     }
 
     public Group findById(Integer id) {
@@ -106,9 +134,29 @@ public class GroupService {
         groupRepository.deleteById(id);
     }
 
-    private String buildGroupName(Group group) {
+    private String buildGroupName(Group group, int nextGroupNumber) {
+
         return group.getFaculty().getId() + "." + group.getDepartment().getId() + "."
-                + group.getSpecialization().getId() + "." + group.getYearOfUniv().getCurentYearInUniv();
+                + group.getSpecialization().getId() + "." + nextGroupNumber + "."
+                + group.getYearOfUniv().getCurentYearInUniv();
+    }
+
+    private void setGroupValues(Faculty faculty, AcademicDepartment department, Specialization specialization,
+            Group group, int nextGroupNumber) {
+
+        group.setFaculty(faculty);
+        group.setDepartment(department);
+        group.setSpecialization(specialization);
+        group.setStartDate(LocalDate.now());
+        int maxYears = properties.getTotalYearsOfStudy();
+        group.setYearOfUniv(new YearOfUniv(group.getStartDate(), maxYears));
+        String groupName = buildGroupName(group, nextGroupNumber);
+        group.setName(groupName);
+
+        if (groupRepository.existsByFaculty_IdAndDepartment_IdAndSpecialization_IdAndName(faculty.getId(),
+                department.getId(), specialization.getId(), group.getName())) {
+            throw new DuplicateEntityException("Group with name: " + group.getName() + " alredy exists!");
+        }
     }
 
 }

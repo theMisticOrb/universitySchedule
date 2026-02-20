@@ -13,7 +13,7 @@ import ua.com.foxminded.entity.Specialization;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.GroupMapper;
-import ua.com.foxminded.sdjpa.SpecializationRepository;
+import ua.com.foxminded.repository.SpecializationRepository;
 
 @Service
 @Transactional

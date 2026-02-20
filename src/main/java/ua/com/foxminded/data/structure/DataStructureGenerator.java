@@ -2,6 +2,8 @@ package ua.com.foxminded.data.structure;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -63,18 +65,15 @@ public class DataStructureGenerator {
         this.facultyService = facultyService;
     }
 
+    @Transactional
     public void generate() {
         if (!isDatabaseEmpty()) {
             log.info("Database is not empty. Skipping data generation.");
             return;
         }
-        try {
-            log.info("Database empty. Starting data generation...");
-            generateAll();
-            log.info("Data generation completed successfully.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        log.info("Database empty. Starting data generation...");
+        generateAll();
+        log.info("Data generation completed successfully.");
 
     }
 
@@ -85,16 +84,27 @@ public class DataStructureGenerator {
     public void generateAll() {
 
         GeneratorConfig count = config;
-        classrooms = classroomGen.generateClassrooms(count.getClassroomsPerTeacher());
+        classrooms = classroomGen.generateClassrooms(count.getClassroomsPerDepartment());
 
         List<Faculty> faculties = facultyGen.generateFaculty(count.getFacultyCount());
-        faculties.forEach(faculty -> generateFacultyStructure(faculty, count));
+//        faculties.forEach(faculty -> generateFacultyStructure(faculty, count));
+
+        for (Faculty faculty : faculties) {
+            List<AcademicDepartment> departments = departmentGen.generateDepartment(count.getDepartmentsPerFaculty(),
+                    faculty);
+            for (AcademicDepartment department : departments) {
+                generateDepartmentStructure(department, count);
+            }
+        }
     }
 
     private void generateFacultyStructure(Faculty faculty, GeneratorConfig count) {
         List<AcademicDepartment> departments = departmentGen.generateDepartment(count.getDepartmentsPerFaculty(),
                 faculty);
-        departments.forEach(department -> generateDepartmentStructure(department, count));
+//        departments.forEach(department -> generateDepartmentStructure(department, count));
+        for (AcademicDepartment department : departments) {
+            generateDepartmentStructure(department, count);
+        }
     }
 
     private void generateDepartmentStructure(AcademicDepartment department, GeneratorConfig count) {

@@ -10,7 +10,7 @@ import com.github.javafaker.Faker;
 
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Teacher;
-import ua.com.foxminded.sdjpa.TeacherRepository;
+import ua.com.foxminded.repository.TeacherRepository;
 
 @Component
 @Profile("dev")
@@ -46,7 +46,7 @@ public class TeacherGenerator {
             teachers.add(teacher);
 
         }
-        repository.saveAll(teachers);
+        teachers = repository.saveAll(teachers);
 
         return teachers;
     }

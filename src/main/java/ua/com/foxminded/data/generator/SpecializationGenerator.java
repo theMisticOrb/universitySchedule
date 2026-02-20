@@ -11,8 +11,7 @@ import com.github.javafaker.Faker;
 
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Specialization;
-import ua.com.foxminded.sdjpa.SpecializationRepository;
-
+import ua.com.foxminded.repository.SpecializationRepository;
 
 @Component
 @Profile("dev")
@@ -38,7 +37,7 @@ public class SpecializationGenerator {
             specializations.add(specialization);
 
         }
-        repository.saveAll(specializations);
+        specializations = repository.saveAll(specializations);
 
         return specializations;
     }

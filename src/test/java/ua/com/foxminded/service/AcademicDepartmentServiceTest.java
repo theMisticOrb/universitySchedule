@@ -22,7 +22,7 @@ import ua.com.foxminded.MainApp;
 import ua.com.foxminded.dto.department.AcademicDepartmentCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
-import ua.com.foxminded.sdjpa.FacultyRepository;
+import ua.com.foxminded.repository.FacultyRepository;
 
 @Testcontainers
 @Transactional
