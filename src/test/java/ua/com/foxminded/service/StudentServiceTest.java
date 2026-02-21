@@ -68,8 +68,6 @@ class StudentServiceTest {
         Specialization security = specializationRepository.save(specialization);
 
         GroupCreateUpdateDto group = new GroupCreateUpdateDto();
-        group.setFacultyId(engineeringFaculty.getId());
-        group.setDepartmentId(csDepartment.getId());
         group.setSpecializationId(security.getId());
         Group firstGroup = groupService.addOne(group);
 

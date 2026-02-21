@@ -29,14 +29,6 @@ public class Group {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "faculty_id")
-    private Faculty faculty;
-
-    @ManyToOne
-    @JoinColumn(name = "department_id")
-    private AcademicDepartment department;
-
-    @ManyToOne
     @JoinColumn(name = "specialization_id")
     private Specialization specialization;
 
@@ -59,16 +51,15 @@ public class Group {
     public Group() {
     }
 
-    public Group(Integer id, Faculty faculty, AcademicDepartment department, Specialization specialization,
-            YearOfUniv yearOfUniv, Set<Student> students, Set<Subject> subjects) {
+    public Group(Integer id, Specialization specialization, YearOfUniv yearOfUniv, LocalDate startDate, String name,
+            Set<Student> students, Set<Subject> subjects) {
         this.id = id;
-        this.faculty = faculty;
-        this.department = department;
         this.specialization = specialization;
         this.yearOfUniv = yearOfUniv;
+        this.startDate = startDate;
+        this.name = name;
         this.students = students;
         this.subjects = subjects;
-
     }
 
     public Integer getId() {
@@ -77,22 +68,6 @@ public class Group {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Faculty getFaculty() {
-        return faculty;
-    }
-
-    public void setFaculty(Faculty faculty) {
-        this.faculty = faculty;
-    }
-
-    public AcademicDepartment getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(AcademicDepartment department) {
-        this.department = department;
     }
 
     public Specialization getSpecialization() {
@@ -143,5 +118,4 @@ public class Group {
         this.subjects = subjects;
     }
 
-   
 }

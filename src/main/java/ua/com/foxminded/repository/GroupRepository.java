@@ -14,9 +14,7 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
 
     Optional<Group> findByName(String name);
 
-    boolean existsByFaculty_IdAndDepartment_IdAndSpecialization_IdAndName(
-            Integer facultyId, 
-            Integer departmentId,
+    boolean existsBySpecialization_IdAndName(
             Integer specializationId, 
             String name);
 

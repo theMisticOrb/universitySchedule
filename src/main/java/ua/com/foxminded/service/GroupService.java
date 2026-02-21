@@ -13,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.config.UniversityProperties;
 import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
-import ua.com.foxminded.entity.AcademicDepartment;
-import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Specialization;
 import ua.com.foxminded.entity.YearOfUniv;
@@ -29,18 +27,13 @@ import ua.com.foxminded.repository.GroupRepository;
 public class GroupService {
 
     private GroupRepository groupRepository;
-    private FacultyService facultyService;
-    private AcademicDepartmentService departmentService;
     private SpecializationService specializationService;
 
     private UniversityProperties properties;
 
-    public GroupService(GroupRepository groupRepository, FacultyService facultyService,
-            AcademicDepartmentService departmentService, SpecializationService specializationService,
+    public GroupService(GroupRepository groupRepository, SpecializationService specializationService,
             UniversityProperties properties) {
         this.groupRepository = groupRepository;
-        this.facultyService = facultyService;
-        this.departmentService = departmentService;
         this.specializationService = specializationService;
         this.properties = properties;
     }
@@ -49,8 +42,6 @@ public class GroupService {
         Group group = new Group();
         Map<Integer, Integer> counter = new HashMap<>();
 
-        Faculty faculty = facultyService.findById(dto.getFacultyId());
-        AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
         Specialization specialization = specializationService.findById(dto.getSpecializationId());
 
         int nextGroupNumber = counter.compute(specialization.getId(), (specializationId, currentValue) -> {
@@ -60,7 +51,7 @@ public class GroupService {
             return currentValue + 1;
         });
 
-        setGroupValues(faculty, department, specialization, group, nextGroupNumber);
+        setGroupValues(specialization, group, nextGroupNumber);
 
         return groupRepository.save(group);
     }
@@ -72,8 +63,6 @@ public class GroupService {
 
             Group group = new Group();
 
-            Faculty faculty = facultyService.findById(dto.getFacultyId());
-            AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
             Specialization specialization = specializationService.findById(dto.getSpecializationId());
 
             int nextGroupNumber = counter.compute(specialization.getId(), (specializationId, currentValue) -> {
@@ -83,7 +72,7 @@ public class GroupService {
                 return currentValue + 1;
             });
 
-            setGroupValues(faculty, department, specialization, group, nextGroupNumber);
+            setGroupValues(specialization, group, nextGroupNumber);
 
             groups.add(group);
 
@@ -112,14 +101,6 @@ public class GroupService {
         StudentMapper studentMapper = new StudentMapper();
         SubjectMapper subjectMapper = new SubjectMapper();
 
-        if (updated.getFacultyId() != null) {
-            Faculty faculty = facultyService.findById(updated.getFacultyId());
-            UpdateUtil.setIfNotNull(faculty, group::setFaculty);
-        }
-        if (updated.getDepartmentId() != null) {
-            AcademicDepartment department = departmentService.findById(updated.getDepartmentId());
-            UpdateUtil.setIfNotNull(department, group::setDepartment);
-        }
         if (updated.getSpecializationId() != null) {
             Specialization specialization = specializationService.findById(updated.getSpecializationId());
             UpdateUtil.setIfNotNull(specialization, group::setSpecialization);
@@ -136,16 +117,13 @@ public class GroupService {
 
     private String buildGroupName(Group group, int nextGroupNumber) {
 
-        return group.getFaculty().getId() + "." + group.getDepartment().getId() + "."
-                + group.getSpecialization().getId() + "." + nextGroupNumber + "."
-                + group.getYearOfUniv().getCurentYearInUniv();
+        return group.getSpecialization().getDepartment().getFaculty().getId() + "."
+                + group.getSpecialization().getDepartment().getId() + "." + group.getSpecialization().getId() + "."
+                + nextGroupNumber + "." + group.getYearOfUniv().getCurentYearInUniv();
     }
 
-    private void setGroupValues(Faculty faculty, AcademicDepartment department, Specialization specialization,
-            Group group, int nextGroupNumber) {
+    private void setGroupValues(Specialization specialization, Group group, int nextGroupNumber) {
 
-        group.setFaculty(faculty);
-        group.setDepartment(department);
         group.setSpecialization(specialization);
         group.setStartDate(LocalDate.now());
         int maxYears = properties.getTotalYearsOfStudy();
@@ -153,8 +131,7 @@ public class GroupService {
         String groupName = buildGroupName(group, nextGroupNumber);
         group.setName(groupName);
 
-        if (groupRepository.existsByFaculty_IdAndDepartment_IdAndSpecialization_IdAndName(faculty.getId(),
-                department.getId(), specialization.getId(), group.getName())) {
+        if (groupRepository.existsBySpecialization_IdAndName(specialization.getId(), group.getName())) {
             throw new DuplicateEntityException("Group with name: " + group.getName() + " alredy exists!");
         }
     }

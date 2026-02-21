@@ -122,7 +122,7 @@ class GroupControllerTest {
         Group group = createGroup();
         GroupResponseDto responseDto = createResponseDto();
         GroupCreateUpdateDto requestDto = new GroupCreateUpdateDto();
-        requestDto.setFacultyId(1);
+        requestDto.setSpecializationId(1);
 
         when(service.addOne(any(GroupCreateUpdateDto.class))).thenReturn(group);
         when(groupMapper.toResponseDto(group)).thenReturn(responseDto);
@@ -147,7 +147,7 @@ class GroupControllerTest {
         GroupResponseDto responseDto = createResponseDto();
 
         GroupCreateUpdateDto requestDto = new GroupCreateUpdateDto();
-        requestDto.setFacultyId(1);
+        requestDto.setSpecializationId(1);
 
         when(service.update(any(GroupCreateUpdateDto.class), eq(1))).thenReturn(group);
         when(groupMapper.toResponseDto(group)).thenReturn(responseDto);

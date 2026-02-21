@@ -31,16 +31,12 @@ CONSTRAINT fk_specialization_department FOREIGN KEY (department_id) REFERENCES d
 CREATE TABLE IF NOT EXISTS academic_groups(
 group_id INTEGER PRIMARY KEY,
 group_name varchar(225),
-faculty_id INTEGER NOT NULL,
-department_id INTEGER NOT NULL,
 specialization_id INTEGER NOT NULL,
 year_of_univ INTEGER,
 start_date DATE NOT NULL,
 
-CONSTRAINT uk_group_name_faculty UNIQUE (group_name, faculty_id),
+CONSTRAINT uk_group_name_specialization UNIQUE (group_name, specialization_id),
 
-CONSTRAINT fk_group_faculty FOREIGN KEY (faculty_id) REFERENCES faculties (faculty_id),
-CONSTRAINT fk_group_department FOREIGN KEY (department_id) REFERENCES departments (department_id),
 CONSTRAINT fk_group_specialization FOREIGN KEY (specialization_id) REFERENCES specializations (specialization_id)
 );
 

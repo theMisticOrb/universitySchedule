@@ -87,24 +87,14 @@ public class DataStructureGenerator {
         classrooms = classroomGen.generateClassrooms(count.getClassroomsPerDepartment());
 
         List<Faculty> faculties = facultyGen.generateFaculty(count.getFacultyCount());
-//        faculties.forEach(faculty -> generateFacultyStructure(faculty, count));
+        faculties.forEach(faculty -> generateFacultyStructure(faculty, count));
 
-        for (Faculty faculty : faculties) {
-            List<AcademicDepartment> departments = departmentGen.generateDepartment(count.getDepartmentsPerFaculty(),
-                    faculty);
-            for (AcademicDepartment department : departments) {
-                generateDepartmentStructure(department, count);
-            }
-        }
     }
 
     private void generateFacultyStructure(Faculty faculty, GeneratorConfig count) {
         List<AcademicDepartment> departments = departmentGen.generateDepartment(count.getDepartmentsPerFaculty(),
                 faculty);
-//        departments.forEach(department -> generateDepartmentStructure(department, count));
-        for (AcademicDepartment department : departments) {
-            generateDepartmentStructure(department, count);
-        }
+        departments.forEach(department -> generateDepartmentStructure(department, count));
     }
 
     private void generateDepartmentStructure(AcademicDepartment department, GeneratorConfig count) {

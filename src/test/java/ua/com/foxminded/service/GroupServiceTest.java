@@ -62,8 +62,6 @@ class GroupServiceTest {
         specialization.setTitle("Security");
         Specialization security = specializationRepository.save(specialization);
 
-        group.setFacultyId(engineeringFaculty.getId());
-        group.setDepartmentId(csDepartment.getId());
         group.setSpecializationId(security.getId());
 
     }
@@ -119,17 +117,17 @@ class GroupServiceTest {
     void update_shouldUpdateEntity_whenCalled() {
         Group firstGroup = service.addOne(group);
 
-        Faculty faculty = new Faculty();
-        faculty.setTitle("Math");
-        Faculty mathFaculty = facultyRepository.save(faculty);
+        Specialization specialization = new Specialization();
+        specialization.setTitle("Math");
+        Specialization mathSpecialization = specializationRepository.save(specialization);
 
         GroupCreateUpdateDto firstGroupUpdated = new GroupCreateUpdateDto();
-        firstGroupUpdated.setFacultyId(mathFaculty.getId());
+        firstGroupUpdated.setSpecializationId(mathSpecialization.getId());
         Group result = service.update(firstGroupUpdated, firstGroup.getId());
 
         assertEquals(firstGroup.getId(), result.getId());
-        assertEquals(mathFaculty.getId(), result.getFaculty().getId());
-        assertEquals(mathFaculty.getTitle(), result.getFaculty().getTitle());
+        assertEquals(mathSpecialization.getId(), result.getSpecialization().getId());
+        assertEquals(mathSpecialization.getTitle(), result.getSpecialization().getTitle());
 
     }
 
@@ -139,10 +137,10 @@ class GroupServiceTest {
         Group firstGroup = service.addOne(group);
 
         GroupCreateUpdateDto computerScienceUpdated = new GroupCreateUpdateDto();
-        computerScienceUpdated.setFacultyId(null);
+        computerScienceUpdated.setSpecializationId(null);
         Group result = service.update(computerScienceUpdated, firstGroup.getId());
 
-        assertEquals("Engineering", result.getFaculty().getTitle());
+        assertEquals("Security", result.getSpecialization().getTitle());
     }
 
     @Test
