@@ -29,16 +29,18 @@ public class LessonGenerator {
 
     public List<Lesson> generateLesson(int lessonCount, Subject subject, List<Classroom> classrooms) {
         List<Lesson> lessons = new ArrayList<>();
+        ClassHour[] hours = ClassHour.values();
+        WeekDay[] days = WeekDay.values();
 
         for (int i = 0; i < lessonCount; i++) {
 
             Classroom classroom = classrooms.get(faker.random().nextInt(classrooms.size()));
 
             Lesson lesson = new Lesson();
-            lesson.setClassHour(ClassHour.FIFTH_CLASS);
+            lesson.setClassHour(hours[faker.random().nextInt(hours.length)]);
             lesson.setClassroom(classroom);
             lesson.setSubject(subject);
-            lesson.setWeekDay(WeekDay.MONDAY);
+            lesson.setWeekDay(days[faker.random().nextInt(days.length)]);
 
             lessons.add(lesson);
 
