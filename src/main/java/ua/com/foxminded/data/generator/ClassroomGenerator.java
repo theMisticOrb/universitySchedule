@@ -26,7 +26,7 @@ public class ClassroomGenerator {
     public List<Classroom> generateClassrooms(int classroomCount) {
         List<Classroom> classrooms = new ArrayList<>();
 
-        for (int i = 0; i < classroomCount; i++) {
+        while (classrooms.size() < classroomCount) {
 
             Classroom classroom = new Classroom();
             classroom.setName(faker.code().ean8());

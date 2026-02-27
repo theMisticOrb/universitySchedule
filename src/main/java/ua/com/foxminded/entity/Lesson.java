@@ -41,15 +41,26 @@ public class Lesson {
     @Column(name = "week_days")
     private WeekDay weekDay;
 
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private Group group;
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
+
     public Lesson() {
     }
 
-    public Lesson(Integer id, Subject subject, Classroom classroom, ClassHour classHour, WeekDay weekDay) {
+    public Lesson(Integer id, Subject subject, Classroom classroom, ClassHour classHour, WeekDay weekDay, Group group,
+            Teacher teacher) {
         this.id = id;
         this.subject = subject;
         this.classroom = classroom;
         this.classHour = classHour;
         this.weekDay = weekDay;
+        this.group = group;
+        this.teacher = teacher;
     }
 
     public Integer getId() {
@@ -58,14 +69,6 @@ public class Lesson {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public WeekDay getWeekDay() {
-        return weekDay;
-    }
-
-    public void setWeekDay(WeekDay weekDay) {
-        this.weekDay = weekDay;
     }
 
     public Subject getSubject() {
@@ -92,4 +95,27 @@ public class Lesson {
         this.classHour = classHour;
     }
 
+    public WeekDay getWeekDay() {
+        return weekDay;
+    }
+
+    public void setWeekDay(WeekDay weekDay) {
+        this.weekDay = weekDay;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
 }

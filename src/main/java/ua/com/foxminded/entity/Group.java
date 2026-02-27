@@ -44,6 +44,9 @@ public class Group {
     @OneToMany(mappedBy = "group")
     private Set<Student> students = new HashSet<>();
 
+    @OneToMany(mappedBy = "group")
+    private Set<Lesson> lessons = new HashSet<>();
+
     @ManyToMany
     @JoinTable(name = "groups_subjects", joinColumns = @JoinColumn(name = "group_id"), inverseJoinColumns = @JoinColumn(name = "subject_id"))
     private Set<Subject> subjects = new HashSet<>();

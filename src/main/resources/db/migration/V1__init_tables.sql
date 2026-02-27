@@ -86,11 +86,13 @@ CREATE TABLE IF NOT EXISTS lessons(
 lesson_id INTEGER PRIMARY KEY,
 subject_id INTEGER NOT NULL,
 classroom_id INTEGER NOT NULL,
+group_id INTEGER NOT NULL,
 class_hours varchar(225) NOT NULL,
 week_days varchar(225) NOT NULL,
 
 CONSTRAINT fk_lesson_subject FOREIGN KEY (subject_id) REFERENCES subjects (subject_id),
 CONSTRAINT fk_lesson_classroom FOREIGN KEY (classroom_id) REFERENCES classrooms (classroom_id)
+CONSTRAINT fk_lesson_group FOREIGN KEY (group_id) REFERENCES academic_groups (group_id)
 );
 
 

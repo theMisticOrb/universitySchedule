@@ -115,7 +115,7 @@ public class DataStructureGenerator {
 
     private void generateTeachers(AcademicDepartment department, GeneratorConfig count) {
         List<Teacher> teachers = teacherGen.generateTeachers(count.getTeachersPerDepartment(), department);
-        teachers.forEach(teacher -> generateTeacherLoad(teacher, count));
+        teachers.forEach(teacher -> subjectGen.generateSubjects(count.getSubjectsPerTeacher(), teacher));
     }
 
     private void generateTeacherLoad(Teacher teacher, GeneratorConfig count) {
