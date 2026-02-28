@@ -2,16 +2,13 @@ package ua.com.foxminded.data.generator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,10 +19,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.github.javafaker.Faker;
 
 import ua.com.foxminded.entity.Classroom;
+import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Lesson;
-import ua.com.foxminded.entity.Subject;
-import ua.com.foxminded.enums.ClassHour;
-import ua.com.foxminded.enums.WeekDay;
+import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.repository.LessonRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,62 +43,46 @@ class LessonGeneratorTest {
     @Test
     void generateLesson_shouldGenerateRequestedNumberOfLessons_whenCalled() {
 
-        Subject subject = new Subject();
-        subject.setId(1);
+        Group group = new Group();
+        group.setId(1);
+
+        Teacher teacher = new Teacher();
+        teacher.setId(1);
 
         Classroom classroom = new Classroom();
         classroom.setId(1);
 
         List<Classroom> classrooms = Arrays.asList(classroom);
+        List<Teacher> teachers = Arrays.asList(teacher);
 
         when(repository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        List<Lesson> result = generator.generateLesson(103, subject, classrooms);
+        int lessonsPerWeek = 30;
+        List<Lesson> result = generator.generateLessons(lessonsPerWeek, group, teachers, classrooms);
 
-        assertEquals(103, result.size());
+        assertEquals(lessonsPerWeek, result.size());
         verify(repository).saveAll(any());
-    }
-
-    @Test
-    void generateLesson_shouldGenerateUniqueLessons_whenCalled() {
-
-        Subject subject = new Subject();
-        subject.setId(1);
-
-        Classroom classroom = new Classroom();
-        classroom.setId(1);
-
-        List<Classroom> classrooms = Arrays.asList(classroom);
-
-        when(repository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
-
-        List<Lesson> result = generator.generateLesson(105, subject, classrooms);
-
-        Set<String> uniqueKeys = new HashSet<>();
-
-        for (Lesson lesson : result) {
-            String key = lesson.getSubject().getId() + "_" + lesson.getClassroom().getId() + "_" + lesson.getWeekDay()
-                    + "_" + lesson.getClassHour();
-
-            assertTrue(uniqueKeys.add(key));
-        }
     }
 
     @Test
     void generateLesson_shouldThrowExceptionWhenRequestedMoreThanPossible_whenCalled() {
 
-        Subject subject = new Subject();
-        subject.setId(1);
+        Group group = new Group();
+        group.setId(1);
+
+        Teacher teacher = new Teacher();
+        teacher.setId(1);
 
         Classroom classroom = new Classroom();
         classroom.setId(1);
 
         List<Classroom> classrooms = Arrays.asList(classroom);
+        List<Teacher> teachers = Arrays.asList(teacher);
 
-        int maxCombinations = classrooms.size() * ClassHour.values().length * WeekDay.values().length;
+        int moreThanPossiblelessonsPerWeek = 50;
 
         assertThrows(IllegalArgumentException.class,
-                () -> generator.generateLesson(maxCombinations + 1, subject, classrooms));
+                () -> generator.generateLessons(moreThanPossiblelessonsPerWeek, group, teachers, classrooms));
     }
 
 }

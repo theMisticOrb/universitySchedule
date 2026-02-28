@@ -20,5 +20,5 @@ dev:
   teachersPerDepartment: 5
   subjectsPerTeacher: 3
   classroomsPerDepartment: 3
-  lessonsPerSubject: 3
+  lessonsPerWeek: 7
   

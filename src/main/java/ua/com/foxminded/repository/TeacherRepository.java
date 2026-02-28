@@ -10,15 +10,10 @@ import ua.com.foxminded.entity.Teacher;
 
 @Repository
 @Transactional
-public interface TeacherRepository extends JpaRepository<Teacher, Integer>{
-    
-    Optional<Teacher> findByLastNameAndFirstNameAndMiddleName(
-            String lastName, 
-            String firstName, 
-            String middleName);
-    boolean existsByLastNameAndFirstNameAndMiddleNameAndDepartment_Id(
-            String lastName, 
-            String firstName, 
-            String middleName, 
-            Integer departmentId);
+public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
+
+    Optional<Teacher> findByLastNameAndFirstNameAndMiddleName(String lastName, String firstName, String middleName);
+
+    boolean existsByLastNameAndFirstNameAndMiddleNameAndDepartment_Id(String lastName, String firstName,
+            String middleName, Integer departmentId);
 }

@@ -34,6 +34,8 @@ public class SubjectGenerator {
             subject.setTitle(faker.educator().course() + " - " + UUID.randomUUID());
             subject.setTeacher(teacher);
 
+            teacher.getSubjects().add(subject);
+
             subjects.add(subject);
 
         }

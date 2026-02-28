@@ -12,6 +12,7 @@ import ua.com.foxminded.entity.Classroom;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Lesson;
 import ua.com.foxminded.entity.Subject;
+import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.enums.ClassHour;
 import ua.com.foxminded.enums.WeekDay;
 import ua.com.foxminded.repository.LessonRepository;
@@ -28,31 +29,39 @@ public class LessonGenerator {
         this.faker = faker;
     }
 
-    public List<Lesson> generateLesson(int lessonCount, Subject subject, Group group, List<Classroom> classrooms) {
+    public List<Lesson> generateLessons(int lessonCountPerWeek, Group group, List<Teacher> teachers,
+            List<Classroom> classrooms) {
 
         List<Lesson> lessons = new ArrayList<>();
         ClassHour[] hours = ClassHour.values();
         WeekDay[] days = WeekDay.values();
 
-        for (int i = 0; i < lessonCount; i++) {
+        int totalSlots = days.length * hours.length;
+        if (lessonCountPerWeek > totalSlots) {
+            throw new IllegalArgumentException("Cannot generate more lessons per week than available slots");
+        }
+
+        for (int i = 0; i < lessonCountPerWeek; i++) {
 
             Classroom classroom = classrooms.get(faker.random().nextInt(classrooms.size()));
-            ClassHour hour = hours[faker.random().nextInt(hours.length)];
-            WeekDay day = days[faker.random().nextInt(days.length)];
+            Teacher teacher = teachers.get(faker.random().nextInt(teachers.size()));
+            WeekDay day = days[i % days.length];
+            ClassHour hour = hours[i % hours.length];
 
             Lesson lesson = new Lesson();
+            lesson.setGroup(group);
+            lesson.setTeacher(teacher);
             lesson.setClassHour(hour);
             lesson.setClassroom(classroom);
-            lesson.setSubject(subject);
+
+            List<Subject> subjects = teacher.getSubjects();
+            lesson.setSubject(subjects.get(faker.random().nextInt(subjects.size())));
             lesson.setWeekDay(day);
-            lesson.setGroup(group);
 
             lessons.add(lesson);
-
         }
-        lessons = repository.saveAll(lessons);
 
-        return lessons;
+        return repository.saveAll(lessons);
     }
 
 }

@@ -21,7 +21,7 @@ public class GeneratorConfig {
     private int teachersPerDepartment;
     private int subjectsPerTeacher;
     private int classroomsPerDepartment;
-    private int lessonsPerSubject;
+    private int lessonsPerWeek;
 
     @Bean
     public Faker faker() {
@@ -92,13 +92,12 @@ public class GeneratorConfig {
         this.classroomsPerDepartment = classroomsPerDepartment;
     }
 
-    public int getLessonsPerSubject() {
-        return lessonsPerSubject;
+    public int getLessonsPerWeek() {
+        return lessonsPerWeek;
     }
 
-    public void setLessonsPerSubject(int lessonsPerSubject) {
-        this.lessonsPerSubject = lessonsPerSubject;
+    public void setLessonsPerWeek(int lessonsPerWeek) {
+        this.lessonsPerWeek = lessonsPerWeek;
     }
-
 
 }

@@ -24,7 +24,6 @@ import ua.com.foxminded.entity.Classroom;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Specialization;
-import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.service.FacultyService;
 
@@ -98,29 +97,26 @@ public class DataStructureGenerator {
     }
 
     private void generateDepartmentStructure(AcademicDepartment department, GeneratorConfig count) {
-        generateSpecializations(department, count);
-        generateTeachers(department, count);
-    }
-
-    private void generateSpecializations(AcademicDepartment department, GeneratorConfig count) {
-        List<Specialization> specs = specializationGen.generateSpecialization(count.getSpecializationsPerDepartment(),
-                department);
-        specs.forEach(spec -> generateGroups(spec, count));
-    }
-
-    private void generateGroups(Specialization spec, GeneratorConfig count) {
-        List<Group> groups = groupGen.generateGroup(count.getGroupsPerSpecialization(), spec);
-        groups.forEach(group -> studentGen.generateStudents(count.getStudentsPerGroup(), group));
-    }
-
-    private void generateTeachers(AcademicDepartment department, GeneratorConfig count) {
-        List<Teacher> teachers = teacherGen.generateTeachers(count.getTeachersPerDepartment(), department);
+        List<Teacher> teachers = generateTeachers(department, count);
         teachers.forEach(teacher -> subjectGen.generateSubjects(count.getSubjectsPerTeacher(), teacher));
+        List<Specialization> specializations = generateSpecializations(department, count);
+        specializations.forEach(specialization -> {
+            List<Group> groups = groupGen.generateGroup(count.getGroupsPerSpecialization(), specialization);
+            groups.forEach(group -> {
+                studentGen.generateStudents(count.getStudentsPerGroup(), group);
+                lessonGen.generateLessons(count.getLessonsPerWeek(), group, teachers, classrooms);
+            });
+
+        });
+
     }
 
-    private void generateTeacherLoad(Teacher teacher, GeneratorConfig count) {
-        List<Subject> subjects = subjectGen.generateSubjects(count.getSubjectsPerTeacher(), teacher);
-        subjects.forEach(subject -> lessonGen.generateLesson(count.getLessonsPerSubject(), subject, classrooms));
+    private List<Specialization> generateSpecializations(AcademicDepartment department, GeneratorConfig count) {
+        return specializationGen.generateSpecialization(count.getSpecializationsPerDepartment(), department);
+    }
+
+    private List<Teacher> generateTeachers(AcademicDepartment department, GeneratorConfig count) {
+        return teacherGen.generateTeachers(count.getTeachersPerDepartment(), department);
     }
 
 }
