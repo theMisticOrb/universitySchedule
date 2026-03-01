@@ -32,28 +32,27 @@ public class Subject {
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private AcademicDepartment department;
+
     @ManyToMany(mappedBy = "subjects")
     private Set<Group> groups = new HashSet<>();
-    
+
     @OneToMany(mappedBy = "subject")
     private List<Lesson> lesson = new ArrayList<>();
 
     public Subject() {
     }
 
-    public Subject(Integer id, String title, Teacher teacher, Set<Group> groups) {
+    public Subject(Integer id, String title, Teacher teacher, AcademicDepartment department, Set<Group> groups,
+            List<Lesson> lesson) {
         this.id = id;
         this.title = title;
         this.teacher = teacher;
+        this.department = department;
         this.groups = groups;
-    }
-
-    public Set<Group> getGroups() {
-        return groups;
-    }
-
-    public void setGroups(Set<Group> groups) {
-        this.groups = groups;
+        this.lesson = lesson;
     }
 
     public Integer getId() {
@@ -78,6 +77,30 @@ public class Subject {
 
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
+    }
+
+    public AcademicDepartment getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(AcademicDepartment department) {
+        this.department = department;
+    }
+
+    public Set<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
+    }
+
+    public List<Lesson> getLesson() {
+        return lesson;
+    }
+
+    public void setLesson(List<Lesson> lesson) {
+        this.lesson = lesson;
     }
 
 }

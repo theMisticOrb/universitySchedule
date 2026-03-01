@@ -41,7 +41,7 @@ import ua.com.foxminded.service.SpecializationService;
 @WebMvcTest(controllers = SpecializationRestController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class SpecializationControllerTest {
-    
+
     @Autowired
     private MockMvc mvc;
 
@@ -57,7 +57,7 @@ class SpecializationControllerTest {
     private Specialization createSpecialization() {
         Specialization entity = new Specialization();
         entity.setId(1);
-        entity.setDepartment(new AcademicDepartment(1, "IT", null, null));
+        entity.setDepartment(new AcademicDepartment(1, "IT", null, null, null));
         entity.setTitle("Computer Science");
         return entity;
     }
@@ -124,7 +124,7 @@ class SpecializationControllerTest {
 
         Specialization specialization = createSpecialization();
         SpecializationResponseDto responseDto = createResponseDto();
-        
+
         SpecializationCreateUpdateDto requestDto = new SpecializationCreateUpdateDto();
         requestDto.setDepartmentId(1);
         requestDto.setTitle("Computer Science");

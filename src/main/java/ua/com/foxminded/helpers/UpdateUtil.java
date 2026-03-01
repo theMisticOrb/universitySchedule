@@ -1,8 +1,11 @@
 package ua.com.foxminded.helpers;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public final class UpdateUtil {
 
@@ -16,11 +19,12 @@ public final class UpdateUtil {
         }
     }
 
-    public static <D, E> void updateListIfNotNull(Collection<D> dtoList, Collection<E> entityList,
-            Function<D, E> mapper) {
-        if (dtoList != null) {
-            entityList.clear();
-            dtoList.stream().map(mapper).forEach(entityList::add);
+    public static <D, E> List<E> updateListIfNotNull(Collection<? extends D> dtoList,
+            Function<? super D, ? extends E> mapper) {
+        if (dtoList == null) {
+            return Collections.emptyList();
         }
+
+        return dtoList.stream().map(mapper).collect(Collectors.toList());
     }
 }

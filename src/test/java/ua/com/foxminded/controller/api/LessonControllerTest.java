@@ -54,7 +54,7 @@ class LessonControllerTest {
     private Lesson createLesson() {
         Lesson lesson = new Lesson();
         lesson.setId(1);
-        lesson.setSubject(new Subject(1, "Math", null, null));
+        lesson.setSubject(new Subject(1, "Math", null, null, null, null));
         lesson.setWeekDay(WeekDay.FRIDAY);
         return lesson;
     }

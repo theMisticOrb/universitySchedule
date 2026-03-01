@@ -65,7 +65,7 @@ public class AcademicDepartmentService {
             Faculty faculty = facultyService.findById(updated.getFacultyId());
             UpdateUtil.setIfNotNull(faculty, department::setFaculty);
         }
-        UpdateUtil.updateListIfNotNull(updated.getSpecializations(), department.getSpecializations(), mapper::toEntity);
+        UpdateUtil.updateListIfNotNull(updated.getSpecializations(), mapper::toEntity);
         UpdateUtil.setIfNotNull(updated.getTitle(), department::setTitle);
         return department;
     }

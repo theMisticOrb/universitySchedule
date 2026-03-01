@@ -51,7 +51,7 @@ public class FacultyService {
     public Faculty update(FacultyCreateUpdateDto updated, Integer id) {
         Faculty faculty = findById(id);
         AcademicDepartmentMapper mapper = new AcademicDepartmentMapper();
-        UpdateUtil.updateListIfNotNull(updated.getDepartments(), faculty.getDepartments(), mapper::toEntity);
+        UpdateUtil.updateListIfNotNull(updated.getDepartments(), mapper::toEntity);
         UpdateUtil.setIfNotNull(updated.getTitle(), faculty::setTitle);
         return faculty;
     }
@@ -59,7 +59,7 @@ public class FacultyService {
     public void deleteById(Integer id) {
         facultyRepository.deleteById(id);
     }
-    
+
     public long count() {
         return facultyRepository.count();
     }

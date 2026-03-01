@@ -59,7 +59,7 @@ class TeacherControllerTest {
         entity.setFirstName("Bob");
         entity.setMiddleName("Bobovitch");
         entity.setLastName("Bobinski");
-        entity.setDepartment(new AcademicDepartment(1, null, null, null));
+        entity.setDepartment(new AcademicDepartment(1, null, null, null, null));
         return entity;
     }
 

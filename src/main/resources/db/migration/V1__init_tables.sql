@@ -62,8 +62,13 @@ CREATE TABLE IF NOT EXISTS subjects(
 subject_id BIGSERIAL PRIMARY KEY,
 subject_title varchar(225) UNIQUE,
 teacher_id  INTEGER NOT NULL,
+department_id  INTEGER NOT NULL,
 
-CONSTRAINT fk_subject_teacher FOREIGN KEY (teacher_id ) REFERENCES teachers (user_id)
+CONSTRAINT uk_subject_title_department UNIQUE (subject_title, department_id),
+
+CONSTRAINT fk_subject_teacher FOREIGN KEY (teacher_id ) REFERENCES teachers (user_id),
+CONSTRAINT fk_subject_department FOREIGN KEY (department_id) REFERENCES departments (department_id)
+
 );
 
 

@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.github.javafaker.Faker;
 
+import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.repository.SubjectRepository;
@@ -44,9 +45,12 @@ class SubjectGeneratorTest {
         Teacher teacher = new Teacher();
         teacher.setId(1);
 
+        AcademicDepartment department = new AcademicDepartment();
+        department.setId(1);
+
         when(repository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        List<Subject> result = generator.generateSubjects(140, teacher);
+        List<Subject> result = generator.generateSubjects(140, teacher, department);
 
         assertEquals(140, result.size());
     }
@@ -57,9 +61,12 @@ class SubjectGeneratorTest {
         Teacher teacher = new Teacher();
         teacher.setId(1);
 
+        AcademicDepartment department = new AcademicDepartment();
+        department.setId(1);
+
         when(repository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        List<Subject> result = generator.generateSubjects(140, teacher);
+        List<Subject> result = generator.generateSubjects(140, teacher, department);
 
         Set<String> uniqueKeys = new HashSet<>();
 

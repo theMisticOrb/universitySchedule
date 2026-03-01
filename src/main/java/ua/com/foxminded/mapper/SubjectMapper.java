@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import ua.com.foxminded.dto.subject.SubjectCreateUpdateDto;
 import ua.com.foxminded.dto.subject.SubjectResponseDto;
+import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
 
@@ -17,10 +18,13 @@ public class SubjectMapper {
 
         Subject entity = new Subject();
         Teacher teacher = new Teacher();
+        AcademicDepartment department = new AcademicDepartment();
         teacher.setId(dto.getTeacherId());
+        department.setId(dto.getDepartmentId());
 
         entity.setTeacher(teacher);
         entity.setTitle(dto.getTitle());
+        entity.setDepartment(department);
         return entity;
 
     }
@@ -34,6 +38,7 @@ public class SubjectMapper {
         dto.setId(entity.getId());
         dto.setTeacherId(entity.getTeacher().getId());
         dto.setTitle(entity.getTitle());
+        dto.setDepartmentId(entity.getDepartment().getId());
         return dto;
     }
 }

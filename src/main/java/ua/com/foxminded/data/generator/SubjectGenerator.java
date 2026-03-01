@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.github.javafaker.Faker;
 
+import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.repository.SubjectRepository;
@@ -25,7 +26,7 @@ public class SubjectGenerator {
         this.faker = faker;
     }
 
-    public List<Subject> generateSubjects(int subjectCount, Teacher teacher) {
+    public List<Subject> generateSubjects(int subjectCount, Teacher teacher, AcademicDepartment department) {
         List<Subject> subjects = new ArrayList<>();
 
         for (int i = 0; i < subjectCount; i++) {
@@ -33,8 +34,10 @@ public class SubjectGenerator {
             Subject subject = new Subject();
             subject.setTitle(faker.educator().course() + " - " + UUID.randomUUID());
             subject.setTeacher(teacher);
+            subject.setDepartment(department);
 
             teacher.getSubjects().add(subject);
+            department.getSubjects().add(subject);
 
             subjects.add(subject);
 

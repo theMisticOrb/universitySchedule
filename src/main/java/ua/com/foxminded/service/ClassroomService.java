@@ -52,7 +52,7 @@ public class ClassroomService {
 
         LessonMapper mapper = new LessonMapper();
         UpdateUtil.setIfNotNull(updated.getName(), classroom::setName);
-        UpdateUtil.updateListIfNotNull(updated.getLessons(), classroom.getLesson(), mapper::toEntity);
+        UpdateUtil.updateListIfNotNull(updated.getLessons(), mapper::toEntity);
         return classroom;
     }
 

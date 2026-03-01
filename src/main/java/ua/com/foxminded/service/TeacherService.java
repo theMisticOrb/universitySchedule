@@ -34,7 +34,7 @@ public class TeacherService {
         if (teacherRepository.existsByLastNameAndFirstNameAndMiddleNameAndDepartment_Id(dto.getLastName(),
                 dto.getFirstName(), dto.getMiddleName(), department.getId())) {
             throw new DuplicateEntityException("Teacher with name: " + dto.getLastName() + " " + dto.getFirstName()
-            + " " + dto.getMiddleName() + " alredy exists in this academic department!");
+                    + " " + dto.getMiddleName() + " alredy exists in this academic department!");
         }
         teacher.setFirstName(dto.getFirstName());
         teacher.setLastName(dto.getLastName());
@@ -73,7 +73,7 @@ public class TeacherService {
         UpdateUtil.setIfNotNull(updated.getFirstName(), teacher::setFirstName);
         UpdateUtil.setIfNotNull(updated.getMiddleName(), teacher::setMiddleName);
         UpdateUtil.setIfNotNull(updated.getLastName(), teacher::setLastName);
-        UpdateUtil.updateListIfNotNull(updated.getSubjects(), teacher.getSubjects(), mapper::toEntity);
+        UpdateUtil.updateListIfNotNull(updated.getSubjects(), mapper::toEntity);
         return teacher;
     }
 

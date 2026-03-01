@@ -3,6 +3,7 @@ package ua.com.foxminded.dto.department;
 import java.util.List;
 
 import ua.com.foxminded.dto.specialization.SpecializationCreateUpdateDto;
+import ua.com.foxminded.dto.subject.SubjectCreateUpdateDto;
 
 public class AcademicDepartmentResponseDto {
 
@@ -10,16 +11,18 @@ public class AcademicDepartmentResponseDto {
     private String title;
     private Integer facultyId;
     private List<SpecializationCreateUpdateDto> specializations;
+    private List<SubjectCreateUpdateDto> subject;
 
     public AcademicDepartmentResponseDto() {
     }
 
     public AcademicDepartmentResponseDto(Integer id, String title, Integer facultyId,
-            List<SpecializationCreateUpdateDto> specializations) {
+            List<SpecializationCreateUpdateDto> specializations, List<SubjectCreateUpdateDto> subject) {
         this.id = id;
         this.title = title;
         this.facultyId = facultyId;
         this.specializations = specializations;
+        this.subject = subject;
     }
 
     public Integer getId() {
@@ -52,6 +55,14 @@ public class AcademicDepartmentResponseDto {
 
     public void setSpecializations(List<SpecializationCreateUpdateDto> specializations) {
         this.specializations = specializations;
+    }
+
+    public List<SubjectCreateUpdateDto> getSubject() {
+        return subject;
+    }
+
+    public void setSubject(List<SubjectCreateUpdateDto> subject) {
+        this.subject = subject;
     }
 
 }

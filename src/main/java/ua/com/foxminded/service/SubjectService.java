@@ -65,7 +65,7 @@ public class SubjectService {
 
         }
 
-        UpdateUtil.updateListIfNotNull(updated.getGroups(), subject.getGroups(), mapper::toEntity);
+        UpdateUtil.updateListIfNotNull(updated.getGroups(), mapper::toEntity);
         UpdateUtil.setIfNotNull(updated.getTitle(), subject::setTitle);
         return subject;
     }

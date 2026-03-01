@@ -35,7 +35,7 @@ public class TeacherGenerator {
 
             firstName = faker.name().firstName();
             middleName = faker.name().firstName();
-            lastName = faker.name().firstName();
+            lastName = faker.name().lastName();
 
             Teacher teacher = new Teacher();
             teacher.setFirstName(firstName);

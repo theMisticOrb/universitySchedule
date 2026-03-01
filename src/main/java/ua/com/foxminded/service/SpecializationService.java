@@ -71,7 +71,7 @@ public class SpecializationService {
 
         }
 
-        UpdateUtil.updateListIfNotNull(updated.getGroups(), specialization.getGroups(), mapper::toEntity);
+        UpdateUtil.updateListIfNotNull(updated.getGroups(), mapper::toEntity);
         UpdateUtil.setIfNotNull(updated.getTitle(), specialization::setTitle);
         return specialization;
     }

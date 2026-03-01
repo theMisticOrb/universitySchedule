@@ -35,7 +35,7 @@ public class StudentGenerator {
 
             firstName = faker.name().firstName();
             middleName = faker.name().firstName();
-            lastName = faker.name().firstName();
+            lastName = faker.name().lastName();
 
             Student student = new Student();
             student.setFirstName(firstName);

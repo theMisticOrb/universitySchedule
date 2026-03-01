@@ -106,8 +106,8 @@ public class GroupService {
             UpdateUtil.setIfNotNull(specialization, group::setSpecialization);
         }
 
-        UpdateUtil.updateListIfNotNull(updated.getStudents(), group.getStudents(), studentMapper::toEntity);
-        UpdateUtil.updateListIfNotNull(updated.getSubjects(), group.getSubjects(), subjectMapper::toEntity);
+        UpdateUtil.updateListIfNotNull(updated.getStudents(), studentMapper::toEntity);
+        UpdateUtil.updateListIfNotNull(updated.getSubjects(), subjectMapper::toEntity);
         return group;
     }
 
