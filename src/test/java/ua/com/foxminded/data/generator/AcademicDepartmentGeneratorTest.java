@@ -52,7 +52,7 @@ class AcademicDepartmentGeneratorTest {
     }
 
     @Test
-    void generateLesson_shouldGenerateUniqueLessons_whenCalled() {
+    void generateDepartments_shouldGenerateUniqueDepartments_whenCalled() {
 
         Faculty faculty = new Faculty();
         faculty.setId(1);

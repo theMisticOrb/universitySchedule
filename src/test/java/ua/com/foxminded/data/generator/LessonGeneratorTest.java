@@ -21,6 +21,7 @@ import com.github.javafaker.Faker;
 import ua.com.foxminded.entity.Classroom;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Lesson;
+import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.repository.LessonRepository;
 
@@ -41,13 +42,18 @@ class LessonGeneratorTest {
     }
 
     @Test
-    void generateLesson_shouldGenerateRequestedNumberOfLessons_whenCalled() {
+    void generateLessons_shouldGenerateRequestedNumberOfLessons_whenCalled() {
 
         Group group = new Group();
         group.setId(1);
 
+        Subject subject = new Subject();
+        subject.setId(1);
+        List<Subject> subjects = Arrays.asList(subject);
+
         Teacher teacher = new Teacher();
         teacher.setId(1);
+        teacher.setSubjects(subjects);
 
         Classroom classroom = new Classroom();
         classroom.setId(1);
@@ -65,7 +71,7 @@ class LessonGeneratorTest {
     }
 
     @Test
-    void generateLesson_shouldThrowExceptionWhenRequestedMoreThanPossible_whenCalled() {
+    void generateLessons_shouldThrowExceptionWhenRequestedMoreThanPossible_whenCalled() {
 
         Group group = new Group();
         group.setId(1);

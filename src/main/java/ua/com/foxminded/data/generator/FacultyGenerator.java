@@ -23,7 +23,7 @@ public class FacultyGenerator {
         this.faker = faker;
     }
 
-    public List<Faculty> generateFaculty(int facultyCount) {
+    public List<Faculty> generateFaculties(int facultyCount) {
         List<Faculty> faculties = new ArrayList<>();
 
         for (int i = 0; i < facultyCount; i++) {

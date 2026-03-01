@@ -85,7 +85,7 @@ public class DataStructureGenerator {
         GeneratorConfig count = config;
         classrooms = classroomGen.generateClassrooms(count.getClassroomsPerDepartment());
 
-        List<Faculty> faculties = facultyGen.generateFaculty(count.getFacultyCount());
+        List<Faculty> faculties = facultyGen.generateFaculties(count.getFacultyCount());
         faculties.forEach(faculty -> generateFacultyStructure(faculty, count));
 
     }
@@ -101,7 +101,7 @@ public class DataStructureGenerator {
         teachers.forEach(teacher -> subjectGen.generateSubjects(count.getSubjectsPerTeacher(), teacher));
         List<Specialization> specializations = generateSpecializations(department, count);
         specializations.forEach(specialization -> {
-            List<Group> groups = groupGen.generateGroup(count.getGroupsPerSpecialization(), specialization);
+            List<Group> groups = groupGen.generateGroups(count.getGroupsPerSpecialization(), specialization);
             groups.forEach(group -> {
                 studentGen.generateStudents(count.getStudentsPerGroup(), group);
                 lessonGen.generateLessons(count.getLessonsPerWeek(), group, teachers, classrooms);

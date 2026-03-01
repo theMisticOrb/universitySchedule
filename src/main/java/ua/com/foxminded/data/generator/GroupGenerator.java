@@ -20,7 +20,7 @@ public class GroupGenerator {
         this.service = service;
     }
 
-    public List<Group> generateGroup(int groupCount, Specialization specialization) {
+    public List<Group> generateGroups(int groupCount, Specialization specialization) {
         List<GroupCreateUpdateDto> groups = new ArrayList<>();
 
         for (int i = 0; i < groupCount; i++) {
