@@ -1,5 +1,7 @@
 package ua.com.foxminded.mapper;
 
+import java.util.Objects;
+
 import org.springframework.stereotype.Component;
 
 import ua.com.foxminded.dto.user.StudentCreateUpdateDto;
@@ -11,9 +13,7 @@ import ua.com.foxminded.entity.Student;
 public class StudentMapper {
 
     public Student toEntity(StudentCreateUpdateDto dto) {
-        if (dto == null) {
-            return null;
-        }
+        Objects.requireNonNull(dto, "StudentCreateUpdateDto must not be null!");
 
         Student entity = new Student();
         Group group = new Group();
@@ -27,9 +27,7 @@ public class StudentMapper {
     }
 
     public StudentResponseDto toResponseDto(Student entity) {
-        if (entity == null) {
-            return null;
-        }
+        Objects.requireNonNull(entity, "Student must not be null!");
 
         StudentResponseDto dto = new StudentResponseDto();
         dto.setId(entity.getId());

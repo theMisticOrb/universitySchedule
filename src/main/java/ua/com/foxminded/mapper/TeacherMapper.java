@@ -1,5 +1,7 @@
 package ua.com.foxminded.mapper;
 
+import java.util.Objects;
+
 import org.springframework.stereotype.Component;
 
 import ua.com.foxminded.dto.user.TeacherCreateUpdateDto;
@@ -11,9 +13,7 @@ import ua.com.foxminded.entity.Teacher;
 public class TeacherMapper {
 
     public Teacher toEntity(TeacherCreateUpdateDto dto) {
-        if (dto == null) {
-            return null;
-        }
+        Objects.requireNonNull(dto, "TeacherCreateUpdateDto must not be null!");
 
         Teacher entity = new Teacher();
         AcademicDepartment department = new AcademicDepartment();
@@ -27,9 +27,7 @@ public class TeacherMapper {
     }
 
     public TeacherResponseDto toResponseDto(Teacher entity) {
-        if (entity == null) {
-            return null;
-        }
+        Objects.requireNonNull(entity, "Teacher must not be null!");
 
         TeacherResponseDto dto = new TeacherResponseDto();
         dto.setId(entity.getId());

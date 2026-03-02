@@ -1,5 +1,7 @@
 package ua.com.foxminded.mapper;
 
+import java.util.Objects;
+
 import org.springframework.stereotype.Component;
 
 import ua.com.foxminded.dto.classroom.ClassroomCreateUpdateDto;
@@ -10,9 +12,7 @@ import ua.com.foxminded.entity.Classroom;
 public class ClassroomMapper {
 
     public Classroom toEntity(ClassroomCreateUpdateDto dto) {
-        if (dto == null) {
-            return null;
-        }
+        Objects.requireNonNull(dto, "ClassroomCreateUpdateDto must not be null!");
 
         Classroom entity = new Classroom();
         entity.setName(dto.getName());
@@ -20,9 +20,7 @@ public class ClassroomMapper {
     }
 
     public ClassroomResponseDto toResponseDto(Classroom entity) {
-        if (entity == null) {
-            return null;
-        }
+        Objects.requireNonNull(entity, "Classroom must not be null!");
 
         ClassroomResponseDto dto = new ClassroomResponseDto();
         dto.setId(entity.getId());

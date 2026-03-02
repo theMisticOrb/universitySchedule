@@ -1,5 +1,7 @@
 package ua.com.foxminded.mapper;
 
+import java.util.Objects;
+
 import org.springframework.stereotype.Component;
 
 import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
@@ -11,9 +13,7 @@ import ua.com.foxminded.entity.Specialization;
 public class GroupMapper {
 
     public Group toEntity(GroupCreateUpdateDto dto) {
-        if (dto == null) {
-            return null;
-        }
+        Objects.requireNonNull(dto, "GroupCreateUpdateDto must not be null!");
 
         Group entity = new Group();
 
@@ -25,9 +25,7 @@ public class GroupMapper {
     }
 
     public GroupResponseDto toResponseDto(Group entity) {
-        if (entity == null) {
-            return null;
-        }
+        Objects.requireNonNull(entity, "Group must not be null!");
 
         GroupResponseDto dto = new GroupResponseDto();
         dto.setId(entity.getId());

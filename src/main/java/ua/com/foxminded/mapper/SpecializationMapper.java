@@ -1,5 +1,7 @@
 package ua.com.foxminded.mapper;
 
+import java.util.Objects;
+
 import org.springframework.stereotype.Component;
 
 import ua.com.foxminded.dto.specialization.SpecializationCreateUpdateDto;
@@ -10,9 +12,7 @@ import ua.com.foxminded.entity.Specialization;
 public class SpecializationMapper {
 
     public Specialization toEntity(SpecializationCreateUpdateDto dto) {
-        if (dto == null) {
-            return null;
-        }
+        Objects.requireNonNull(dto, "SpecializationCreateUpdateDto must not be null!");
 
         Specialization entity = new Specialization();
         entity.setTitle(dto.getTitle());
@@ -20,9 +20,7 @@ public class SpecializationMapper {
     }
 
     public SpecializationResponseDto toResponseDto(Specialization entity) {
-        if (entity == null) {
-            return null;
-        }
+        Objects.requireNonNull(entity, "Specialization must not be null!");
 
         SpecializationResponseDto dto = new SpecializationResponseDto();
         dto.setId(entity.getId());
