@@ -8,6 +8,7 @@ import ua.com.foxminded.dto.subject.SubjectCreateUpdateDto;
 public class AcademicDepartmentCreateUpdateDto {
 
     private String title;
+    private String code;
     private Integer facultyId;
     private List<SpecializationCreateUpdateDto> specializations;
     private List<SubjectCreateUpdateDto> subjects;
@@ -15,9 +16,10 @@ public class AcademicDepartmentCreateUpdateDto {
     public AcademicDepartmentCreateUpdateDto() {
     }
 
-    public AcademicDepartmentCreateUpdateDto(String title, Integer facultyId,
+    public AcademicDepartmentCreateUpdateDto(String title, String code, Integer facultyId,
             List<SpecializationCreateUpdateDto> specializations, List<SubjectCreateUpdateDto> subjects) {
         this.title = title;
+        this.code = code;
         this.facultyId = facultyId;
         this.specializations = specializations;
         this.subjects = subjects;
@@ -29,6 +31,14 @@ public class AcademicDepartmentCreateUpdateDto {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public Integer getFacultyId() {

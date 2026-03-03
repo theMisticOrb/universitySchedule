@@ -8,14 +8,17 @@ public class FacultyResponseDto {
 
     private Integer id;
     private String title;
+    private String code;
     private List<AcademicDepartmentCreateUpdateDto> departments;
 
     public FacultyResponseDto() {
     }
 
-    public FacultyResponseDto(Integer id, String title, List<AcademicDepartmentCreateUpdateDto> departments) {
+    public FacultyResponseDto(Integer id, String title, String code,
+            List<AcademicDepartmentCreateUpdateDto> departments) {
         this.id = id;
         this.title = title;
+        this.code = code;
         this.departments = departments;
     }
 
@@ -33,6 +36,14 @@ public class FacultyResponseDto {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public List<AcademicDepartmentCreateUpdateDto> getDepartments() {

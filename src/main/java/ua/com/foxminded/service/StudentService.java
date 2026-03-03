@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,7 @@ import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Student;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
+import ua.com.foxminded.mapper.StudentMapper;
 import ua.com.foxminded.repository.StudentRepository;
 
 @Service
@@ -20,28 +22,25 @@ public class StudentService {
 
     private StudentRepository studentRepository;
     private GroupService groupService;
+    private StudentMapper studentMapper;
 
-    public StudentService(StudentRepository studentRepository, GroupService groupService) {
+    public StudentService(StudentRepository studentRepository, GroupService groupService, StudentMapper studentMapper) {
         this.studentRepository = studentRepository;
         this.groupService = groupService;
+        this.studentMapper = studentMapper;
     }
 
     public Student addOne(StudentCreateUpdateDto dto) {
-        Student student = new Student();
-        Group group = groupService.findById(dto.getGroupId());
 
-        if (studentRepository.existsByLastNameAndFirstNameAndMiddleNameAndGroup_Id(dto.getLastName(),
-                dto.getFirstName(), dto.getMiddleName(), group.getId())) {
+        Group group = groupService.findById(dto.getGroupId());
+        Student student = studentMapper.toEntity(dto, group);
+        try {
+            return studentRepository.save(student);
+        } catch (DataIntegrityViolationException e) {
             throw new DuplicateEntityException("Student with name: " + dto.getLastName() + " " + dto.getFirstName()
                     + " " + dto.getMiddleName() + " alredy exists in this group!");
 
         }
-
-        student.setFirstName(dto.getFirstName());
-        student.setLastName(dto.getLastName());
-        student.setMiddleName(dto.getMiddleName());
-        student.setGroup(group);
-        return studentRepository.save(student);
     }
 
     public Student findById(Integer id) {
@@ -65,10 +64,8 @@ public class StudentService {
         Student student = findById(id);
 
         if (updated.getGroupId() != null) {
-
             Group group = groupService.findById(updated.getGroupId());
             UpdateUtil.setIfNotNull(group, student::setGroup);
-
         }
 
         UpdateUtil.setIfNotNull(updated.getFirstName(), student::setFirstName);

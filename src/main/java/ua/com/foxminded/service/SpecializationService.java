@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import ua.com.foxminded.entity.Specialization;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.GroupMapper;
+import ua.com.foxminded.mapper.SpecializationMapper;
 import ua.com.foxminded.repository.SpecializationRepository;
 
 @Service
@@ -21,27 +23,29 @@ public class SpecializationService {
 
     private SpecializationRepository specializationRepository;
     private AcademicDepartmentService departmentService;
+    private GroupMapper groupMapper;
+    private SpecializationMapper specializationMapper;
 
     public SpecializationService(SpecializationRepository specializationRepository,
-            AcademicDepartmentService departmentService) {
+            AcademicDepartmentService departmentService, GroupMapper groupMapper) {
         this.specializationRepository = specializationRepository;
         this.departmentService = departmentService;
+        this.groupMapper = groupMapper;
     }
 
     public Specialization addOne(SpecializationCreateUpdateDto dto) {
-        Specialization specialization = new Specialization();
 
         AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
+        Specialization specialization = specializationMapper.toEntity(dto, department);
 
-        if (specializationRepository.existsByTitleAndDepartment_Id(dto.getTitle(), department.getId())) {
+        try {
+            return specializationRepository.save(specialization);
+        } catch (DataIntegrityViolationException e) {
             throw new DuplicateEntityException(
                     "Specialization with title: " + dto.getTitle() + " alredy exists in this academic department!");
+
         }
 
-        specialization.setDepartment(department);
-        specialization.setTitle(dto.getTitle());
-
-        return specializationRepository.save(specialization);
     }
 
     public Specialization findById(Integer id) {
@@ -61,18 +65,15 @@ public class SpecializationService {
     public Specialization update(SpecializationCreateUpdateDto updated, Integer id) {
 
         Specialization specialization = findById(id);
-        GroupMapper mapper = new GroupMapper();
 
         if (updated.getDepartmentId() != null) {
-
             AcademicDepartment department = departmentService.findById(updated.getDepartmentId());
-
             UpdateUtil.setIfNotNull(department, specialization::setDepartment);
-
         }
 
-        UpdateUtil.updateListIfNotNull(updated.getGroups(), mapper::toEntity);
+        UpdateUtil.updateListIfNotNull(updated.getGroups(), dto -> groupMapper.toEntity(dto, specialization));
         UpdateUtil.setIfNotNull(updated.getTitle(), specialization::setTitle);
+        UpdateUtil.setIfNotNull(updated.getCode(), specialization::setCode);
         return specialization;
     }
 

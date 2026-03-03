@@ -12,15 +12,14 @@ import ua.com.foxminded.entity.Faculty;
 @Component
 public class AcademicDepartmentMapper {
 
-    public AcademicDepartment toEntity(AcademicDepartmentCreateUpdateDto dto) {
+    public AcademicDepartment toEntity(AcademicDepartmentCreateUpdateDto dto, Faculty faculty) {
         Objects.requireNonNull(dto, "AcademicDepartmentCreateUpdateDto must not be null!");
+        Objects.requireNonNull(faculty, "Faculty must not be null!");
 
         AcademicDepartment entity = new AcademicDepartment();
 
-        Faculty faculty = new Faculty();
-        faculty.setId(dto.getFacultyId());
-
         entity.setTitle(dto.getTitle());
+        entity.setCode(dto.getCode());
         entity.setFaculty(faculty);
         return entity;
     }
@@ -32,6 +31,7 @@ public class AcademicDepartmentMapper {
         dto.setId(entity.getId());
         dto.setFacultyId(entity.getFaculty().getId());
         dto.setTitle(entity.getTitle());
+        dto.setCode(entity.getCode());
         return dto;
     }
 

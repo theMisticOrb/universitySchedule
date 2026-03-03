@@ -13,14 +13,12 @@ import ua.com.foxminded.entity.Teacher;
 @Component
 public class SubjectMapper {
 
-    public Subject toEntity(SubjectCreateUpdateDto dto) {
+    public Subject toEntity(SubjectCreateUpdateDto dto, Teacher teacher, AcademicDepartment department) {
         Objects.requireNonNull(dto, "SubjectCreateUpdateDto must not be null!");
+        Objects.requireNonNull(teacher, "Teacher must not be null!");
+        Objects.requireNonNull(department, "AcademicDepartment must not be null!");
 
         Subject entity = new Subject();
-        Teacher teacher = new Teacher();
-        AcademicDepartment department = new AcademicDepartment();
-        teacher.setId(dto.getTeacherId());
-        department.setId(dto.getDepartmentId());
 
         entity.setTeacher(teacher);
         entity.setTitle(dto.getTitle());

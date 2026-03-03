@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -15,6 +17,8 @@ import ua.com.foxminded.config.UniversityProperties;
 import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Specialization;
+import ua.com.foxminded.entity.Subject;
+import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.entity.YearOfUniv;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
@@ -28,13 +32,19 @@ public class GroupService {
 
     private GroupRepository groupRepository;
     private SpecializationService specializationService;
-
+    private TeacherService teacherService;
+    private StudentMapper studentMapper;
+    private SubjectMapper subjectMapper;
     private UniversityProperties properties;
 
     public GroupService(GroupRepository groupRepository, SpecializationService specializationService,
+            TeacherService teacherService, StudentMapper studentMapper, SubjectMapper subjectMapper,
             UniversityProperties properties) {
         this.groupRepository = groupRepository;
         this.specializationService = specializationService;
+        this.teacherService = teacherService;
+        this.studentMapper = studentMapper;
+        this.subjectMapper = subjectMapper;
         this.properties = properties;
     }
 
@@ -97,17 +107,18 @@ public class GroupService {
 
     public Group update(GroupCreateUpdateDto updated, Integer id) {
         Group group = findById(id);
+        Specialization specialization = specializationService.findById(updated.getSpecializationId());
 
-        StudentMapper studentMapper = new StudentMapper();
-        SubjectMapper subjectMapper = new SubjectMapper();
+        UpdateUtil.setIfNotNull(specialization, group::setSpecialization);
+        UpdateUtil.updateListIfNotNull(updated.getStudents(), dto -> studentMapper.toEntity(dto, group));
+        if (updated.getSubjects() != null) {
+            Set<Subject> subjects = updated.getSubjects().stream().map(dto -> {
+                Teacher teacher = teacherService.findById(dto.getTeacherId());
+                return subjectMapper.toEntity(dto, teacher, specialization.getDepartment());
+            }).collect(Collectors.toSet());
 
-        if (updated.getSpecializationId() != null) {
-            Specialization specialization = specializationService.findById(updated.getSpecializationId());
-            UpdateUtil.setIfNotNull(specialization, group::setSpecialization);
+            group.setSubjects(subjects);
         }
-
-        UpdateUtil.updateListIfNotNull(updated.getStudents(), studentMapper::toEntity);
-        UpdateUtil.updateListIfNotNull(updated.getSubjects(), subjectMapper::toEntity);
         return group;
     }
 
@@ -117,8 +128,8 @@ public class GroupService {
 
     private String buildGroupName(Group group, int nextGroupNumber) {
 
-        return group.getSpecialization().getDepartment().getFaculty().getId() + "."
-                + group.getSpecialization().getDepartment().getId() + "." + group.getSpecialization().getId() + "."
+        return group.getSpecialization().getDepartment().getFaculty().getCode() + "."
+                + group.getSpecialization().getDepartment().getCode() + "." + group.getSpecialization().getCode() + "."
                 + nextGroupNumber + "." + group.getYearOfUniv().getCurentYearInUniv();
     }
 

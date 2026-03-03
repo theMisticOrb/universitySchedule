@@ -8,16 +8,18 @@ public class SpecializationResponseDto {
 
     private Integer id;
     private String title;
+    private String code;
     private Integer departmentId;
     private List<GroupCreateUpdateDto> groups;
 
     public SpecializationResponseDto() {
     }
 
-    public SpecializationResponseDto(Integer id, String title, Integer departmentId,
+    public SpecializationResponseDto(Integer id, String title, String code, Integer departmentId,
             List<GroupCreateUpdateDto> groups) {
         this.id = id;
         this.title = title;
+        this.code = code;
         this.departmentId = departmentId;
         this.groups = groups;
     }
@@ -36,6 +38,14 @@ public class SpecializationResponseDto {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public Integer getDepartmentId() {

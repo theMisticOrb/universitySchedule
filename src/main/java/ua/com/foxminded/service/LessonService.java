@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.enums.WeekDay;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
+import ua.com.foxminded.mapper.LessonMapper;
 import ua.com.foxminded.repository.LessonRepository;
 
 @Service
@@ -23,30 +25,29 @@ public class LessonService {
     private LessonRepository lessonRepository;
     private ClassroomService classroomService;
     private SubjectService subjectService;
+    private LessonMapper lessonMapper;
 
     public LessonService(LessonRepository lessonRepository, ClassroomService classroomService,
-            SubjectService subjectService) {
+            SubjectService subjectService, LessonMapper lessonMapper) {
         this.lessonRepository = lessonRepository;
         this.classroomService = classroomService;
         this.subjectService = subjectService;
+        this.lessonMapper = lessonMapper;
     }
 
     public Lesson addOne(LessonCreateUpdateDto dto) {
-        Lesson lesson = new Lesson();
+
         Classroom classroom = classroomService.findById(dto.getClassroomId());
         Subject subject = subjectService.findById(dto.getSubjectId());
 
-        if (lessonRepository.existsBySubject_TitleAndClassroom_Name(subject.getTitle(), classroom.getName())) {
+        Lesson lesson = lessonMapper.toEntity(dto, classroom, subject);
+
+        try {
+            return lessonRepository.save(lesson);
+        } catch (DataIntegrityViolationException e) {
             throw new DuplicateEntityException("Lesson with subject: " + subject.getTitle()
                     + " alredy exists in classroom: " + classroom.getName() + "!");
-
         }
-
-        lesson.setClassHour(dto.getClassHour());
-        lesson.setClassroom(classroom);
-        lesson.setSubject(subject);
-        lesson.setWeekDay(dto.getWeekDay());
-        return lessonRepository.save(lesson);
     }
 
     public Lesson findById(Integer id) {

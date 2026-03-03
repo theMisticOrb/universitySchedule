@@ -16,6 +16,7 @@ public class FacultyMapper {
 
         Faculty entity = new Faculty();
         entity.setTitle(dto.getTitle());
+        entity.setCode(dto.getCode());
         return entity;
     }
 
@@ -25,6 +26,7 @@ public class FacultyMapper {
         FacultyResponseDto dto = new FacultyResponseDto();
         dto.setId(entity.getId());
         dto.setTitle(entity.getTitle());
+        dto.setCode(entity.getCode());
         return dto;
     }
 

@@ -25,6 +25,9 @@ public class Specialization {
     @Column(name = "specialization_title")
     private String title;
 
+    @Column(name = "specialization_code")
+    private String code;
+
     @ManyToOne
     @JoinColumn(name = "department_id")
     private AcademicDepartment department;
@@ -35,9 +38,10 @@ public class Specialization {
     public Specialization() {
     }
 
-    public Specialization(Integer id, String title, AcademicDepartment department, List<Group> groups) {
+    public Specialization(Integer id, String title, String code, AcademicDepartment department, List<Group> groups) {
         this.id = id;
         this.title = title;
+        this.code = code;
         this.department = department;
         this.groups = groups;
     }
@@ -56,6 +60,14 @@ public class Specialization {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public AcademicDepartment getDepartment() {

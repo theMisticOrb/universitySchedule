@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,7 @@ import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
+import ua.com.foxminded.mapper.AcademicDepartmentMapper;
 import ua.com.foxminded.mapper.SpecializationMapper;
 import ua.com.foxminded.repository.AcademicDepartmentRepository;
 
@@ -21,24 +23,28 @@ public class AcademicDepartmentService {
 
     private AcademicDepartmentRepository departmentRepository;
     private FacultyService facultyService;
+    private SpecializationMapper specializationMapper;
+    private AcademicDepartmentMapper departmentMapper;
 
-    public AcademicDepartmentService(AcademicDepartmentRepository departmentRapository, FacultyService facultyService) {
-        this.departmentRepository = departmentRapository;
+    public AcademicDepartmentService(AcademicDepartmentRepository departmentRepository, FacultyService facultyService,
+            SpecializationMapper specializationMapper, AcademicDepartmentMapper departmentMapper) {
+        this.departmentRepository = departmentRepository;
         this.facultyService = facultyService;
+        this.specializationMapper = specializationMapper;
+        this.departmentMapper = departmentMapper;
     }
 
     public AcademicDepartment addOne(AcademicDepartmentCreateUpdateDto dto) {
-        Faculty faculty = facultyService.findById(dto.getFacultyId());
 
-        if (departmentRepository.existsByFaculty_IdAndTitle(faculty.getId(), dto.getTitle())) {
+        Faculty faculty = facultyService.findById(dto.getFacultyId());
+        AcademicDepartment newDepartment = departmentMapper.toEntity(dto, faculty);
+
+        try {
+            return departmentRepository.save(newDepartment);
+        } catch (DataIntegrityViolationException e) {
             throw new DuplicateEntityException(
                     "Department with title: " + dto.getTitle() + " alredy exists in this faculty!");
         }
-
-        AcademicDepartment newDepartment = new AcademicDepartment();
-        newDepartment.setFaculty(faculty);
-        newDepartment.setTitle(dto.getTitle());
-        return departmentRepository.save(newDepartment);
 
     }
 
@@ -59,14 +65,15 @@ public class AcademicDepartmentService {
     public AcademicDepartment update(AcademicDepartmentCreateUpdateDto updated, Integer id) {
 
         AcademicDepartment department = findById(id);
-        SpecializationMapper mapper = new SpecializationMapper();
 
         if (updated.getFacultyId() != null) {
             Faculty faculty = facultyService.findById(updated.getFacultyId());
             UpdateUtil.setIfNotNull(faculty, department::setFaculty);
         }
-        UpdateUtil.updateListIfNotNull(updated.getSpecializations(), mapper::toEntity);
+        UpdateUtil.updateListIfNotNull(updated.getSpecializations(),
+                updatedDto -> specializationMapper.toEntity(updatedDto, department));
         UpdateUtil.setIfNotNull(updated.getTitle(), department::setTitle);
+        UpdateUtil.setIfNotNull(updated.getCode(), department::setCode);
         return department;
     }
 

@@ -7,13 +7,15 @@ import ua.com.foxminded.dto.department.AcademicDepartmentCreateUpdateDto;
 public class FacultyCreateUpdateDto {
 
     private String title;
+    private String code;
     private List<AcademicDepartmentCreateUpdateDto> departments;
 
     public FacultyCreateUpdateDto() {
     }
 
-    public FacultyCreateUpdateDto(String title, List<AcademicDepartmentCreateUpdateDto> departments) {
+    public FacultyCreateUpdateDto(String title, String code, List<AcademicDepartmentCreateUpdateDto> departments) {
         this.title = title;
+        this.code = code;
         this.departments = departments;
     }
 
@@ -25,6 +27,14 @@ public class FacultyCreateUpdateDto {
         this.title = title;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     public List<AcademicDepartmentCreateUpdateDto> getDepartments() {
         return departments;
     }
@@ -32,9 +42,5 @@ public class FacultyCreateUpdateDto {
     public void setDepartments(List<AcademicDepartmentCreateUpdateDto> departments) {
         this.departments = departments;
     }
-
-    
-
-    
 
 }

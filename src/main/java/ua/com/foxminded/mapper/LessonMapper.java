@@ -13,16 +13,12 @@ import ua.com.foxminded.entity.Subject;
 @Component
 public class LessonMapper {
 
-    public Lesson toEntity(LessonCreateUpdateDto dto) {
+    public Lesson toEntity(LessonCreateUpdateDto dto, Classroom classroom, Subject subject) {
         Objects.requireNonNull(dto, "LessonCreateUpdateDto must not be null!");
+        Objects.requireNonNull(classroom, "Classroom must not be null!");
+        Objects.requireNonNull(subject, "Subject must not be null!");
 
         Lesson entity = new Lesson();
-
-        Classroom classroom = new Classroom();
-        classroom.setId(dto.getClassroomId());
-
-        Subject subject = new Subject();
-        subject.setId(dto.getSubjectId());
 
         entity.setClassroom(classroom);
         entity.setClassHour(dto.getClassHour());

@@ -25,6 +25,9 @@ public class AcademicDepartment {
     @Column(name = "department_title")
     private String title;
 
+    @Column(name = "department_code")
+    private String code;
+
     @ManyToOne
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
@@ -38,10 +41,11 @@ public class AcademicDepartment {
     public AcademicDepartment() {
     }
 
-    public AcademicDepartment(Integer id, String title, Faculty faculty, List<Specialization> specializations,
-            List<Subject> subjects) {
+    public AcademicDepartment(Integer id, String title, String code, Faculty faculty,
+            List<Specialization> specializations, List<Subject> subjects) {
         this.id = id;
         this.title = title;
+        this.code = code;
         this.faculty = faculty;
         this.specializations = specializations;
         this.subjects = subjects;
@@ -61,6 +65,14 @@ public class AcademicDepartment {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public Faculty getFaculty() {

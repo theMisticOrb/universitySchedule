@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,7 @@ import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.AcademicDepartmentMapper;
+import ua.com.foxminded.mapper.FacultyMapper;
 import ua.com.foxminded.repository.FacultyRepository;
 
 @Service
@@ -19,19 +21,26 @@ import ua.com.foxminded.repository.FacultyRepository;
 public class FacultyService {
 
     private FacultyRepository facultyRepository;
+    private AcademicDepartmentMapper departmentMapper;
+    private FacultyMapper facultyMapper;
 
-    public FacultyService(FacultyRepository facultyRepository) {
+    public FacultyService(FacultyRepository facultyRepository, AcademicDepartmentMapper departmentMapper,
+            FacultyMapper facultyMapper) {
         this.facultyRepository = facultyRepository;
+        this.departmentMapper = departmentMapper;
+        this.facultyMapper = facultyMapper;
     }
 
     public Faculty addOne(FacultyCreateUpdateDto dto) {
-        if (facultyRepository.existsByTitle(dto.getTitle())) {
+
+        Faculty faculty = facultyMapper.toEntity(dto);
+
+        try {
+            return facultyRepository.save(faculty);
+        } catch (DataIntegrityViolationException e) {
             throw new DuplicateEntityException("Faculty with title: " + dto.getTitle() + " alredy exists!");
 
         }
-        Faculty faculty = new Faculty();
-        faculty.setTitle(dto.getTitle());
-        return facultyRepository.save(faculty);
     }
 
     public Faculty findById(Integer id) {
@@ -50,9 +59,10 @@ public class FacultyService {
 
     public Faculty update(FacultyCreateUpdateDto updated, Integer id) {
         Faculty faculty = findById(id);
-        AcademicDepartmentMapper mapper = new AcademicDepartmentMapper();
-        UpdateUtil.updateListIfNotNull(updated.getDepartments(), mapper::toEntity);
+        UpdateUtil.updateListIfNotNull(updated.getDepartments(),
+                updatedDto -> departmentMapper.toEntity(updatedDto, faculty));
         UpdateUtil.setIfNotNull(updated.getTitle(), faculty::setTitle);
+        UpdateUtil.setIfNotNull(updated.getCode(), faculty::setCode);
         return faculty;
     }
 

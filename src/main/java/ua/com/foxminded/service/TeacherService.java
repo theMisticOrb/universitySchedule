@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.SubjectMapper;
+import ua.com.foxminded.mapper.TeacherMapper;
 import ua.com.foxminded.repository.TeacherRepository;
 
 @Service
@@ -21,26 +23,26 @@ public class TeacherService {
 
     private TeacherRepository teacherRepository;
     private AcademicDepartmentService departmentService;
+    private TeacherMapper teacherMapper;
 
-    public TeacherService(TeacherRepository teacherRepository, AcademicDepartmentService departmentService) {
+    public TeacherService(TeacherRepository teacherRepository, AcademicDepartmentService departmentService,
+            TeacherMapper teacherMapper) {
         this.teacherRepository = teacherRepository;
         this.departmentService = departmentService;
+        this.teacherMapper = teacherMapper;
     }
 
     public Teacher addOne(TeacherCreateUpdateDto dto) {
-        Teacher teacher = new Teacher();
-        AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
 
-        if (teacherRepository.existsByLastNameAndFirstNameAndMiddleNameAndDepartment_Id(dto.getLastName(),
-                dto.getFirstName(), dto.getMiddleName(), department.getId())) {
+        AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
+        Teacher teacher = teacherMapper.toEntity(dto, department);
+
+        try {
+            return teacherRepository.save(teacher);
+        } catch (DataIntegrityViolationException e) {
             throw new DuplicateEntityException("Teacher with name: " + dto.getLastName() + " " + dto.getFirstName()
                     + " " + dto.getMiddleName() + " alredy exists in this academic department!");
         }
-        teacher.setFirstName(dto.getFirstName());
-        teacher.setLastName(dto.getLastName());
-        teacher.setMiddleName(dto.getMiddleName());
-        teacher.setDepartment(department);
-        return teacherRepository.save(teacher);
     }
 
     public Teacher findById(Integer id) {
@@ -62,18 +64,13 @@ public class TeacherService {
     public Teacher update(TeacherCreateUpdateDto updated, Integer id) {
         Teacher teacher = findById(id);
         SubjectMapper mapper = new SubjectMapper();
+        AcademicDepartment department = departmentService.findById(updated.getDepartmentId());
 
-        if (updated.getDepartmentId() != null) {
-
-            AcademicDepartment department = departmentService.findById(updated.getDepartmentId());
-            UpdateUtil.setIfNotNull(department, teacher::setDepartment);
-
-        }
-
+        UpdateUtil.setIfNotNull(department, teacher::setDepartment);
         UpdateUtil.setIfNotNull(updated.getFirstName(), teacher::setFirstName);
         UpdateUtil.setIfNotNull(updated.getMiddleName(), teacher::setMiddleName);
         UpdateUtil.setIfNotNull(updated.getLastName(), teacher::setLastName);
-        UpdateUtil.updateListIfNotNull(updated.getSubjects(), mapper::toEntity);
+        UpdateUtil.updateListIfNotNull(updated.getSubjects(), dto -> mapper.toEntity(dto, teacher, department));
         return teacher;
     }
 

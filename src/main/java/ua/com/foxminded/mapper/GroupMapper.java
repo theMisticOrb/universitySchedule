@@ -12,13 +12,11 @@ import ua.com.foxminded.entity.Specialization;
 @Component
 public class GroupMapper {
 
-    public Group toEntity(GroupCreateUpdateDto dto) {
+    public Group toEntity(GroupCreateUpdateDto dto, Specialization specialization) {
         Objects.requireNonNull(dto, "GroupCreateUpdateDto must not be null!");
+        Objects.requireNonNull(specialization, "Specialization must not be null!");
 
         Group entity = new Group();
-
-        Specialization specialization = new Specialization();
-        specialization.setId(dto.getSpecializationId());
 
         entity.setSpecialization(specialization);
         return entity;

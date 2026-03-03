@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,7 +12,7 @@ import ua.com.foxminded.dto.classroom.ClassroomCreateUpdateDto;
 import ua.com.foxminded.entity.Classroom;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
-import ua.com.foxminded.mapper.LessonMapper;
+import ua.com.foxminded.mapper.ClassroomMapper;
 import ua.com.foxminded.repository.ClassroomRepository;
 
 @Service
@@ -19,18 +20,17 @@ import ua.com.foxminded.repository.ClassroomRepository;
 public class ClassroomService {
 
     private ClassroomRepository classroomRapository;
-
-    public ClassroomService(ClassroomRepository classroomRapository) {
-        this.classroomRapository = classroomRapository;
-    }
+    private ClassroomMapper classroomMapper;
 
     public Classroom addOne(ClassroomCreateUpdateDto dto) {
-        if (classroomRapository.existsByName(dto.getName())) {
+
+        Classroom classroom = classroomMapper.toEntity(dto);
+
+        try {
+            return classroomRapository.save(classroom);
+        } catch (DataIntegrityViolationException e) {
             throw new DuplicateEntityException("Classroom with title: " + dto.getName() + " alredy exists!");
         }
-        Classroom classroom = new Classroom();
-        classroom.setName(dto.getName());
-        return classroomRapository.save(classroom);
     }
 
     public Classroom findById(Integer id) {
@@ -50,9 +50,7 @@ public class ClassroomService {
     public Classroom update(ClassroomCreateUpdateDto updated, Integer id) {
         Classroom classroom = findById(id);
 
-        LessonMapper mapper = new LessonMapper();
         UpdateUtil.setIfNotNull(updated.getName(), classroom::setName);
-        UpdateUtil.updateListIfNotNull(updated.getLessons(), mapper::toEntity);
         return classroom;
     }
 

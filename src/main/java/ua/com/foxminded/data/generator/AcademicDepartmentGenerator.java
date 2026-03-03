@@ -30,11 +30,10 @@ public class AcademicDepartmentGenerator {
 
         for (int i = 0; i < departmentCount; i++) {
 
-            String departmentTitle = faker.educator().secondarySchool() + UUID.randomUUID();
-
             AcademicDepartment department = new AcademicDepartment();
-            department.setTitle(departmentTitle);
+            department.setTitle(faker.educator().secondarySchool() + UUID.randomUUID());
             department.setFaculty(faculty);
+            department.setCode(faker.regexify("[A-Z]{2}"));
 
             departments.add(department);
 

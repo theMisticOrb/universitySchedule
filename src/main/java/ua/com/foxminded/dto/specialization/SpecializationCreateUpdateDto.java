@@ -7,14 +7,17 @@ import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
 public class SpecializationCreateUpdateDto {
 
     private String title;
+    private String code;
     private Integer departmentId;
     private List<GroupCreateUpdateDto> groups;
 
     public SpecializationCreateUpdateDto() {
     }
 
-    public SpecializationCreateUpdateDto(String title, Integer departmentId, List<GroupCreateUpdateDto> groups) {
+    public SpecializationCreateUpdateDto(String title, String code, Integer departmentId,
+            List<GroupCreateUpdateDto> groups) {
         this.title = title;
+        this.code = code;
         this.departmentId = departmentId;
         this.groups = groups;
     }
@@ -25,6 +28,14 @@ public class SpecializationCreateUpdateDto {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public Integer getDepartmentId() {

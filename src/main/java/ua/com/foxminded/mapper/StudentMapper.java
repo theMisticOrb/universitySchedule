@@ -12,12 +12,11 @@ import ua.com.foxminded.entity.Student;
 @Component
 public class StudentMapper {
 
-    public Student toEntity(StudentCreateUpdateDto dto) {
+    public Student toEntity(StudentCreateUpdateDto dto, Group group) {
         Objects.requireNonNull(dto, "StudentCreateUpdateDto must not be null!");
+        Objects.requireNonNull(group, "Group must not be null!");
 
         Student entity = new Student();
-        Group group = new Group();
-        group.setId(dto.getGroupId());
 
         entity.setFirstName(dto.getFirstName());
         entity.setMiddleName(dto.getMiddleName());

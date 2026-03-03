@@ -1,18 +1,25 @@
 package ua.com.foxminded.service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.dto.subject.SubjectCreateUpdateDto;
+import ua.com.foxminded.entity.AcademicDepartment;
+import ua.com.foxminded.entity.Group;
+import ua.com.foxminded.entity.Specialization;
 import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.GroupMapper;
+import ua.com.foxminded.mapper.SubjectMapper;
 import ua.com.foxminded.repository.SubjectRepository;
 
 @Service
@@ -21,23 +28,35 @@ public class SubjectService {
 
     private SubjectRepository subjectRepository;
     private TeacherService teacherService;
+    private AcademicDepartmentService departmentService;
+    private SpecializationService specializationService;
+    private SubjectMapper subjectMapper;
+    private GroupMapper groupMapper;
 
-    public SubjectService(SubjectRepository subjectRepository, TeacherService teacherService) {
+    public SubjectService(SubjectRepository subjectRepository, TeacherService teacherService,
+            AcademicDepartmentService departmentService, SpecializationService specializationService,
+            SubjectMapper subjectMapper, GroupMapper groupMapper) {
         this.subjectRepository = subjectRepository;
         this.teacherService = teacherService;
+        this.departmentService = departmentService;
+        this.specializationService = specializationService;
+        this.subjectMapper = subjectMapper;
+        this.groupMapper = groupMapper;
     }
 
     public Subject addOne(SubjectCreateUpdateDto dto) {
-        Subject subject = new Subject();
+
         Teacher teacher = teacherService.findById(dto.getTeacherId());
+        AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
 
-        if (subjectRepository.existsByTitle(dto.getTitle())) {
+        Subject subject = subjectMapper.toEntity(dto, teacher, department);
+
+        try {
+            return subjectRepository.save(subject);
+        } catch (DataIntegrityViolationException e) {
             throw new DuplicateEntityException("Subject with name: " + dto.getTitle() + " alredy exists!");
-        }
 
-        subject.setTeacher(teacher);
-        subject.setTitle(dto.getTitle());
-        return subjectRepository.save(subject);
+        }
     }
 
     public Subject findById(Integer id) {
@@ -57,16 +76,23 @@ public class SubjectService {
     public Subject update(SubjectCreateUpdateDto updated, Integer id) {
 
         Subject subject = findById(id);
-        GroupMapper mapper = new GroupMapper();
 
         if (updated.getTeacherId() != null) {
             Teacher teacher = teacherService.findById(updated.getTeacherId());
             UpdateUtil.setIfNotNull(teacher, subject::setTeacher);
 
         }
-
-        UpdateUtil.updateListIfNotNull(updated.getGroups(), mapper::toEntity);
         UpdateUtil.setIfNotNull(updated.getTitle(), subject::setTitle);
+
+        if (updated.getGroups() != null) {
+            Set<Group> groups = updated.getGroups().stream().map(dto -> {
+                Specialization specialization = specializationService.findById(dto.getSpecializationId());
+                return groupMapper.toEntity(dto, specialization);
+            }).collect(Collectors.toSet());
+
+            subject.setGroups(groups);
+        }
+
         return subject;
     }
 

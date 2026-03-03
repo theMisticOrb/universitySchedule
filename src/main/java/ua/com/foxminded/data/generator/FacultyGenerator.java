@@ -30,6 +30,7 @@ public class FacultyGenerator {
 
             Faculty faculty = new Faculty();
             faculty.setTitle(faker.university().name());
+            faculty.setCode(faker.regexify("[A-Z]{2}"));
 
             faculties.add(faculty);
 

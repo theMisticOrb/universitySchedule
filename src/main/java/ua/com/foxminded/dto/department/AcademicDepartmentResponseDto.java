@@ -9,6 +9,7 @@ public class AcademicDepartmentResponseDto {
 
     private Integer id;
     private String title;
+    private String code;
     private Integer facultyId;
     private List<SpecializationCreateUpdateDto> specializations;
     private List<SubjectCreateUpdateDto> subject;
@@ -16,10 +17,11 @@ public class AcademicDepartmentResponseDto {
     public AcademicDepartmentResponseDto() {
     }
 
-    public AcademicDepartmentResponseDto(Integer id, String title, Integer facultyId,
+    public AcademicDepartmentResponseDto(Integer id, String title, String code, Integer facultyId,
             List<SpecializationCreateUpdateDto> specializations, List<SubjectCreateUpdateDto> subject) {
         this.id = id;
         this.title = title;
+        this.code = code;
         this.facultyId = facultyId;
         this.specializations = specializations;
         this.subject = subject;
@@ -39,6 +41,14 @@ public class AcademicDepartmentResponseDto {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public Integer getFacultyId() {
