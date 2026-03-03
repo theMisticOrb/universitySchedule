@@ -10,8 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
 import ua.com.foxminded.entity.Classroom;
+import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Lesson;
 import ua.com.foxminded.entity.Subject;
+import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.enums.WeekDay;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
@@ -25,13 +27,18 @@ public class LessonService {
     private LessonRepository lessonRepository;
     private ClassroomService classroomService;
     private SubjectService subjectService;
+    private GroupService groupService;
+    private TeacherService teacherService;
     private LessonMapper lessonMapper;
 
     public LessonService(LessonRepository lessonRepository, ClassroomService classroomService,
-            SubjectService subjectService, LessonMapper lessonMapper) {
+            SubjectService subjectService, GroupService groupService, TeacherService teacherService,
+            LessonMapper lessonMapper) {
         this.lessonRepository = lessonRepository;
         this.classroomService = classroomService;
         this.subjectService = subjectService;
+        this.groupService = groupService;
+        this.teacherService = teacherService;
         this.lessonMapper = lessonMapper;
     }
 
@@ -39,8 +46,10 @@ public class LessonService {
 
         Classroom classroom = classroomService.findById(dto.getClassroomId());
         Subject subject = subjectService.findById(dto.getSubjectId());
+        Group group = groupService.findById(dto.getGroupId());
+        Teacher teacher = teacherService.findById(dto.getTeacherId());
 
-        Lesson lesson = lessonMapper.toEntity(dto, classroom, subject);
+        Lesson lesson = lessonMapper.toEntity(dto, classroom, subject, group, teacher);
 
         try {
             return lessonRepository.save(lesson);
@@ -73,8 +82,17 @@ public class LessonService {
             Subject subject = subjectService.findById(updated.getSubjectId());
             UpdateUtil.setIfNotNull(subject, lesson::setSubject);
         }
+        if (updated.getGroupId() != null) {
+            Group group = groupService.findById(updated.getGroupId());
+            UpdateUtil.setIfNotNull(group, lesson::setGroup);
+        }
+        if (updated.getTeacherId() != null) {
+            Teacher teacher = teacherService.findById(updated.getTeacherId());
+            UpdateUtil.setIfNotNull(teacher, lesson::setTeacher);
+        }
 
         UpdateUtil.setIfNotNull(updated.getClassHour(), lesson::setClassHour);
+        UpdateUtil.setIfNotNull(updated.getWeekDay(), lesson::setWeekDay);
         UpdateUtil.setIfNotNull(updated.getWeekDay(), lesson::setWeekDay);
         return lesson;
     }

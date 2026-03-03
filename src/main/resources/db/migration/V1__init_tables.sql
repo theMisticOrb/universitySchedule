@@ -6,7 +6,7 @@ CREATE SEQUENCE IF NOT EXISTS lesson_id_seq START WITH 1 INCREMENT BY 30 CACHE 3
 
 CREATE TABLE IF NOT EXISTS faculties(
 faculty_id BIGSERIAL PRIMARY KEY,
-faculty_title varchar(225) UNIQUE
+faculty_title varchar(225) UNIQUE,
 faculty_code varchar(225) UNIQUE
 );
 
@@ -106,7 +106,7 @@ teacher_id INTEGER NOT NULL,
 class_hours varchar(225) NOT NULL,
 week_days varchar(225) NOT NULL,
 
-CONSTRAINT uk_subject_classroom UNIQUE (subject_id, classroom_id),
+CONSTRAINT uk_subject_classroom UNIQUE (lesson_id, classroom_id, group_id),
 
 CONSTRAINT fk_lesson_subject FOREIGN KEY (subject_id) REFERENCES subjects (subject_id),
 CONSTRAINT fk_lesson_classroom FOREIGN KEY (classroom_id) REFERENCES classrooms (classroom_id),

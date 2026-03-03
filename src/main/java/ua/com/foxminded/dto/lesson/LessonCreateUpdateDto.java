@@ -1,6 +1,5 @@
 package ua.com.foxminded.dto.lesson;
 
-import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.enums.ClassHour;
 import ua.com.foxminded.enums.WeekDay;
 
@@ -10,18 +9,20 @@ public class LessonCreateUpdateDto {
     private Integer subjectId;
     private ClassHour classHour;
     private WeekDay weekDay;
-    private Group group;
+    private Integer groupId;
+    private Integer teacherId;
 
     public LessonCreateUpdateDto() {
     }
 
     public LessonCreateUpdateDto(Integer classroomId, Integer subjectId, ClassHour classHour, WeekDay weekDay,
-            Group group) {
+            Integer groupId, Integer teacherId) {
         this.classroomId = classroomId;
         this.subjectId = subjectId;
         this.classHour = classHour;
         this.weekDay = weekDay;
-        this.group = group;
+        this.groupId = groupId;
+        this.teacherId = teacherId;
     }
 
     public Integer getClassroomId() {
@@ -56,12 +57,20 @@ public class LessonCreateUpdateDto {
         this.weekDay = weekDay;
     }
 
-    public Group getGroup() {
-        return group;
+    public Integer getGroupId() {
+        return groupId;
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
+    }
+
+    public Integer getTeacherId() {
+        return teacherId;
+    }
+
+    public void setTeacherId(Integer teacherId) {
+        this.teacherId = teacherId;
     }
 
 }

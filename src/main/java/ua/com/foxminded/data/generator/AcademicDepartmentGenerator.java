@@ -33,7 +33,7 @@ public class AcademicDepartmentGenerator {
             AcademicDepartment department = new AcademicDepartment();
             department.setTitle(faker.educator().secondarySchool() + UUID.randomUUID());
             department.setFaculty(faculty);
-            department.setCode(faker.regexify("[A-Z]{2}"));
+            department.setCode(faker.regexify("[A-Z]{3}"));
 
             departments.add(department);
 

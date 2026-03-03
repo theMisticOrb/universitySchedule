@@ -33,7 +33,7 @@ public class SpecializationGenerator {
             Specialization specialization = new Specialization();
             specialization.setTitle(faker.university().name() + " - " + UUID.randomUUID());
             specialization.setDepartment(department);
-            specialization.setCode(faker.regexify("[A-Z]{2}"));
+            specialization.setCode(faker.regexify("[A-Z]{4}"));
 
             specializations.add(specialization);
 

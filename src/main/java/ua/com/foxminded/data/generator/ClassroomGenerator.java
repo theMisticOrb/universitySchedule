@@ -30,7 +30,6 @@ public class ClassroomGenerator {
 
             Classroom classroom = new Classroom();
             classroom.setName(faker.code().ean8());
-
             classrooms.add(classroom);
 
         }

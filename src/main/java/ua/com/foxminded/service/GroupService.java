@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.config.UniversityProperties;
 import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
+import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Specialization;
 import ua.com.foxminded.entity.Subject;
@@ -32,16 +33,18 @@ public class GroupService {
 
     private GroupRepository groupRepository;
     private SpecializationService specializationService;
+    private AcademicDepartmentService departmentService;
     private TeacherService teacherService;
     private StudentMapper studentMapper;
     private SubjectMapper subjectMapper;
     private UniversityProperties properties;
 
     public GroupService(GroupRepository groupRepository, SpecializationService specializationService,
-            TeacherService teacherService, StudentMapper studentMapper, SubjectMapper subjectMapper,
-            UniversityProperties properties) {
+            AcademicDepartmentService departmentService, TeacherService teacherService, StudentMapper studentMapper,
+            SubjectMapper subjectMapper, UniversityProperties properties) {
         this.groupRepository = groupRepository;
         this.specializationService = specializationService;
+        this.departmentService = departmentService;
         this.teacherService = teacherService;
         this.studentMapper = studentMapper;
         this.subjectMapper = subjectMapper;
@@ -107,14 +110,16 @@ public class GroupService {
 
     public Group update(GroupCreateUpdateDto updated, Integer id) {
         Group group = findById(id);
-        Specialization specialization = specializationService.findById(updated.getSpecializationId());
-
-        UpdateUtil.setIfNotNull(specialization, group::setSpecialization);
+        if (updated.getSpecializationId() != null) {
+            Specialization specialization = specializationService.findById(updated.getSpecializationId());
+            UpdateUtil.setIfNotNull(specialization, group::setSpecialization);
+        }
         UpdateUtil.updateListIfNotNull(updated.getStudents(), dto -> studentMapper.toEntity(dto, group));
         if (updated.getSubjects() != null) {
             Set<Subject> subjects = updated.getSubjects().stream().map(dto -> {
                 Teacher teacher = teacherService.findById(dto.getTeacherId());
-                return subjectMapper.toEntity(dto, teacher, specialization.getDepartment());
+                AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
+                return subjectMapper.toEntity(dto, teacher, department);
             }).collect(Collectors.toSet());
 
             group.setSubjects(subjects);

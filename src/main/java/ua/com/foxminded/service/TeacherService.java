@@ -24,12 +24,14 @@ public class TeacherService {
     private TeacherRepository teacherRepository;
     private AcademicDepartmentService departmentService;
     private TeacherMapper teacherMapper;
+    private SubjectMapper subjectMapper;
 
     public TeacherService(TeacherRepository teacherRepository, AcademicDepartmentService departmentService,
-            TeacherMapper teacherMapper) {
+            TeacherMapper teacherMapper, SubjectMapper subjectMapper) {
         this.teacherRepository = teacherRepository;
         this.departmentService = departmentService;
         this.teacherMapper = teacherMapper;
+        this.subjectMapper = subjectMapper;
     }
 
     public Teacher addOne(TeacherCreateUpdateDto dto) {
@@ -63,14 +65,16 @@ public class TeacherService {
 
     public Teacher update(TeacherCreateUpdateDto updated, Integer id) {
         Teacher teacher = findById(id);
-        SubjectMapper mapper = new SubjectMapper();
-        AcademicDepartment department = departmentService.findById(updated.getDepartmentId());
 
-        UpdateUtil.setIfNotNull(department, teacher::setDepartment);
+        if (updated.getDepartmentId() != null) {
+            AcademicDepartment department = departmentService.findById(updated.getDepartmentId());
+            UpdateUtil.setIfNotNull(department, teacher::setDepartment);
+            UpdateUtil.updateListIfNotNull(updated.getSubjects(),
+                    dto -> subjectMapper.toEntity(dto, teacher, department));
+        }
         UpdateUtil.setIfNotNull(updated.getFirstName(), teacher::setFirstName);
         UpdateUtil.setIfNotNull(updated.getMiddleName(), teacher::setMiddleName);
         UpdateUtil.setIfNotNull(updated.getLastName(), teacher::setLastName);
-        UpdateUtil.updateListIfNotNull(updated.getSubjects(), dto -> mapper.toEntity(dto, teacher, department));
         return teacher;
     }
 

@@ -27,10 +27,12 @@ public class SpecializationService {
     private SpecializationMapper specializationMapper;
 
     public SpecializationService(SpecializationRepository specializationRepository,
-            AcademicDepartmentService departmentService, GroupMapper groupMapper) {
+            AcademicDepartmentService departmentService, GroupMapper groupMapper,
+            SpecializationMapper specializationMapper) {
         this.specializationRepository = specializationRepository;
         this.departmentService = departmentService;
         this.groupMapper = groupMapper;
+        this.specializationMapper = specializationMapper;
     }
 
     public Specialization addOne(SpecializationCreateUpdateDto dto) {

@@ -31,7 +31,7 @@ import ua.com.foxminded.repository.SpecializationRepository;
 @Transactional
 @SpringBootTest(classes = { MainApp.class })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles({"test"})
+@ActiveProfiles({ "test" })
 class GroupServiceTest {
 
     @Autowired
@@ -105,9 +105,9 @@ class GroupServiceTest {
     void findByTitle_shouldReturnGroup_whenExists() {
         Group saved = service.addOne(group);
         String groupName = saved.getName();
-        
+
         Group result = service.findByName(groupName);
-        
+
         assertNotNull(result);
         assertEquals(groupName, result.getName());
         assertEquals(saved.getId(), result.getId());
@@ -117,8 +117,18 @@ class GroupServiceTest {
     void update_shouldUpdateEntity_whenCalled() {
         Group firstGroup = service.addOne(group);
 
+        Faculty faculty = new Faculty();
+        faculty.setTitle("Data Science");
+        Faculty engineeringFaculty = facultyRepository.save(faculty);
+
+        AcademicDepartment computerScience = new AcademicDepartment();
+        computerScience.setTitle("Analitics");
+        computerScience.setFaculty(engineeringFaculty);
+        AcademicDepartment csDepartment = departmentRepository.save(computerScience);
+
         Specialization specialization = new Specialization();
         specialization.setTitle("Math");
+        specialization.setDepartment(csDepartment);
         Specialization mathSpecialization = specializationRepository.save(specialization);
 
         GroupCreateUpdateDto firstGroupUpdated = new GroupCreateUpdateDto();

@@ -26,7 +26,7 @@ public class Classroom {
     private String name;
     
     @OneToMany(mappedBy = "classroom")
-    private List<Lesson> lesson = new ArrayList<>();
+    private List<Lesson> lessons = new ArrayList<>();
 
     public Classroom() {
     }
@@ -52,12 +52,12 @@ public class Classroom {
         this.name = name;
     }
 
-    public List<Lesson> getLesson() {
-        return lesson;
+    public List<Lesson> getLessons() {
+        return lessons;
     }
 
-    public void setLesson(List<Lesson> lesson) {
-        this.lesson = lesson;
+    public void setLessons(List<Lesson> lessons) {
+        this.lessons = lessons;
     }
     
     

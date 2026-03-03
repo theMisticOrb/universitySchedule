@@ -22,6 +22,11 @@ public class ClassroomService {
     private ClassroomRepository classroomRapository;
     private ClassroomMapper classroomMapper;
 
+    public ClassroomService(ClassroomRepository classroomRapository, ClassroomMapper classroomMapper) {
+        this.classroomRapository = classroomRapository;
+        this.classroomMapper = classroomMapper;
+    }
+
     public Classroom addOne(ClassroomCreateUpdateDto dto) {
 
         Classroom classroom = classroomMapper.toEntity(dto);

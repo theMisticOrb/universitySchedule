@@ -31,7 +31,7 @@ import ua.com.foxminded.repository.TeacherRepository;
 @Transactional
 @SpringBootTest(classes = { MainApp.class })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles({"test"})
+@ActiveProfiles({ "test" })
 class SubjectServiceTest {
 
     @Autowired
@@ -67,6 +67,7 @@ class SubjectServiceTest {
 
         subject.setTeacherId(jonTeacher.getId());
         subject.setTitle("Math");
+        subject.setDepartmentId(csDepartment.getId());
 
     }
 
@@ -104,7 +105,7 @@ class SubjectServiceTest {
         assertNotNull(allSubjects);
 
     }
-    
+
     @Test
     void findByTitle_shouldReturnStudent_whenExists() {
         Subject saved = service.addOne(subject);
