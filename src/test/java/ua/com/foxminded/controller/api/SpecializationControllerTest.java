@@ -57,7 +57,7 @@ class SpecializationControllerTest {
     private Specialization createSpecialization() {
         Specialization entity = new Specialization();
         entity.setId(1);
-        entity.setDepartment(new AcademicDepartment(1, "IT", null, null, null));
+        entity.setDepartment(new AcademicDepartment(1, "IT", null, null, null, null));
         entity.setTitle("Computer Science");
         return entity;
     }

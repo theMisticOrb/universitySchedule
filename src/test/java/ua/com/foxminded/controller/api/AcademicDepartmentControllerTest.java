@@ -56,7 +56,7 @@ class AcademicDepartmentControllerTest {
     private AcademicDepartment createDepartment() {
         AcademicDepartment department = new AcademicDepartment();
         department.setId(1);
-        department.setFaculty(new Faculty(1, "IT"));
+        department.setFaculty(new Faculty(1, "IT", null, null));
         department.setTitle("Computer Science");
         return department;
     }
@@ -123,7 +123,7 @@ class AcademicDepartmentControllerTest {
 
         AcademicDepartment department = createDepartment();
         AcademicDepartmentResponseDto responseDto = createResponseDto();
-        
+
         AcademicDepartmentCreateUpdateDto requestDto = new AcademicDepartmentCreateUpdateDto();
         requestDto.setFacultyId(1);
         requestDto.setTitle("Computer Science");
