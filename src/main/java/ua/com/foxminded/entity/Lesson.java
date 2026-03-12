@@ -34,11 +34,11 @@ public class Lesson {
     private Classroom classroom;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "class_hours")
+    @Column(name = "class_hour")
     private ClassHour classHour;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "week_days")
+    @Column(name = "week_day")
     private WeekDay weekDay;
 
     @ManyToOne

@@ -1,7 +1,9 @@
 package ua.com.foxminded.data.generator;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -25,12 +27,16 @@ public class ClassroomGenerator {
 
     public List<Classroom> generateClassrooms(int classroomCount) {
         List<Classroom> classrooms = new ArrayList<>();
+        Set<String> names = new HashSet<>();
 
-        while (classrooms.size() < classroomCount) {
+        while (names.size() < classroomCount) {
+            String name = faker.regexify("[A-Z]{3}") + faker.number().numberBetween(100, 500);
 
-            Classroom classroom = new Classroom();
-            classroom.setName(faker.code().ean8());
-            classrooms.add(classroom);
+            if (names.add(name)) {
+                Classroom classroom = new Classroom();
+                classroom.setName(name);
+                classrooms.add(classroom);
+            }
 
         }
         classrooms = repository.saveAll(classrooms);

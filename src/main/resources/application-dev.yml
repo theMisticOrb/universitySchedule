@@ -19,6 +19,6 @@ dev:
   studentsPerGroup: 5
   teachersPerDepartment: 5
   subjectsPerTeacher: 3
-  classroomsPerDepartment: 3
+  classroomsPerDepartment: 15
   lessonsPerWeek: 7
   
