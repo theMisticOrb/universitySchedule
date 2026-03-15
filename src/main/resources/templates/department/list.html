@@ -16,13 +16,13 @@
     <table border="1">
         <thead>
             <tr>
-                <th>Faculty</th>
+                <th>Faculty Code</th>
                 <th>Title</th>
             </tr>
         </thead>
         <tbody>
             <tr th:each="department : ${departments}">
-                <td th:text="${department.facultyId}"></td>
+                <td th:text="${department.facultyCode}"></td>
                 <td th:text="${department.title}"></td>
             </tr>
         </tbody>

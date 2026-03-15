@@ -64,7 +64,7 @@ class AcademicDepartmentControllerTest {
     private AcademicDepartmentResponseDto createResponseDto() {
         AcademicDepartmentResponseDto dto = new AcademicDepartmentResponseDto();
         dto.setId(1);
-        dto.setFacultyId(1);
+        dto.setFacultyCode("CS");
         dto.setTitle("Computer Science");
         return dto;
     }
@@ -81,7 +81,7 @@ class AcademicDepartmentControllerTest {
         when(service.findAll()).thenReturn(departments);
         when(departmentMapper.toResponseDto(any(AcademicDepartment.class))).thenReturn(dto);
 
-        mvc.perform(get("/api/departments")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
+        mvc.perform(get("/api/v1/departments")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].title").value("Computer Science"));
     }
 
@@ -93,7 +93,7 @@ class AcademicDepartmentControllerTest {
 
         when(service.findByTitle("Computer Science")).thenReturn(department);
         when(departmentMapper.toResponseDto(department)).thenReturn(dto);
-        mvc.perform(get("/api/departments/title/Computer Science")).andExpect(status().isOk())
+        mvc.perform(get("/api/v1/departments/title/Computer Science")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
     }
 
@@ -102,7 +102,7 @@ class AcademicDepartmentControllerTest {
         when(service.findByTitle("Math"))
             .thenThrow(new EntityNotFoundException("Not found"));
 
-        mvc.perform(get("/api/departments/title/Math"))
+        mvc.perform(get("/api/v1/departments/title/Math"))
            .andExpect(status().isNotFound());
     }
 
@@ -114,7 +114,7 @@ class AcademicDepartmentControllerTest {
 
         when(service.findById(1)).thenReturn(department);
         when(departmentMapper.toResponseDto(department)).thenReturn(dto);
-        mvc.perform(get("/api/departments/1")).andExpect(status().isOk())
+        mvc.perform(get("/api/v1/departments/1")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
     }
 
@@ -125,13 +125,13 @@ class AcademicDepartmentControllerTest {
         AcademicDepartmentResponseDto responseDto = createResponseDto();
 
         AcademicDepartmentCreateUpdateDto requestDto = new AcademicDepartmentCreateUpdateDto();
-        requestDto.setFacultyId(1);
+        requestDto.setFacultyCode("CS");
         requestDto.setTitle("Computer Science");
 
         when(service.addOne(any(AcademicDepartmentCreateUpdateDto.class))).thenReturn(department);
         when(departmentMapper.toResponseDto(department)).thenReturn(responseDto);
 
-        mvc.perform(post("/api/departments").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/api/v1/departments").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
     }
@@ -140,7 +140,7 @@ class AcademicDepartmentControllerTest {
     void delete_shouldReturn204_whenCalled() throws Exception {
         when(service.findById(1)).thenReturn(createDepartment());
         doNothing().when(service).deleteById(1);
-        mvc.perform(delete("/api/departments/1")).andExpect(status().isNoContent());
+        mvc.perform(delete("/api/v1/departments/1")).andExpect(status().isNoContent());
         verify(service).deleteById(1);
     }
 
@@ -152,13 +152,13 @@ class AcademicDepartmentControllerTest {
         AcademicDepartmentResponseDto responseDto = createResponseDto();
 
         AcademicDepartmentCreateUpdateDto requestDto = new AcademicDepartmentCreateUpdateDto();
-        requestDto.setFacultyId(1);
+        requestDto.setFacultyCode("CS");
         requestDto.setTitle("Computer Science");
 
         when(service.update(any(AcademicDepartmentCreateUpdateDto.class), eq(1))).thenReturn(department);
         when(departmentMapper.toResponseDto(department)).thenReturn(responseDto);
 
-        mvc.perform(put("/api/departments/1").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(put("/api/v1/departments/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
 

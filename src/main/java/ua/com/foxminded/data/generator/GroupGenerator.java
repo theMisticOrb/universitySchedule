@@ -26,7 +26,7 @@ public class GroupGenerator {
         for (int i = 0; i < groupCount; i++) {
 
             GroupCreateUpdateDto group = new GroupCreateUpdateDto();
-            group.setSpecializationId(specialization.getId());
+            group.setSpecializationCode(specialization.getCode());
 
             groups.add(group);
 

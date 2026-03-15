@@ -25,11 +25,11 @@ import ua.com.foxminded.entity.Specialization;
 import ua.com.foxminded.repository.AcademicDepartmentRepository;
 import ua.com.foxminded.repository.FacultyRepository;
 
-@Testcontainers
-@Transactional
 @SpringBootTest(classes = { MainApp.class })
+@Transactional
+@Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles({"test"})
+@ActiveProfiles({ "test" })
 class SpecializationServiceTest {
 
     @Autowired
@@ -46,15 +46,18 @@ class SpecializationServiceTest {
     void setUp() {
 
         Faculty faculty = new Faculty();
+        faculty.setCode("EN");
         faculty.setTitle("Engineering");
-        Faculty engineeringFaculty = facultyRepository.save(faculty);
+        Faculty engineeringFaculty = facultyRepository.saveAndFlush(faculty);
 
         AcademicDepartment computerScience = new AcademicDepartment();
         computerScience.setTitle("Computer Science");
+        computerScience.setCode("CS");
         computerScience.setFaculty(engineeringFaculty);
-        AcademicDepartment csDepartment = departmentRepository.save(computerScience);
+        AcademicDepartment csDepartment = departmentRepository.saveAndFlush(computerScience);
 
-        specialization.setDepartmentId(csDepartment.getId());
+        specialization.setDepartmentCode(csDepartment.getCode());
+        specialization.setCode("SEC");
         specialization.setTitle("Security");
     }
 
@@ -81,7 +84,7 @@ class SpecializationServiceTest {
     void findById_shouldThrowException_whenCalledifEntityDoesNotExist() {
         int nonexistentId = 34;
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.findById(nonexistentId));
-        assertEquals("Specialization not found: " + nonexistentId, ex.getMessage());
+        assertEquals("Specialization not found by id: " + nonexistentId, ex.getMessage());
     }
 
     @Test
@@ -92,7 +95,7 @@ class SpecializationServiceTest {
         assertNotNull(allSpecializations);
 
     }
-    
+
     @Test
     void findByTitle_shouldReturnSpecialization_whenExists() {
         Specialization saved = service.addOne(specialization);
@@ -111,15 +114,17 @@ class SpecializationServiceTest {
 
         Faculty faculty = new Faculty();
         faculty.setTitle("Math");
+        faculty.setCode("MT");
         Faculty mathFaculty = facultyRepository.save(faculty);
 
         AcademicDepartment analysis = new AcademicDepartment();
         analysis.setTitle("Mathematical analysis");
+        analysis.setCode("MA");
         analysis.setFaculty(mathFaculty);
         AcademicDepartment csDepartment = departmentRepository.save(analysis);
 
         SpecializationCreateUpdateDto securitySpecialUpdated = new SpecializationCreateUpdateDto();
-        securitySpecialUpdated.setDepartmentId(csDepartment.getId());
+        securitySpecialUpdated.setDepartmentCode(csDepartment.getCode());
         Specialization result = service.update(securitySpecialUpdated, securitySpecial.getId());
 
         assertEquals(securitySpecial.getId(), result.getId());
@@ -134,7 +139,7 @@ class SpecializationServiceTest {
         Specialization securitySpecial = service.addOne(specialization);
 
         SpecializationCreateUpdateDto securitySpecialUpdated = new SpecializationCreateUpdateDto();
-        securitySpecialUpdated.setDepartmentId(null);
+        securitySpecialUpdated.setDepartmentCode(null);
         Specialization result = service.update(securitySpecialUpdated, securitySpecial.getId());
 
         assertEquals("Computer Science", result.getDepartment().getTitle());

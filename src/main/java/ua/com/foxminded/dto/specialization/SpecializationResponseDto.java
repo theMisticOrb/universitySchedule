@@ -9,18 +9,18 @@ public class SpecializationResponseDto {
     private Integer id;
     private String title;
     private String code;
-    private Integer departmentId;
+    private String departmentCode;
     private List<GroupCreateUpdateDto> groups;
 
     public SpecializationResponseDto() {
     }
 
-    public SpecializationResponseDto(Integer id, String title, String code, Integer departmentId,
+    public SpecializationResponseDto(Integer id, String title, String code, String departmentCode,
             List<GroupCreateUpdateDto> groups) {
         this.id = id;
         this.title = title;
         this.code = code;
-        this.departmentId = departmentId;
+        this.departmentCode = departmentCode;
         this.groups = groups;
     }
 
@@ -48,12 +48,12 @@ public class SpecializationResponseDto {
         this.code = code;
     }
 
-    public Integer getDepartmentId() {
-        return departmentId;
+    public String getDepartmentCode() {
+        return departmentCode;
     }
 
-    public void setDepartmentId(Integer departmentId) {
-        this.departmentId = departmentId;
+    public void setDepartmentCode(String string) {
+        this.departmentCode = string;
     }
 
     public List<GroupCreateUpdateDto> getGroups() {

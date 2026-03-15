@@ -26,7 +26,7 @@ import ua.com.foxminded.entity.Faculty;
 @Transactional
 @SpringBootTest(classes = { MainApp.class })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles({"test"})
+@ActiveProfiles({ "test" })
 class FacultyServiceTest {
 
     @Autowired
@@ -60,7 +60,7 @@ class FacultyServiceTest {
     void findById_shouldThrowException_whenCalledifEntityDoesNotExist() {
         int nonexistentId = 34;
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.findById(nonexistentId));
-        assertEquals("Faculty not found: " + nonexistentId, ex.getMessage());
+        assertEquals("Faculty not found by id: " + nonexistentId, ex.getMessage());
     }
 
     @Test

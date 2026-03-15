@@ -84,7 +84,7 @@ class SubjectControllerTest {
         when(service.findAll()).thenReturn(specializations);
         when(specializationMapper.toResponseDto(any(Subject.class))).thenReturn(responseDto);
 
-        mvc.perform(get("/api/subjects")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
+        mvc.perform(get("/api/v1/subjects")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].title").value("Computer Science"));
     }
 
@@ -96,7 +96,7 @@ class SubjectControllerTest {
 
         when(service.findByTitle("Computer Science")).thenReturn(subject);
         when(specializationMapper.toResponseDto(subject)).thenReturn(responseDto);
-        mvc.perform(get("/api/subjects/title/Computer Science")).andExpect(status().isOk())
+        mvc.perform(get("/api/v1/subjects/title/Computer Science")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
     }
 
@@ -105,7 +105,7 @@ class SubjectControllerTest {
         when(service.findByTitle("Math"))
             .thenThrow(new EntityNotFoundException("Not found"));
 
-        mvc.perform(get("/api/subjects/title/Math"))
+        mvc.perform(get("/api/v1/subjects/title/Math"))
            .andExpect(status().isNotFound());
     }
 
@@ -117,7 +117,7 @@ class SubjectControllerTest {
 
         when(service.findById(1)).thenReturn(subject);
         when(specializationMapper.toResponseDto(subject)).thenReturn(responseDto);
-        mvc.perform(get("/api/subjects/1")).andExpect(status().isOk())
+        mvc.perform(get("/api/v1/subjects/1")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
     }
 
@@ -134,7 +134,7 @@ class SubjectControllerTest {
         when(service.addOne(any(SubjectCreateUpdateDto.class))).thenReturn(subject);
         when(specializationMapper.toResponseDto(subject)).thenReturn(responseDto);
 
-        mvc.perform(post("/api/subjects").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/api/v1/subjects").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
     }
@@ -143,7 +143,7 @@ class SubjectControllerTest {
     void delete_shouldReturn204_whenCalled() throws Exception {
         when(service.findById(1)).thenReturn(createSubject());
         doNothing().when(service).deleteById(1);
-        mvc.perform(delete("/api/subjects/1")).andExpect(status().isNoContent());
+        mvc.perform(delete("/api/v1/subjects/1")).andExpect(status().isNoContent());
         verify(service).deleteById(1);
     }
 
@@ -160,7 +160,7 @@ class SubjectControllerTest {
         when(service.update(any(SubjectCreateUpdateDto.class), eq(1))).thenReturn(subject);
         when(specializationMapper.toResponseDto(subject)).thenReturn(responseDto);
 
-        mvc.perform(put("/api/subjects/1").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(put("/api/v1/subjects/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
 

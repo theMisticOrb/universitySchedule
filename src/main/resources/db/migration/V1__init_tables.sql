@@ -13,7 +13,7 @@ faculty_code varchar(225) UNIQUE
 
 CREATE TABLE IF NOT EXISTS departments (
 department_id BIGSERIAL PRIMARY KEY,
-department_title varchar(225) UNIQUE,
+department_title varchar(225),
 department_code varchar(225) UNIQUE,
 faculty_id INTEGER NOT NULL,
 
@@ -24,7 +24,7 @@ CONSTRAINT fk_department_faculty FOREIGN KEY (faculty_id) REFERENCES faculties (
 
 CREATE TABLE IF NOT EXISTS specializations (
 specialization_id BIGSERIAL PRIMARY KEY,
-specialization_title varchar(225) UNIQUE,
+specialization_title varchar(225),
 specialization_code varchar(225) UNIQUE,
 department_id INTEGER NOT NULL,
 
@@ -68,7 +68,7 @@ CONSTRAINT fk_teacher_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON D
 
 CREATE TABLE IF NOT EXISTS subjects(
 subject_id BIGSERIAL PRIMARY KEY,
-subject_title varchar(225) UNIQUE,
+subject_title varchar(225),
 teacher_id  INTEGER NOT NULL,
 department_id  INTEGER NOT NULL,
 

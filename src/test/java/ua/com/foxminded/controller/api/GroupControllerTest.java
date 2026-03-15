@@ -47,7 +47,7 @@ class GroupControllerTest {
     private GroupService service;
     @MockBean
     private GroupMapper groupMapper;
-    
+
     @Autowired
     private ObjectMapper mapper;
 
@@ -57,7 +57,7 @@ class GroupControllerTest {
         group.setName("1.1.1.1");
         return group;
     }
-    
+
     private GroupResponseDto createResponseDto() {
         GroupResponseDto dto = new GroupResponseDto();
         dto.setId(1);
@@ -70,14 +70,14 @@ class GroupControllerTest {
 
         Group group = createGroup();
         GroupResponseDto responseDto = createResponseDto();
-        
+
         List<Group> groups = new ArrayList<>();
         groups.add(group);
 
         when(service.findAll()).thenReturn(groups);
         when(groupMapper.toResponseDto(any(Group.class))).thenReturn(responseDto);
 
-        mvc.perform(get("/api/groups")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
+        mvc.perform(get("/api/v1/groups")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].name").value(group.getName()));
     }
 
@@ -90,7 +90,7 @@ class GroupControllerTest {
         when(service.findByName("1.1.1.1")).thenReturn(group);
         when(groupMapper.toResponseDto(group)).thenReturn(responseDto);
 
-        mvc.perform(get("/api/groups/name/1.1.1.1")).andExpect(status().isOk())
+        mvc.perform(get("/api/v1/groups/name/1.1.1.1")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("1.1.1.1"));
     }
 
@@ -99,7 +99,7 @@ class GroupControllerTest {
         when(service.findByName("Math"))
             .thenThrow(new EntityNotFoundException("Not found"));
 
-        mvc.perform(get("/api/groups/name/Math"))
+        mvc.perform(get("/api/v1/groups/name/Math"))
            .andExpect(status().isNotFound());
     }
 
@@ -112,7 +112,7 @@ class GroupControllerTest {
         when(service.findById(1)).thenReturn(group);
         when(groupMapper.toResponseDto(group)).thenReturn(responseDto);
 
-        mvc.perform(get("/api/groups/1")).andExpect(status().isOk())
+        mvc.perform(get("/api/v1/groups/1")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(group.getName()));
     }
 
@@ -122,12 +122,12 @@ class GroupControllerTest {
         Group group = createGroup();
         GroupResponseDto responseDto = createResponseDto();
         GroupCreateUpdateDto requestDto = new GroupCreateUpdateDto();
-        requestDto.setSpecializationId(1);
+        requestDto.setSpecializationCode("A");
 
         when(service.addOne(any(GroupCreateUpdateDto.class))).thenReturn(group);
         when(groupMapper.toResponseDto(group)).thenReturn(responseDto);
 
-        mvc.perform(post("/api/groups").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/api/v1/groups").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value(group.getName()));
     }
@@ -136,7 +136,7 @@ class GroupControllerTest {
     void delete_shouldReturn204_whenCalled() throws Exception {
         when(service.findById(1)).thenReturn(createGroup());
         doNothing().when(service).deleteById(1);
-        mvc.perform(delete("/api/groups/1")).andExpect(status().isNoContent());
+        mvc.perform(delete("/api/v1/groups/1")).andExpect(status().isNoContent());
         verify(service).deleteById(1);
     }
 
@@ -147,12 +147,12 @@ class GroupControllerTest {
         GroupResponseDto responseDto = createResponseDto();
 
         GroupCreateUpdateDto requestDto = new GroupCreateUpdateDto();
-        requestDto.setSpecializationId(1);
+        requestDto.setSpecializationCode("A");
 
         when(service.update(any(GroupCreateUpdateDto.class), eq(1))).thenReturn(group);
         when(groupMapper.toResponseDto(group)).thenReturn(responseDto);
 
-        mvc.perform(put("/api/groups/1").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(put("/api/v1/groups/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(group.getName()));
 

@@ -7,7 +7,7 @@ import ua.com.foxminded.dto.user.StudentCreateUpdateDto;
 
 public class GroupCreateUpdateDto {
 
-    private Integer specializationId;
+    private String specializationCode;
 
     private List<StudentCreateUpdateDto> students;
     private List<SubjectCreateUpdateDto> subjects;
@@ -15,19 +15,19 @@ public class GroupCreateUpdateDto {
     public GroupCreateUpdateDto() {
     }
 
-    public GroupCreateUpdateDto(Integer specializationId, List<StudentCreateUpdateDto> students,
+    public GroupCreateUpdateDto(String specializationCode, List<StudentCreateUpdateDto> students,
             List<SubjectCreateUpdateDto> subjects) {
-        this.specializationId = specializationId;
+        this.specializationCode = specializationCode;
         this.students = students;
         this.subjects = subjects;
     }
 
-    public Integer getSpecializationId() {
-        return specializationId;
+    public String getSpecializationCode() {
+        return specializationCode;
     }
 
-    public void setSpecializationId(Integer specializationId) {
-        this.specializationId = specializationId;
+    public void setSpecializationCode(String specializationCode) {
+        this.specializationCode = specializationCode;
     }
 
     public List<StudentCreateUpdateDto> getStudents() {

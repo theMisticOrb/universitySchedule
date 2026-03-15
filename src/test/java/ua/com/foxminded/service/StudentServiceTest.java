@@ -33,7 +33,7 @@ import ua.com.foxminded.repository.SpecializationRepository;
 @Transactional
 @SpringBootTest(classes = { MainApp.class })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles({"test"})
+@ActiveProfiles({ "test" })
 class StudentServiceTest {
 
     @Autowired
@@ -55,20 +55,23 @@ class StudentServiceTest {
 
         Faculty faculty = new Faculty();
         faculty.setTitle("Engineering");
+        faculty.setCode("EN");
         Faculty engineeringFaculty = facultyRepository.save(faculty);
 
         AcademicDepartment computerScience = new AcademicDepartment();
         computerScience.setTitle("Computer Science");
+        computerScience.setCode("CS");
         computerScience.setFaculty(engineeringFaculty);
         AcademicDepartment csDepartment = departmentRepository.save(computerScience);
 
         Specialization specialization = new Specialization();
         specialization.setDepartment(csDepartment);
+        specialization.setCode("SE");
         specialization.setTitle("Security");
         Specialization security = specializationRepository.save(specialization);
 
         GroupCreateUpdateDto group = new GroupCreateUpdateDto();
-        group.setSpecializationId(security.getId());
+        group.setSpecializationCode(security.getCode());
         Group firstGroup = groupService.addOne(group);
 
         student.setFirstName("Jack");
@@ -111,7 +114,7 @@ class StudentServiceTest {
         assertNotNull(allStudents);
 
     }
-    
+
     @Test
     void findByTitle_shouldReturnStudent_whenExists() {
         Student saved = service.addOne(student);

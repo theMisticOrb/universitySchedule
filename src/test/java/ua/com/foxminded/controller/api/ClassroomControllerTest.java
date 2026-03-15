@@ -78,7 +78,7 @@ class ClassroomControllerTest {
         when(service.findAll()).thenReturn(listClassrooms);
         when(classroomMapper.toResponseDto(any(Classroom.class))).thenReturn(responseDto);
 
-        mvc.perform(get("/api/classrooms")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
+        mvc.perform(get("/api/v1/classrooms")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].name").value("2A"));
     }
 
@@ -91,7 +91,7 @@ class ClassroomControllerTest {
         when(service.findByName("2A")).thenReturn(classroom);
         when(classroomMapper.toResponseDto(classroom)).thenReturn(responseDto);
 
-        mvc.perform(get("/api/classrooms/name/2A")).andExpect(status().isOk())
+        mvc.perform(get("/api/v1/classrooms/name/2A")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("2A"));
     }
 
@@ -100,7 +100,7 @@ class ClassroomControllerTest {
         when(service.findByName("2B"))
             .thenThrow(new EntityNotFoundException("Not found"));
 
-        mvc.perform(get("/api/classrooms/name/2B"))
+        mvc.perform(get("/api/v1/classrooms/name/2B"))
            .andExpect(status().isNotFound());
     }
 
@@ -113,7 +113,7 @@ class ClassroomControllerTest {
         when(service.findById(1)).thenReturn(classroom);
         when(classroomMapper.toResponseDto(classroom)).thenReturn(responseDto);
 
-        mvc.perform(get("/api/classrooms/1")).andExpect(status().isOk()).andExpect(jsonPath("$.name").value("2A"));
+        mvc.perform(get("/api/v1/classrooms/1")).andExpect(status().isOk()).andExpect(jsonPath("$.name").value("2A"));
     }
 
     @Test
@@ -128,7 +128,7 @@ class ClassroomControllerTest {
         when(service.addOne(any(ClassroomCreateUpdateDto.class))).thenReturn(classroom);
         when(classroomMapper.toResponseDto(classroom)).thenReturn(responseDto);
 
-        mvc.perform(post("/api/classrooms").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/api/v1/classrooms").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("2A"));
     }
@@ -137,7 +137,7 @@ class ClassroomControllerTest {
     void delete_shouldReturn204_whenCalled() throws Exception {
         when(service.findById(1)).thenReturn(createClassroom());
         doNothing().when(service).deleteById(1);
-        mvc.perform(delete("/api/classrooms/1")).andExpect(status().isNoContent());
+        mvc.perform(delete("/api/v1/classrooms/1")).andExpect(status().isNoContent());
         verify(service).deleteById(1);
     }
 
@@ -153,7 +153,7 @@ class ClassroomControllerTest {
         when(service.update(any(ClassroomCreateUpdateDto.class), eq(1))).thenReturn(classroom);
         when(classroomMapper.toResponseDto(classroom)).thenReturn(responseDto);
 
-        mvc.perform(put("/api/classrooms/1").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(put("/api/v1/classrooms/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("2A"));
 

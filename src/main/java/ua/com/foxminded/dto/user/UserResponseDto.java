@@ -49,4 +49,7 @@ public class UserResponseDto {
         this.lastName = lastName;
     }
 
+    public String getFullName() {
+        return firstName + " " + middleName + " " + lastName;
+    }
 }

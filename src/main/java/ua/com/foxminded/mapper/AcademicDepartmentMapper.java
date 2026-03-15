@@ -29,7 +29,7 @@ public class AcademicDepartmentMapper {
 
         AcademicDepartmentResponseDto dto = new AcademicDepartmentResponseDto();
         dto.setId(entity.getId());
-        dto.setFacultyId(entity.getFaculty().getId());
+        dto.setFacultyCode(entity.getFaculty().getCode());
         dto.setTitle(entity.getTitle());
         dto.setCode(entity.getCode());
         return dto;

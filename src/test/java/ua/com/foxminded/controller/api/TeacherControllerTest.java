@@ -85,7 +85,7 @@ class TeacherControllerTest {
         when(service.findAll()).thenReturn(students);
         when(studentMapper.toResponseDto(any(Teacher.class))).thenReturn(responseDto);
 
-        mvc.perform(get("/api/teachers")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1));
+        mvc.perform(get("/api/v1/teachers")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1));
     }
 
     @Test
@@ -97,7 +97,7 @@ class TeacherControllerTest {
         when(service.findByFullName("Bobinski", "Bob", "Bobovitch")).thenReturn(student);
         when(studentMapper.toResponseDto(student)).thenReturn(dto);
 
-        mvc.perform(get("/api/teachers/search").param("lastName", "Bobinski").param("firstName", "Bob")
+        mvc.perform(get("/api/v1/teachers/search").param("lastName", "Bobinski").param("firstName", "Bob")
                 .param("middleName", "Bobovitch")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.lastName").value("Bobinski")).andExpect(jsonPath("$.firstName").value("Bob"))
                 .andExpect(jsonPath("$.middleName").value("Bobovitch"));
@@ -109,7 +109,7 @@ class TeacherControllerTest {
         when(service.findByFullName("Bobinski", "Devid", "Bobovitch"))
             .thenThrow(new EntityNotFoundException("Not found"));
 
-        mvc.perform(get("/api/teachers/search")
+        mvc.perform(get("/api/v1/teachers/search")
                 .param("lastName", "Bobinski")
                 .param("firstName", "Devid")
                 .param("middleName", "Bobovitch"))
@@ -124,7 +124,7 @@ class TeacherControllerTest {
 
         when(service.findById(1)).thenReturn(entity);
         when(studentMapper.toResponseDto(entity)).thenReturn(responseDto);
-        mvc.perform(get("/api/teachers/1")).andExpect(status().isOk());
+        mvc.perform(get("/api/v1/teachers/1")).andExpect(status().isOk());
     }
 
     @Test
@@ -142,7 +142,7 @@ class TeacherControllerTest {
         when(service.addOne(any(TeacherCreateUpdateDto.class))).thenReturn(entity);
         when(studentMapper.toResponseDto(entity)).thenReturn(responseDto);
 
-        mvc.perform(post("/api/teachers").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/api/v1/teachers").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated());
     }
 
@@ -150,7 +150,7 @@ class TeacherControllerTest {
     void delete_shouldReturn204_whenCalled() throws Exception {
         when(service.findById(1)).thenReturn(createTeacher());
         doNothing().when(service).deleteById(1);
-        mvc.perform(delete("/api/teachers/1")).andExpect(status().isNoContent());
+        mvc.perform(delete("/api/v1/teachers/1")).andExpect(status().isNoContent());
         verify(service).deleteById(1);
     }
 
@@ -169,7 +169,7 @@ class TeacherControllerTest {
         when(service.update(any(TeacherCreateUpdateDto.class), eq(1))).thenReturn(entity);
         when(studentMapper.toResponseDto(entity)).thenReturn(responseDto);
 
-        mvc.perform(put("/api/teachers/1").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(put("/api/v1/teachers/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk());
 
         verify(service).update(any(TeacherCreateUpdateDto.class), eq(1));

@@ -10,8 +10,11 @@ import ua.com.foxminded.entity.Specialization;
 
 @Repository
 @Transactional
-public interface SpecializationRepository extends JpaRepository<Specialization, Integer>{
+public interface SpecializationRepository extends JpaRepository<Specialization, Integer> {
+
+    Optional<Specialization> findByCode(String code);
 
     Optional<Specialization> findByTitle(String title);
+
     boolean existsByTitleAndDepartment_Id(String title, Integer departmentId);
 }

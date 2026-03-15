@@ -45,7 +45,12 @@ public class FacultyService {
 
     public Faculty findById(Integer id) {
         return facultyRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Faculty not found: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Faculty not found by id: " + id));
+    }
+
+    public Faculty findByCode(String code) {
+        return facultyRepository.findByCode(code)
+                .orElseThrow(() -> new EntityNotFoundException("Faculty with this code are not found: " + code));
     }
 
     public Faculty findByTitle(String title) {

@@ -79,7 +79,7 @@ class LessonControllerTest {
         when(service.findAll()).thenReturn(lessons);
         when(groupMapper.toResponseDto(any(Lesson.class))).thenReturn(responseDto);
 
-        mvc.perform(get("/api/lessons").param("subjectTitle", "Math")).andExpect(status().isOk())
+        mvc.perform(get("/api/v1/lessons").param("subjectTitle", "Math")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(1)).andExpect(jsonPath("$[0].subjectTitle").value("Math"));
     }
 
@@ -95,7 +95,7 @@ class LessonControllerTest {
         when(service.findBySubjectTitleAndWeekDay("Math", WeekDay.FRIDAY)).thenReturn(lessons);
         when(groupMapper.toResponseDto(any(Lesson.class))).thenReturn(responseDto);
 
-        mvc.perform(get("/api/lessons").param("subjectTitle", "Math").param("weekDay", "FRIDAY"))
+        mvc.perform(get("/api/v1/lessons").param("subjectTitle", "Math").param("weekDay", "FRIDAY"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$[0].subjectTitle").value("Math"));
     }
 
@@ -108,7 +108,7 @@ class LessonControllerTest {
         when(service.findById(1)).thenReturn(lesson);
         when(groupMapper.toResponseDto(lesson)).thenReturn(responseDto);
 
-        mvc.perform(get("/api/lessons/1")).andExpect(status().isOk())
+        mvc.perform(get("/api/v1/lessons/1")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.subjectTitle").value(lesson.getSubject().getTitle()));
     }
 
@@ -123,7 +123,7 @@ class LessonControllerTest {
         when(service.addOne(any(LessonCreateUpdateDto.class))).thenReturn(lesson);
         when(groupMapper.toResponseDto(lesson)).thenReturn(responseDto);
 
-        mvc.perform(post("/api/lessons").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/api/v1/lessons").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
                 .andExpect(jsonPath("$.subjectTitle").value(lesson.getSubject().getTitle()));
     }
@@ -132,7 +132,7 @@ class LessonControllerTest {
     void delete_shouldReturn204_whenCalled() throws Exception {
         when(service.findById(1)).thenReturn(createLesson());
         doNothing().when(service).deleteById(1);
-        mvc.perform(delete("/api/lessons/1")).andExpect(status().isNoContent());
+        mvc.perform(delete("/api/v1/lessons/1")).andExpect(status().isNoContent());
         verify(service).deleteById(1);
     }
 
@@ -147,7 +147,7 @@ class LessonControllerTest {
         when(service.update(any(LessonCreateUpdateDto.class), eq(1))).thenReturn(lesson);
         when(groupMapper.toResponseDto(lesson)).thenReturn(responseDto);
 
-        mvc.perform(put("/api/lessons/1").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(put("/api/v1/lessons/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
                 .andExpect(jsonPath("$.subjectTitle").value(lesson.getSubject().getTitle()));
 

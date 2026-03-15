@@ -9,18 +9,18 @@ public class AcademicDepartmentCreateUpdateDto {
 
     private String title;
     private String code;
-    private Integer facultyId;
+    private String facultyCode;
     private List<SpecializationCreateUpdateDto> specializations;
     private List<SubjectCreateUpdateDto> subjects;
 
     public AcademicDepartmentCreateUpdateDto() {
     }
 
-    public AcademicDepartmentCreateUpdateDto(String title, String code, Integer facultyId,
+    public AcademicDepartmentCreateUpdateDto(String title, String code, String facultyCode,
             List<SpecializationCreateUpdateDto> specializations, List<SubjectCreateUpdateDto> subjects) {
         this.title = title;
         this.code = code;
-        this.facultyId = facultyId;
+        this.facultyCode = facultyCode;
         this.specializations = specializations;
         this.subjects = subjects;
     }
@@ -41,12 +41,12 @@ public class AcademicDepartmentCreateUpdateDto {
         this.code = code;
     }
 
-    public Integer getFacultyId() {
-        return facultyId;
+    public String getFacultyCode() {
+        return facultyCode;
     }
 
-    public void setFacultyId(Integer facultyId) {
-        this.facultyId = facultyId;
+    public void setFacultyCode(String facultyCode) {
+        this.facultyCode = facultyCode;
     }
 
     public List<SpecializationCreateUpdateDto> getSpecializations() {

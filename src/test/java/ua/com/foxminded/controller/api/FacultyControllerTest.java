@@ -47,7 +47,7 @@ class FacultyControllerTest {
     private FacultyService service;
     @MockBean
     private FacultyMapper facultyMapper;
-    
+
     @Autowired
     private ObjectMapper mapper;
 
@@ -57,7 +57,7 @@ class FacultyControllerTest {
         department.setTitle("IT");
         return department;
     }
-    
+
     private FacultyResponseDto createResponseDto() {
         FacultyResponseDto dto = new FacultyResponseDto();
         dto.setId(1);
@@ -70,14 +70,14 @@ class FacultyControllerTest {
 
         Faculty faculty = createFaculty();
         FacultyResponseDto responseDto = createResponseDto();
-        
+
         List<Faculty> faculties = new ArrayList<>();
         faculties.add(faculty);
 
         when(service.findAll()).thenReturn(faculties);
         when(facultyMapper.toResponseDto(any(Faculty.class))).thenReturn(responseDto);
 
-        mvc.perform(get("/api/faculties")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
+        mvc.perform(get("/api/v1/faculties")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].title").value("IT"));
     }
 
@@ -90,7 +90,7 @@ class FacultyControllerTest {
         when(service.findByTitle("IT")).thenReturn(faculty);
         when(facultyMapper.toResponseDto(faculty)).thenReturn(responseDto);
 
-        mvc.perform(get("/api/faculties/title/IT")).andExpect(status().isOk())
+        mvc.perform(get("/api/v1/faculties/title/IT")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("IT"));
     }
 
@@ -99,7 +99,7 @@ class FacultyControllerTest {
         when(service.findByTitle("Math"))
             .thenThrow(new EntityNotFoundException("Not found"));
 
-        mvc.perform(get("/api/faculties/title/Math"))
+        mvc.perform(get("/api/v1/faculties/title/Math"))
            .andExpect(status().isNotFound());
     }
 
@@ -112,7 +112,7 @@ class FacultyControllerTest {
         when(service.findById(1)).thenReturn(faculty);
         when(facultyMapper.toResponseDto(faculty)).thenReturn(responseDto);
 
-        mvc.perform(get("/api/faculties/1")).andExpect(status().isOk()).andExpect(jsonPath("$.title").value("IT"));
+        mvc.perform(get("/api/v1/faculties/1")).andExpect(status().isOk()).andExpect(jsonPath("$.title").value("IT"));
     }
 
     @Test
@@ -127,7 +127,7 @@ class FacultyControllerTest {
         when(service.addOne(any(FacultyCreateUpdateDto.class))).thenReturn(faculty);
         when(facultyMapper.toResponseDto(faculty)).thenReturn(responseDto);
 
-        mvc.perform(post("/api/faculties").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/api/v1/faculties").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
                 .andExpect(jsonPath("$.title").value("IT"));
     }
@@ -136,7 +136,7 @@ class FacultyControllerTest {
     void delete_shouldReturn204_whenCalled() throws Exception {
         when(service.findById(1)).thenReturn(createFaculty());
         doNothing().when(service).deleteById(1);
-        mvc.perform(delete("/api/faculties/1")).andExpect(status().isNoContent());
+        mvc.perform(delete("/api/v1/faculties/1")).andExpect(status().isNoContent());
         verify(service).deleteById(1);
     }
 
@@ -152,7 +152,7 @@ class FacultyControllerTest {
         when(service.update(any(FacultyCreateUpdateDto.class), eq(1))).thenReturn(faculty);
         when(facultyMapper.toResponseDto(faculty)).thenReturn(responseDto);
 
-        mvc.perform(put("/api/faculties/1").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(put("/api/v1/faculties/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("IT"));
 

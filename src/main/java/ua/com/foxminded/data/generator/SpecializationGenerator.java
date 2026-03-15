@@ -2,7 +2,6 @@ package ua.com.foxminded.data.generator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -30,10 +29,11 @@ public class SpecializationGenerator {
 
         for (int i = 0; i < specializationCount; i++) {
 
+            String code = faker.regexify("[A-Z]{4}");
             Specialization specialization = new Specialization();
-            specialization.setTitle(faker.university().name() + " - " + UUID.randomUUID());
+            specialization.setTitle(code + " - " + faker.university().name());
             specialization.setDepartment(department);
-            specialization.setCode(faker.regexify("[A-Z]{4}"));
+            specialization.setCode(code);
 
             specializations.add(specialization);
 

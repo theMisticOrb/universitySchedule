@@ -51,10 +51,12 @@ class SubjectServiceTest {
 
         Faculty faculty = new Faculty();
         faculty.setTitle("Engineering");
+        faculty.setCode("EN");
         Faculty engineeringFaculty = facultyRepository.save(faculty);
 
         AcademicDepartment computerScience = new AcademicDepartment();
         computerScience.setTitle("Computer Science");
+        computerScience.setCode("CS");
         computerScience.setFaculty(engineeringFaculty);
         AcademicDepartment csDepartment = departmentRepository.save(computerScience);
 
@@ -67,7 +69,7 @@ class SubjectServiceTest {
 
         subject.setTeacherId(jonTeacher.getId());
         subject.setTitle("Math");
-        subject.setDepartmentId(csDepartment.getId());
+        subject.setDepartmentCode(csDepartment.getCode());
 
     }
 

@@ -65,7 +65,7 @@ class SpecializationControllerTest {
     private SpecializationResponseDto createResponseDto() {
         SpecializationResponseDto dto = new SpecializationResponseDto();
         dto.setId(1);
-        dto.setDepartmentId(1);
+        dto.setDepartmentCode("CS");
         dto.setTitle("Computer Science");
         return dto;
     }
@@ -82,7 +82,7 @@ class SpecializationControllerTest {
         when(service.findAll()).thenReturn(specializations);
         when(specializationMapper.toResponseDto(any(Specialization.class))).thenReturn(responseDto);
 
-        mvc.perform(get("/api/specializations")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
+        mvc.perform(get("/api/v1/specializations")).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].title").value("Computer Science"));
     }
 
@@ -94,7 +94,7 @@ class SpecializationControllerTest {
 
         when(service.findByTitle("Computer Science")).thenReturn(specialization);
         when(specializationMapper.toResponseDto(specialization)).thenReturn(dto);
-        mvc.perform(get("/api/specializations/title/Computer Science")).andExpect(status().isOk())
+        mvc.perform(get("/api/v1/specializations/title/Computer Science")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
     }
 
@@ -103,7 +103,7 @@ class SpecializationControllerTest {
         when(service.findByTitle("Math"))
             .thenThrow(new EntityNotFoundException("Not found"));
 
-        mvc.perform(get("/api/specializations/title/Math"))
+        mvc.perform(get("/api/v1/specializations/title/Math"))
            .andExpect(status().isNotFound());
     }
 
@@ -115,7 +115,7 @@ class SpecializationControllerTest {
 
         when(service.findById(1)).thenReturn(specialization);
         when(specializationMapper.toResponseDto(specialization)).thenReturn(responseDto);
-        mvc.perform(get("/api/specializations/1")).andExpect(status().isOk())
+        mvc.perform(get("/api/v1/specializations/1")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
     }
 
@@ -126,13 +126,13 @@ class SpecializationControllerTest {
         SpecializationResponseDto responseDto = createResponseDto();
 
         SpecializationCreateUpdateDto requestDto = new SpecializationCreateUpdateDto();
-        requestDto.setDepartmentId(1);
+        requestDto.setDepartmentCode("CS");
         requestDto.setTitle("Computer Science");
 
         when(service.addOne(any(SpecializationCreateUpdateDto.class))).thenReturn(specialization);
         when(specializationMapper.toResponseDto(specialization)).thenReturn(responseDto);
 
-        mvc.perform(post("/api/specializations").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/api/v1/specializations").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
     }
@@ -141,7 +141,7 @@ class SpecializationControllerTest {
     void delete_shouldReturn204_whenCalled() throws Exception {
         when(service.findById(1)).thenReturn(createSpecialization());
         doNothing().when(service).deleteById(1);
-        mvc.perform(delete("/api/specializations/1")).andExpect(status().isNoContent());
+        mvc.perform(delete("/api/v1/specializations/1")).andExpect(status().isNoContent());
         verify(service).deleteById(1);
     }
 
@@ -152,13 +152,13 @@ class SpecializationControllerTest {
         SpecializationResponseDto responseDto = createResponseDto();
 
         AcademicDepartmentCreateUpdateDto requestDto = new AcademicDepartmentCreateUpdateDto();
-        requestDto.setFacultyId(1);
+        requestDto.setFacultyCode("CS");
         requestDto.setTitle("Computer Science");
 
         when(service.update(any(SpecializationCreateUpdateDto.class), eq(1))).thenReturn(specialization);
         when(specializationMapper.toResponseDto(specialization)).thenReturn(responseDto);
 
-        mvc.perform(put("/api/specializations/1").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(put("/api/v1/specializations/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
 

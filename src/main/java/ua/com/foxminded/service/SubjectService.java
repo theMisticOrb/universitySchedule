@@ -47,7 +47,7 @@ public class SubjectService {
     public Subject addOne(SubjectCreateUpdateDto dto) {
 
         Teacher teacher = teacherService.findById(dto.getTeacherId());
-        AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
+        AcademicDepartment department = departmentService.findByCode(dto.getDepartmentCode());
 
         Subject subject = subjectMapper.toEntity(dto, teacher, department);
 
@@ -86,7 +86,7 @@ public class SubjectService {
 
         if (updated.getGroups() != null) {
             Set<Group> groups = updated.getGroups().stream().map(dto -> {
-                Specialization specialization = specializationService.findById(dto.getSpecializationId());
+                Specialization specialization = specializationService.findByCode(dto.getSpecializationCode());
                 return groupMapper.toEntity(dto, specialization);
             }).collect(Collectors.toSet());
 

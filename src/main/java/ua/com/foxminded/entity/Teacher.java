@@ -45,7 +45,5 @@ public class Teacher extends User {
     public void setSubjects(List<Subject> subjects) {
         this.subjects = subjects;
     }
-    
-    
 
 }

@@ -28,7 +28,7 @@ public class GroupMapper {
         GroupResponseDto dto = new GroupResponseDto();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
-        dto.setSpecializationId(entity.getSpecialization().getId());
+        dto.setSpecializationCode(entity.getSpecialization().getCode());
         dto.setStartDate(entity.getStartDate());
         dto.setCurrentYearOfUniv(entity.getYearOfUniv().getCurentYearInUniv());
         return dto;

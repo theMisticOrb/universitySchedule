@@ -9,18 +9,20 @@ public class SubjectCreateUpdateDto {
 
     private String title;
     private Integer teacherId;
-    private Integer departmentId;
+    private String teacherFullName;
+    private String departmentCode;
     private List<GroupCreateUpdateDto> groups;
     private List<LessonCreateUpdateDto> lessons;
 
     public SubjectCreateUpdateDto() {
     }
 
-    public SubjectCreateUpdateDto(String title, Integer teacherId, Integer departmentId,
+    public SubjectCreateUpdateDto(String title, Integer teacherId, String teacherFullName, String departmentCode,
             List<GroupCreateUpdateDto> groups, List<LessonCreateUpdateDto> lessons) {
         this.title = title;
         this.teacherId = teacherId;
-        this.departmentId = departmentId;
+        this.teacherFullName = teacherFullName;
+        this.departmentCode = departmentCode;
         this.groups = groups;
         this.lessons = lessons;
     }
@@ -41,12 +43,20 @@ public class SubjectCreateUpdateDto {
         this.teacherId = teacherId;
     }
 
-    public Integer getDepartmentId() {
-        return departmentId;
+    public String getTeacherFullName() {
+        return teacherFullName;
     }
 
-    public void setDepartmentId(Integer departmentId) {
-        this.departmentId = departmentId;
+    public void setTeacherFullName(String teacherFullName) {
+        this.teacherFullName = teacherFullName;
+    }
+
+    public String getDepartmentCode() {
+        return departmentCode;
+    }
+
+    public void setDepartmentCode(String departmentCode) {
+        this.departmentCode = departmentCode;
     }
 
     public List<GroupCreateUpdateDto> getGroups() {
@@ -64,5 +74,6 @@ public class SubjectCreateUpdateDto {
     public void setLessons(List<LessonCreateUpdateDto> lessons) {
         this.lessons = lessons;
     }
+
 
 }

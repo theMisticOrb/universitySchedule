@@ -16,13 +16,13 @@
     <table border="1">
         <thead>
             <tr>
-                <th>Specialization</th>
+                <th>Specialization Code</th>
                 <th>Group name</th>
             </tr>
         </thead>
         <tbody>
             <tr th:each="group : ${groups}">
-                <td th:text="${group.specializationId}"></td>
+                <td th:text="${group.specializationCode}"></td>
                 <td th:text="${group.name}"></td>
             </tr>
         </tbody>

@@ -16,13 +16,13 @@
     <table border="1">
         <thead>
             <tr>
-                <th>Teacher Id</th>
+                <th>Teacher Full Name</th>
                 <th>Title</th>
             </tr>
         </thead>
         <tbody>
             <tr th:each="subject : ${subjects}">
-                <td th:text="${subject.teacherId}"></td>
+                <td th:text="${subject.teacherFullName}"></td>
                 <td th:text="${subject.title}"></td>
             </tr>
         </tbody>

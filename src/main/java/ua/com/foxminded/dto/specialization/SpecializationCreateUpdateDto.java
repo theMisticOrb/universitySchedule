@@ -8,17 +8,17 @@ public class SpecializationCreateUpdateDto {
 
     private String title;
     private String code;
-    private Integer departmentId;
+    private String departmentCode;
     private List<GroupCreateUpdateDto> groups;
 
     public SpecializationCreateUpdateDto() {
     }
 
-    public SpecializationCreateUpdateDto(String title, String code, Integer departmentId,
+    public SpecializationCreateUpdateDto(String title, String code, String departmentCode,
             List<GroupCreateUpdateDto> groups) {
         this.title = title;
         this.code = code;
-        this.departmentId = departmentId;
+        this.departmentCode = departmentCode;
         this.groups = groups;
     }
 
@@ -38,12 +38,12 @@ public class SpecializationCreateUpdateDto {
         this.code = code;
     }
 
-    public Integer getDepartmentId() {
-        return departmentId;
+    public String getDepartmentCode() {
+        return departmentCode;
     }
 
-    public void setDepartmentId(Integer departmentId) {
-        this.departmentId = departmentId;
+    public void setDepartmentCode(String departmentCode) {
+        this.departmentCode = departmentCode;
     }
 
     public List<GroupCreateUpdateDto> getGroups() {

@@ -37,7 +37,7 @@ public class SpecializationService {
 
     public Specialization addOne(SpecializationCreateUpdateDto dto) {
 
-        AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
+        AcademicDepartment department = departmentService.findByCode(dto.getDepartmentCode());
         Specialization specialization = specializationMapper.toEntity(dto, department);
 
         try {
@@ -52,12 +52,17 @@ public class SpecializationService {
 
     public Specialization findById(Integer id) {
         return specializationRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Specialization not found: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Specialization not found by id: " + id));
     }
 
     public Specialization findByTitle(String title) {
         return specializationRepository.findByTitle(title)
-                .orElseThrow(() -> new EntityNotFoundException("Specialization not found: " + title));
+                .orElseThrow(() -> new EntityNotFoundException("Specialization not found by title: " + title));
+    }
+
+    public Specialization findByCode(String code) {
+        return specializationRepository.findByCode(code)
+                .orElseThrow(() -> new EntityNotFoundException("Specialization not found by code: " + code));
     }
 
     public List<Specialization> findAll() {
@@ -68,8 +73,8 @@ public class SpecializationService {
 
         Specialization specialization = findById(id);
 
-        if (updated.getDepartmentId() != null) {
-            AcademicDepartment department = departmentService.findById(updated.getDepartmentId());
+        if (updated.getDepartmentCode() != null) {
+            AcademicDepartment department = departmentService.findByCode(updated.getDepartmentCode());
             UpdateUtil.setIfNotNull(department, specialization::setDepartment);
         }
 

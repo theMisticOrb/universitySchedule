@@ -12,7 +12,10 @@ import ua.com.foxminded.entity.AcademicDepartment;
 @Transactional
 public interface AcademicDepartmentRepository extends JpaRepository<AcademicDepartment, Integer> {
 
+    Optional<AcademicDepartment> findByCode(String code);
+
     Optional<AcademicDepartment> findByTitle(String title);
+
     boolean existsByFaculty_IdAndTitle(Integer facultyId, String title);
 
 }

@@ -49,20 +49,23 @@ class GroupServiceTest {
     @BeforeEach
     void setUp() {
         Faculty faculty = new Faculty();
+        faculty.setCode("EN");
         faculty.setTitle("Engineering");
         Faculty engineeringFaculty = facultyRepository.save(faculty);
 
         AcademicDepartment computerScience = new AcademicDepartment();
         computerScience.setTitle("Computer Science");
+        computerScience.setCode("CS");
         computerScience.setFaculty(engineeringFaculty);
         AcademicDepartment csDepartment = departmentRepository.save(computerScience);
 
         Specialization specialization = new Specialization();
         specialization.setDepartment(csDepartment);
         specialization.setTitle("Security");
+        specialization.setCode("SE");
         Specialization security = specializationRepository.save(specialization);
 
-        group.setSpecializationId(security.getId());
+        group.setSpecializationCode(security.getCode());
 
     }
 
@@ -119,20 +122,23 @@ class GroupServiceTest {
 
         Faculty faculty = new Faculty();
         faculty.setTitle("Data Science");
+        faculty.setCode("DS");
         Faculty engineeringFaculty = facultyRepository.save(faculty);
 
         AcademicDepartment computerScience = new AcademicDepartment();
         computerScience.setTitle("Analitics");
+        computerScience.setCode("AN");
         computerScience.setFaculty(engineeringFaculty);
         AcademicDepartment csDepartment = departmentRepository.save(computerScience);
 
         Specialization specialization = new Specialization();
         specialization.setTitle("Math");
+        specialization.setCode("MT");
         specialization.setDepartment(csDepartment);
         Specialization mathSpecialization = specializationRepository.save(specialization);
 
         GroupCreateUpdateDto firstGroupUpdated = new GroupCreateUpdateDto();
-        firstGroupUpdated.setSpecializationId(mathSpecialization.getId());
+        firstGroupUpdated.setSpecializationCode(mathSpecialization.getCode());
         Group result = service.update(firstGroupUpdated, firstGroup.getId());
 
         assertEquals(firstGroup.getId(), result.getId());
@@ -147,7 +153,7 @@ class GroupServiceTest {
         Group firstGroup = service.addOne(group);
 
         GroupCreateUpdateDto computerScienceUpdated = new GroupCreateUpdateDto();
-        computerScienceUpdated.setSpecializationId(null);
+        computerScienceUpdated.setSpecializationCode(null);
         Group result = service.update(computerScienceUpdated, firstGroup.getId());
 
         assertEquals("Security", result.getSpecialization().getTitle());

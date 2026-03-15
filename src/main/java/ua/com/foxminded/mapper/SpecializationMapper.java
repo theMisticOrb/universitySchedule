@@ -28,7 +28,7 @@ public class SpecializationMapper {
 
         SpecializationResponseDto dto = new SpecializationResponseDto();
         dto.setId(entity.getId());
-        dto.setDepartmentId(entity.getDepartment().getId());
+        dto.setDepartmentCode(entity.getDepartment().getCode());
         dto.setTitle(entity.getTitle());
         dto.setCode(entity.getCode());
         return dto;

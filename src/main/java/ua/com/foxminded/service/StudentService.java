@@ -4,14 +4,12 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.dto.user.StudentCreateUpdateDto;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Student;
-import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.StudentMapper;
 import ua.com.foxminded.repository.StudentRepository;
@@ -34,13 +32,7 @@ public class StudentService {
 
         Group group = groupService.findById(dto.getGroupId());
         Student student = studentMapper.toEntity(dto, group);
-        try {
-            return studentRepository.save(student);
-        } catch (DataIntegrityViolationException e) {
-            throw new DuplicateEntityException("Student with name: " + dto.getLastName() + " " + dto.getFirstName()
-                    + " " + dto.getMiddleName() + " alredy exists in this group!");
-
-        }
+        return studentRepository.save(student);
     }
 
     public Student findById(Integer id) {

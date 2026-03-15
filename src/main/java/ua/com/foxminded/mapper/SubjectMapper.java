@@ -33,6 +33,8 @@ public class SubjectMapper {
         SubjectResponseDto dto = new SubjectResponseDto();
         dto.setId(entity.getId());
         dto.setTeacherId(entity.getTeacher().getId());
+        dto.setTeacherFullName(entity.getTeacher().getFirstName() + " " + entity.getTeacher().getMiddleName() + " "
+                + entity.getTeacher().getLastName());
         dto.setTitle(entity.getTitle());
         dto.setDepartmentId(entity.getDepartment().getId());
         return dto;

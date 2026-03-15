@@ -36,7 +36,7 @@ public class AcademicDepartmentService {
 
     public AcademicDepartment addOne(AcademicDepartmentCreateUpdateDto dto) {
 
-        Faculty faculty = facultyService.findById(dto.getFacultyId());
+        Faculty faculty = facultyService.findByCode(dto.getFacultyCode());
         AcademicDepartment newDepartment = departmentMapper.toEntity(dto, faculty);
 
         try {
@@ -50,12 +50,17 @@ public class AcademicDepartmentService {
 
     public AcademicDepartment findByTitle(String title) {
         return departmentRepository.findByTitle(title)
-                .orElseThrow(() -> new EntityNotFoundException("Academic Department not found: " + title));
+                .orElseThrow(() -> new EntityNotFoundException("Academic Department not found by title: " + title));
+    }
+
+    public AcademicDepartment findByCode(String code) {
+        return departmentRepository.findByCode(code)
+                .orElseThrow(() -> new EntityNotFoundException("Academic Department not found by code: " + code));
     }
 
     public AcademicDepartment findById(Integer id) {
         return departmentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Academic Department not found: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Academic Department not found by id: " + id));
     }
 
     public List<AcademicDepartment> findAll() {
@@ -66,8 +71,8 @@ public class AcademicDepartmentService {
 
         AcademicDepartment department = findById(id);
 
-        if (updated.getFacultyId() != null) {
-            Faculty faculty = facultyService.findById(updated.getFacultyId());
+        if (updated.getFacultyCode() != null) {
+            Faculty faculty = facultyService.findByCode(updated.getFacultyCode());
             UpdateUtil.setIfNotNull(faculty, department::setFaculty);
         }
         UpdateUtil.updateListIfNotNull(updated.getSpecializations(),

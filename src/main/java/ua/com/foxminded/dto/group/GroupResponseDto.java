@@ -11,7 +11,7 @@ public class GroupResponseDto {
     private Integer id;
     private String name;
 
-    private Integer specializationId;
+    private String specializationCode;
 
     private LocalDate startDate;
     private Integer currentYearOfUniv;
@@ -22,11 +22,11 @@ public class GroupResponseDto {
     public GroupResponseDto() {
     }
 
-    public GroupResponseDto(Integer id, String name, Integer specializationId, LocalDate startDate,
+    public GroupResponseDto(Integer id, String name, String specializationCode, LocalDate startDate,
             Integer currentYearOfUniv, List<StudentCreateUpdateDto> students, List<SubjectCreateUpdateDto> subjects) {
         this.id = id;
         this.name = name;
-        this.specializationId = specializationId;
+        this.specializationCode = specializationCode;
         this.startDate = startDate;
         this.currentYearOfUniv = currentYearOfUniv;
         this.students = students;
@@ -49,12 +49,12 @@ public class GroupResponseDto {
         this.name = name;
     }
 
-    public Integer getSpecializationId() {
-        return specializationId;
+    public String getSpecializationCode() {
+        return specializationCode;
     }
 
-    public void setSpecializationId(Integer specializationId) {
-        this.specializationId = specializationId;
+    public void setSpecializationCode(String string) {
+        this.specializationCode = string;
     }
 
     public LocalDate getStartDate() {

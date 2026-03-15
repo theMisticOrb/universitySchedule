@@ -14,9 +14,7 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
 
     Optional<Group> findByName(String name);
 
-    boolean existsBySpecialization_IdAndName(
-            Integer specializationId, 
-            String name);
+    boolean existsBySpecialization_IdAndName(Integer specializationId, String name);
 
     int countBySpecialization_Id(Integer specializationId);
 }

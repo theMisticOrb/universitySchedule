@@ -34,6 +34,7 @@ public class TeacherMapper {
         dto.setMiddleName(entity.getMiddleName());
         dto.setLastName(entity.getLastName());
         dto.setDepartmentId(entity.getDepartment().getId());
+        dto.setDepartmentCode(entity.getDepartment().getCode());
         return dto;
     }
 }

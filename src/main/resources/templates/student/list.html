@@ -16,7 +16,7 @@
     <table border="1">
         <thead>
             <tr>
-                <th>Group Id</th>
+                <th>Group Name</th>
                 <th>First name</th>
                 <th>Middle name</th>
                 <th>Last name</th>
@@ -24,7 +24,7 @@
         </thead>
         <tbody>
             <tr th:each="student : ${students}">
-                <td th:text="${student.groupId}"></td>
+                <td th:text="${student.groupName}"></td>
                 <td th:text="${student.firstName}"></td>
                 <td th:text="${student.middleName}"></td>
                 <td th:text="${student.lastName}"></td>

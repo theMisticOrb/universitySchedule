@@ -55,7 +55,7 @@ public class GroupService {
         Group group = new Group();
         Map<Integer, Integer> counter = new HashMap<>();
 
-        Specialization specialization = specializationService.findById(dto.getSpecializationId());
+        Specialization specialization = specializationService.findByCode(dto.getSpecializationCode());
 
         int nextGroupNumber = counter.compute(specialization.getId(), (specializationId, currentValue) -> {
             if (currentValue == null) {
@@ -76,7 +76,7 @@ public class GroupService {
 
             Group group = new Group();
 
-            Specialization specialization = specializationService.findById(dto.getSpecializationId());
+            Specialization specialization = specializationService.findByCode(dto.getSpecializationCode());
 
             int nextGroupNumber = counter.compute(specialization.getId(), (specializationId, currentValue) -> {
                 if (currentValue == null) {
@@ -110,15 +110,15 @@ public class GroupService {
 
     public Group update(GroupCreateUpdateDto updated, Integer id) {
         Group group = findById(id);
-        if (updated.getSpecializationId() != null) {
-            Specialization specialization = specializationService.findById(updated.getSpecializationId());
+        if (updated.getSpecializationCode() != null) {
+            Specialization specialization = specializationService.findByCode(updated.getSpecializationCode());
             UpdateUtil.setIfNotNull(specialization, group::setSpecialization);
         }
         UpdateUtil.updateListIfNotNull(updated.getStudents(), dto -> studentMapper.toEntity(dto, group));
         if (updated.getSubjects() != null) {
             Set<Subject> subjects = updated.getSubjects().stream().map(dto -> {
                 Teacher teacher = teacherService.findById(dto.getTeacherId());
-                AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
+                AcademicDepartment department = departmentService.findByCode(dto.getDepartmentCode());
                 return subjectMapper.toEntity(dto, teacher, department);
             }).collect(Collectors.toSet());
 
