@@ -51,7 +51,10 @@ CREATE TABLE IF NOT EXISTS users(
 user_id INTEGER PRIMARY KEY,
 user_first_name varchar(225) NOT NULL,
 user_middle_name varchar(225),
-user_last_name varchar(225) NOT NULL
+user_last_name varchar(225) NOT NULL,
+user_role varchar(225) NOT NULL
+
+CONSTRAINT chk_user_role CHECK (role IN ('STUDENT','TEACHER','ADMIN'));
 );
 
 
@@ -59,7 +62,6 @@ CREATE TABLE IF NOT EXISTS teachers(
 user_id INTEGER PRIMARY KEY,
 department_id INTEGER NOT NULL,
 
-CONSTRAINT uk_teacher_department UNIQUE (user_id, department_id),
 
 CONSTRAINT fk_teacher_department FOREIGN KEY (department_id) REFERENCES departments (department_id),
 CONSTRAINT fk_teacher_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
@@ -84,7 +86,6 @@ CREATE TABLE IF NOT EXISTS students(
 user_id INTEGER PRIMARY KEY,
 group_id INTEGER NOT NULL,
 
-CONSTRAINT uq_student_group UNIQUE (group_id, user_id),
 
 CONSTRAINT fk_student_group FOREIGN KEY (group_id) REFERENCES academic_groups (group_id),
 CONSTRAINT fk_student_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE

@@ -10,6 +10,7 @@ import com.github.javafaker.Faker;
 
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Teacher;
+import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.repository.TeacherRepository;
 
 @Component
@@ -42,6 +43,7 @@ public class TeacherGenerator {
             teacher.setMiddleName(middleName);
             teacher.setLastName(lastName);
             teacher.setDepartment(department);
+            teacher.setUserRole(UserRole.TEACHER);
 
             teachers.add(teacher);
 

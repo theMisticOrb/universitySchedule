@@ -22,6 +22,7 @@ public class TeacherMapper {
         entity.setMiddleName(dto.getMiddleName());
         entity.setLastName(dto.getLastName());
         entity.setDepartment(department);
+        entity.setUserRole(dto.getUserRole());
         return entity;
     }
 
@@ -30,6 +31,7 @@ public class TeacherMapper {
 
         TeacherResponseDto dto = new TeacherResponseDto();
         dto.setId(entity.getId());
+        dto.setUserRole(entity.getUserRole());
         dto.setFirstName(entity.getFirstName());
         dto.setMiddleName(entity.getMiddleName());
         dto.setLastName(entity.getLastName());

@@ -10,6 +10,7 @@ import com.github.javafaker.Faker;
 
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Student;
+import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.repository.StudentRepository;
 
 @Component
@@ -42,6 +43,7 @@ public class StudentGenerator {
             student.setMiddleName(middleName);
             student.setLastName(lastName);
             student.setGroup(group);
+            student.setUserRole(UserRole.STUDENT);
 
             students.add(student);
 

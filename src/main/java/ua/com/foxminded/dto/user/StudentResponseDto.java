@@ -8,9 +8,7 @@ public class StudentResponseDto extends UserResponseDto {
     public StudentResponseDto() {
     }
 
-    public StudentResponseDto(Integer id, String firstName, String middleName, String lastName, Integer groupId,
-            String groupName) {
-        super(id, firstName, middleName, lastName);
+    public StudentResponseDto(Integer groupId, String groupName) {
         this.groupId = groupId;
         this.groupName = groupName;
     }

@@ -13,9 +13,7 @@ public class TeacherResponseDto extends UserResponseDto {
     public TeacherResponseDto() {
     }
 
-    public TeacherResponseDto(Integer id, String firstName, String middleName, String lastName, Integer departmentId,
-            String departmentCode, List<SubjectCreateUpdateDto> subjects) {
-        super(id, firstName, middleName, lastName);
+    public TeacherResponseDto(Integer departmentId, String departmentCode, List<SubjectCreateUpdateDto> subjects) {
         this.departmentId = departmentId;
         this.departmentCode = departmentCode;
         this.subjects = subjects;

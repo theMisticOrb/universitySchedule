@@ -1,20 +1,24 @@
 package ua.com.foxminded.dto.user;
 
+import ua.com.foxminded.enums.UserRole;
+
 public class UserResponseDto {
 
     private Integer id;
     private String firstName;
     private String middleName;
     private String lastName;
+    protected UserRole userRole;
 
     public UserResponseDto() {
     }
 
-    public UserResponseDto(Integer id, String firstName, String middleName, String lastName) {
+    public UserResponseDto(Integer id, String firstName, String middleName, String lastName, UserRole userRole) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
+        this.userRole = userRole;
     }
 
     public Integer getId() {
@@ -49,7 +53,12 @@ public class UserResponseDto {
         this.lastName = lastName;
     }
 
-    public String getFullName() {
-        return firstName + " " + middleName + " " + lastName;
+    public UserRole getUserRole() {
+        return userRole;
     }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
+    }
+
 }

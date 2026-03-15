@@ -8,9 +8,7 @@ public class StudentCreateUpdateDto extends UserCreateUpdateDto {
     public StudentCreateUpdateDto() {
     }
 
-    public StudentCreateUpdateDto(String firstName, String middleName, String lastName, Integer groupId,
-            String groupName) {
-        super(firstName, middleName, lastName);
+    public StudentCreateUpdateDto(Integer groupId, String groupName) {
         this.groupId = groupId;
         this.groupName = groupName;
     }

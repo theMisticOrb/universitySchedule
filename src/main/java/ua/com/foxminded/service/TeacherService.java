@@ -4,14 +4,13 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.dto.user.TeacherCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Teacher;
-import ua.com.foxminded.exception.DuplicateEntityException;
+import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.SubjectMapper;
 import ua.com.foxminded.mapper.TeacherMapper;
@@ -38,13 +37,10 @@ public class TeacherService {
 
         AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
         Teacher teacher = teacherMapper.toEntity(dto, department);
-
-        try {
-            return teacherRepository.save(teacher);
-        } catch (DataIntegrityViolationException e) {
-            throw new DuplicateEntityException("Teacher with name: " + dto.getLastName() + " " + dto.getFirstName()
-                    + " " + dto.getMiddleName() + " alredy exists in this academic department!");
+        if (teacher.getUserRole() != UserRole.TEACHER) {
+            throw new IllegalStateException("User must have TEACHER role");
         }
+        return teacherRepository.save(teacher);
     }
 
     public Teacher findById(Integer id) {

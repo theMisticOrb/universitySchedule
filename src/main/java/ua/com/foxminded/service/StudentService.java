@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.dto.user.StudentCreateUpdateDto;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Student;
+import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.StudentMapper;
 import ua.com.foxminded.repository.StudentRepository;
@@ -32,6 +33,9 @@ public class StudentService {
 
         Group group = groupService.findById(dto.getGroupId());
         Student student = studentMapper.toEntity(dto, group);
+        if (student.getUserRole() != UserRole.STUDENT) {
+            throw new IllegalStateException("User must have STUDENT role");
+        }
         return studentRepository.save(student);
     }
 

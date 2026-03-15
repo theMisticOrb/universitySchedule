@@ -13,9 +13,7 @@ public class TeacherCreateUpdateDto extends UserCreateUpdateDto {
     public TeacherCreateUpdateDto() {
     }
 
-    public TeacherCreateUpdateDto(String firstName, String middleName, String lastName, Integer departmentId,
-            String departmentCode, List<SubjectCreateUpdateDto> subjects) {
-        super(firstName, middleName, lastName);
+    public TeacherCreateUpdateDto(Integer departmentId, String departmentCode, List<SubjectCreateUpdateDto> subjects) {
         this.departmentId = departmentId;
         this.departmentCode = departmentCode;
         this.subjects = subjects;
