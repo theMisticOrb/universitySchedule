@@ -7,21 +7,35 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ua.com.foxminded.dto.user.StudentCreateUpdateDto;
+import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Student;
+import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.helpers.UpdateUtil;
-import ua.com.foxminded.sdjpa.StudentRepository;
+import ua.com.foxminded.mapper.StudentMapper;
+import ua.com.foxminded.repository.StudentRepository;
 
 @Service
 @Transactional
 public class StudentService {
 
     private StudentRepository studentRepository;
+    private GroupService groupService;
+    private StudentMapper studentMapper;
 
-    public StudentService(StudentRepository studentRepository) {
+    public StudentService(StudentRepository studentRepository, GroupService groupService, StudentMapper studentMapper) {
         this.studentRepository = studentRepository;
+        this.groupService = groupService;
+        this.studentMapper = studentMapper;
     }
 
-    public Student addOne(Student student) {
+    public Student addOne(StudentCreateUpdateDto dto) {
+
+        Group group = groupService.findById(dto.getGroupId());
+        Student student = studentMapper.toEntity(dto, group);
+        if (student.getUserRole() != UserRole.STUDENT) {
+            throw new IllegalStateException("User must have STUDENT role");
+        }
         return studentRepository.save(student);
     }
 
@@ -30,16 +44,29 @@ public class StudentService {
                 .orElseThrow(() -> new EntityNotFoundException("Student not found: " + id));
     }
 
+    public Student findByFullName(String lastName, String firstName, String middleName) {
+        return studentRepository.findByLastNameAndFirstNameAndMiddleName(lastName, firstName, middleName)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Student not found: " + lastName + " " + firstName + " " + middleName));
+
+    }
+
     public List<Student> findAll() {
         return studentRepository.findAll();
     }
 
-    public Student update(Student updated) {
-        Student student = findById(updated.getId());
+    public Student update(StudentCreateUpdateDto updated, Integer id) {
+
+        Student student = findById(id);
+
+        if (updated.getGroupId() != null) {
+            Group group = groupService.findById(updated.getGroupId());
+            UpdateUtil.setIfNotNull(group, student::setGroup);
+        }
+
         UpdateUtil.setIfNotNull(updated.getFirstName(), student::setFirstName);
         UpdateUtil.setIfNotNull(updated.getMiddleName(), student::setMiddleName);
         UpdateUtil.setIfNotNull(updated.getLastName(), student::setLastName);
-        UpdateUtil.setIfNotNull(updated.getGroup(), student::setGroup);
         return student;
     }
 

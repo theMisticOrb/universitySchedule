@@ -23,15 +23,20 @@ public class Faculty {
     @Column(name = "faculty_title")
     private String title;
 
+    @Column(name = "faculty_code")
+    private String code;
+
     @OneToMany(mappedBy = "faculty")
     private List<AcademicDepartment> departments = new ArrayList<>();
 
     public Faculty() {
     }
 
-    public Faculty(Integer id, String title) {
+    public Faculty(Integer id, String title, String code, List<AcademicDepartment> departments) {
         this.id = id;
         this.title = title;
+        this.code = code;
+        this.departments = departments;
     }
 
     public Integer getId() {
@@ -48,6 +53,14 @@ public class Faculty {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public List<AcademicDepartment> getDepartments() {

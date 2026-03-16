@@ -18,16 +18,17 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import ua.com.foxminded.BootTest;
+import ua.com.foxminded.MainApp;
+import ua.com.foxminded.dto.department.AcademicDepartmentCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
-import ua.com.foxminded.sdjpa.FacultyRepository;
+import ua.com.foxminded.repository.FacultyRepository;
 
 @Testcontainers
 @Transactional
-@SpringBootTest(classes = { BootTest.class })
+@SpringBootTest(classes = { MainApp.class })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
+@ActiveProfiles({ "test" })
 class AcademicDepartmentServiceTest {
 
     @Autowired
@@ -39,12 +40,14 @@ class AcademicDepartmentServiceTest {
     @Test
     void addOne_shouldSaveNewEntity_whenCalled() {
         Faculty faculty = new Faculty();
+        faculty.setCode("EN");
         faculty.setTitle("Engineering");
         Faculty savedFaculty = facultyRepository.save(faculty);
 
-        AcademicDepartment computerScience = new AcademicDepartment();
+        AcademicDepartmentCreateUpdateDto computerScience = new AcademicDepartmentCreateUpdateDto();
         computerScience.setTitle("Computer Science");
-        computerScience.setFaculty(savedFaculty);
+        computerScience.setCode("CS");
+        computerScience.setFacultyCode(savedFaculty.getCode());
 
         AcademicDepartment newDepartment = service.addOne(computerScience);
 
@@ -55,14 +58,16 @@ class AcademicDepartmentServiceTest {
     @Test
     void findById_shouldFindEntityById_whenCalledIfEntityExists() {
         Faculty faculty = new Faculty();
+        faculty.setCode("EN");
         faculty.setTitle("Engineering");
         Faculty savedFaculty = facultyRepository.save(faculty);
 
-        AcademicDepartment computerScience = new AcademicDepartment();
-        computerScience.setTitle("Multimedia");
-        computerScience.setFaculty(savedFaculty);
+        AcademicDepartmentCreateUpdateDto multimedia = new AcademicDepartmentCreateUpdateDto();
+        multimedia.setTitle("Multimedia");
+        multimedia.setCode("MM");
+        multimedia.setFacultyCode(savedFaculty.getCode());
 
-        AcademicDepartment saved = service.addOne(computerScience);
+        AcademicDepartment saved = service.addOne(multimedia);
 
         AcademicDepartment found = service.findById(saved.getId());
 
@@ -72,10 +77,31 @@ class AcademicDepartmentServiceTest {
     }
 
     @Test
+    void findByTitle_shouldReturnDepartment_whenExists() {
+        Faculty faculty = new Faculty();
+        faculty.setCode("EN");
+        faculty.setTitle("Engineering");
+        Faculty savedFaculty = facultyRepository.save(faculty);
+
+        AcademicDepartmentCreateUpdateDto multimedia = new AcademicDepartmentCreateUpdateDto();
+        multimedia.setTitle("Multimedia");
+        multimedia.setCode("MM");
+        multimedia.setFacultyCode(savedFaculty.getCode());
+
+        service.addOne(multimedia);
+
+        AcademicDepartment result = service.findByTitle("Multimedia");
+
+        assertNotNull(result);
+        assertEquals("Multimedia", result.getTitle());
+        assertEquals(savedFaculty.getId(), result.getFaculty().getId());
+    }
+
+    @Test
     void findById_shouldThrowException_whenCalledifEntityDoesNotExist() {
         int nonexistentId = 34;
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.findById(nonexistentId));
-        assertEquals("Academic Department not found: " + nonexistentId, ex.getMessage());
+        assertEquals("Academic Department not found by id: " + nonexistentId, ex.getMessage());
     }
 
     @Test
@@ -84,14 +110,14 @@ class AcademicDepartmentServiceTest {
         faculty.setTitle("Engineering");
         Faculty savedFaculty = facultyRepository.save(faculty);
 
-        AcademicDepartment computerScience = new AcademicDepartment();
+        AcademicDepartmentCreateUpdateDto computerScience = new AcademicDepartmentCreateUpdateDto();
         computerScience.setTitle("Computer Science");
-        computerScience.setFaculty(savedFaculty);
+        computerScience.setFacultyCode(savedFaculty.getCode());
         service.addOne(computerScience);
 
-        AcademicDepartment multimedia = new AcademicDepartment();
+        AcademicDepartmentCreateUpdateDto multimedia = new AcademicDepartmentCreateUpdateDto();
         multimedia.setTitle("Multimedia");
-        multimedia.setFaculty(savedFaculty);
+        multimedia.setFacultyCode(savedFaculty.getCode());
         service.addOne(multimedia);
 
         List<AcademicDepartment> allDepartments = service.findAll();
@@ -113,24 +139,26 @@ class AcademicDepartmentServiceTest {
     @Test
     void update_shouldUpdateEntity_whenCalled() {
         Faculty engineeging = new Faculty();
+        engineeging.setCode("EN");
         engineeging.setTitle("Engineering");
         Faculty engineegingFaculty = facultyRepository.save(engineeging);
 
         Faculty economy = new Faculty();
+        economy.setCode("EC");
         economy.setTitle("Economy");
         Faculty economyFaculty = facultyRepository.save(economy);
 
-        AcademicDepartment computerScience = new AcademicDepartment();
+        AcademicDepartmentCreateUpdateDto computerScience = new AcademicDepartmentCreateUpdateDto();
         computerScience.setTitle("Computer Science");
-        computerScience.setFaculty(engineegingFaculty);
+        computerScience.setCode("CS");
+        computerScience.setFacultyCode(engineegingFaculty.getCode());
         AcademicDepartment department = service.addOne(computerScience);
-        
-        AcademicDepartment computerScienceUpdated = new AcademicDepartment();
-        computerScienceUpdated.setId(department.getId());
-        computerScienceUpdated.setFaculty(economyFaculty);
-        AcademicDepartment result = service.update(computerScienceUpdated);
 
-        assertEquals(computerScience.getId(), result.getId());
+        AcademicDepartmentCreateUpdateDto computerScienceUpdated = new AcademicDepartmentCreateUpdateDto();
+        computerScienceUpdated.setFacultyCode(economyFaculty.getCode());
+        AcademicDepartment result = service.update(computerScienceUpdated, department.getId());
+
+        assertEquals(department.getId(), result.getId());
         assertEquals("Computer Science", result.getTitle());
         assertEquals(economy.getTitle(), result.getFaculty().getTitle());
 
@@ -139,18 +167,20 @@ class AcademicDepartmentServiceTest {
     @Test
     void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
         Faculty engineeging = new Faculty();
+        engineeging.setCode("EN");
         engineeging.setTitle("Engineering");
         Faculty engineegingFaculty = facultyRepository.save(engineeging);
 
-        AcademicDepartment computerScience = new AcademicDepartment();
+        AcademicDepartmentCreateUpdateDto computerScience = new AcademicDepartmentCreateUpdateDto();
         computerScience.setTitle("Computer Science");
-        computerScience.setFaculty(engineegingFaculty);
+        computerScience.setCode("CS");
+        computerScience.setFacultyCode(engineegingFaculty.getCode());
         AcademicDepartment department = service.addOne(computerScience);
 
-        AcademicDepartment computerScienceUpdated = new AcademicDepartment();
-        computerScienceUpdated.setId(department.getId());
-        computerScienceUpdated.setTitle(null);
-        AcademicDepartment result = service.update(computerScienceUpdated);
+        AcademicDepartmentCreateUpdateDto computerScienceUpdated = new AcademicDepartmentCreateUpdateDto();
+        computerScienceUpdated.setFacultyCode(engineegingFaculty.getCode());
+        computerScience.setTitle(null);
+        AcademicDepartment result = service.update(computerScienceUpdated, department.getId());
 
         assertEquals("Computer Science", result.getTitle());
         assertEquals(engineeging.getTitle(), result.getFaculty().getTitle());
@@ -159,12 +189,13 @@ class AcademicDepartmentServiceTest {
     @Test
     void delete_shouldDeleteEntityById_whenEntityExists() {
         Faculty engineeging = new Faculty();
+        engineeging.setCode("EN");
         engineeging.setTitle("Engineering");
         Faculty engineegingFaculty = facultyRepository.save(engineeging);
 
-        AcademicDepartment computerScience = new AcademicDepartment();
+        AcademicDepartmentCreateUpdateDto computerScience = new AcademicDepartmentCreateUpdateDto();
         computerScience.setTitle("Computer Science");
-        computerScience.setFaculty(engineegingFaculty);
+        computerScience.setFacultyCode(engineegingFaculty.getCode());
         AcademicDepartment department = service.addOne(computerScience);
 
         int id = department.getId();

@@ -17,18 +17,19 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import ua.com.foxminded.BootTest;
+import ua.com.foxminded.MainApp;
+import ua.com.foxminded.dto.user.TeacherCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Teacher;
-import ua.com.foxminded.sdjpa.AcademicDepartmentRepository;
-import ua.com.foxminded.sdjpa.FacultyRepository;
+import ua.com.foxminded.repository.AcademicDepartmentRepository;
+import ua.com.foxminded.repository.FacultyRepository;
 
 @Testcontainers
 @Transactional
-@SpringBootTest(classes = { BootTest.class })
+@SpringBootTest(classes = { MainApp.class })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
+@ActiveProfiles({"test"})
 class TeacherServiceTest {
 
     @Autowired
@@ -39,7 +40,7 @@ class TeacherServiceTest {
     @Autowired
     private AcademicDepartmentRepository departmentRepository;
 
-    private Teacher teacher = new Teacher();
+    private TeacherCreateUpdateDto teacher = new TeacherCreateUpdateDto();
 
     @BeforeEach
     void setUp() {
@@ -53,7 +54,7 @@ class TeacherServiceTest {
         computerScience.setFaculty(engineeringFaculty);
         AcademicDepartment csDepartment = departmentRepository.save(computerScience);
 
-        teacher.setDepartment(csDepartment);
+        teacher.setDepartmentId(csDepartment.getId());
         teacher.setFirstName("Jhon");
         teacher.setLastName("Devis");
     }
@@ -98,10 +99,9 @@ class TeacherServiceTest {
     void update_shouldUpdateEntity_whenCalled() {
         Teacher firstTeacher = service.addOne(teacher);
 
-        Teacher firstTeacherUpdated = new Teacher();
-        firstTeacherUpdated.setId(firstTeacher.getId());
+        TeacherCreateUpdateDto firstTeacherUpdated = new TeacherCreateUpdateDto();
         firstTeacherUpdated.setFirstName("Gibbs");
-        Teacher result = service.update(firstTeacherUpdated);
+        Teacher result = service.update(firstTeacherUpdated, firstTeacher.getId());
 
         assertEquals(firstTeacher.getId(), result.getId());
         assertEquals("Gibbs", result.getFirstName());
@@ -112,10 +112,9 @@ class TeacherServiceTest {
     void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
         Teacher firstTeacher = service.addOne(teacher);
 
-        Teacher firstTeacherUpdated = new Teacher();
-        firstTeacherUpdated.setId(firstTeacher.getId());
+        TeacherCreateUpdateDto firstTeacherUpdated = new TeacherCreateUpdateDto();
         firstTeacherUpdated.setFirstName(null);
-        Teacher result = service.update(firstTeacherUpdated);
+        Teacher result = service.update(firstTeacherUpdated, firstTeacher.getId());
 
         assertEquals(firstTeacher.getId(), result.getId());
         assertEquals("Jhon", result.getFirstName());

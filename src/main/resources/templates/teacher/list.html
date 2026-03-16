@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Teachers</title>
+</head>
+
+<body>
+
+    <div th:replace="fragments/header :: header"></div>
+    <div th:replace="fragments/menu :: menu"></div>
+
+    <h2> All Teachers Of University</h2>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Department Code</th>
+                <th>First name</th>
+                <th>Middle name</th>
+                <th>Last name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="teacher : ${teachers}">
+                <td th:text="${teacher.departmentCode}"></td>
+                <td th:text="${teacher.firstName}"></td>
+                <td th:text="${teacher.middleName}"></td>
+                <td th:text="${teacher.lastName}"></td>
+            </tr>
+        </tbody>
+
+    </table>
+
+
+</body>
+
+</html>

@@ -17,21 +17,23 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import ua.com.foxminded.BootTest;
+import ua.com.foxminded.MainApp;
+import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
+import ua.com.foxminded.dto.user.StudentCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Specialization;
 import ua.com.foxminded.entity.Student;
-import ua.com.foxminded.sdjpa.AcademicDepartmentRepository;
-import ua.com.foxminded.sdjpa.FacultyRepository;
-import ua.com.foxminded.sdjpa.SpecializationRepository;
+import ua.com.foxminded.repository.AcademicDepartmentRepository;
+import ua.com.foxminded.repository.FacultyRepository;
+import ua.com.foxminded.repository.SpecializationRepository;
 
 @Testcontainers
 @Transactional
-@SpringBootTest(classes = { BootTest.class })
+@SpringBootTest(classes = { MainApp.class })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
+@ActiveProfiles({ "test" })
 class StudentServiceTest {
 
     @Autowired
@@ -46,34 +48,35 @@ class StudentServiceTest {
     @Autowired
     private GroupService groupService;
 
-    private Student student = new Student();
+    private StudentCreateUpdateDto student = new StudentCreateUpdateDto();
 
     @BeforeEach
     void setUp() {
 
         Faculty faculty = new Faculty();
         faculty.setTitle("Engineering");
+        faculty.setCode("EN");
         Faculty engineeringFaculty = facultyRepository.save(faculty);
 
         AcademicDepartment computerScience = new AcademicDepartment();
         computerScience.setTitle("Computer Science");
+        computerScience.setCode("CS");
         computerScience.setFaculty(engineeringFaculty);
         AcademicDepartment csDepartment = departmentRepository.save(computerScience);
 
         Specialization specialization = new Specialization();
         specialization.setDepartment(csDepartment);
+        specialization.setCode("SE");
         specialization.setTitle("Security");
         Specialization security = specializationRepository.save(specialization);
 
-        Group group = new Group();
-        group.setFaculty(engineeringFaculty);
-        group.setDepartment(csDepartment);
-        group.setSpecialization(security);
+        GroupCreateUpdateDto group = new GroupCreateUpdateDto();
+        group.setSpecializationCode(security.getCode());
         Group firstGroup = groupService.addOne(group);
 
         student.setFirstName("Jack");
         student.setLastName("Sparrow");
-        student.setGroup(firstGroup);
+        student.setGroupId(firstGroup.getId());
     }
 
     @Test
@@ -113,13 +116,24 @@ class StudentServiceTest {
     }
 
     @Test
+    void findByTitle_shouldReturnStudent_whenExists() {
+        Student saved = service.addOne(student);
+
+        Student result = service.findByFullName("Sparrow", "Jack", null);
+
+        assertNotNull(result);
+        assertEquals("Jack", result.getFirstName());
+        assertEquals("Sparrow", result.getLastName());
+        assertEquals(saved.getId(), result.getId());
+    }
+
+    @Test
     void update_shouldUpdateEntity_whenCalled() {
         Student firstStudent = service.addOne(student);
 
-        Student firstStudentUpdated = new Student();
-        firstStudentUpdated.setId(firstStudent.getId());
+        StudentCreateUpdateDto firstStudentUpdated = new StudentCreateUpdateDto();
         firstStudentUpdated.setFirstName("Gibbs");
-        Student result = service.update(firstStudentUpdated);
+        Student result = service.update(firstStudentUpdated, firstStudent.getId());
 
         assertEquals(firstStudent.getId(), result.getId());
         assertEquals("Gibbs", result.getFirstName());
@@ -130,10 +144,9 @@ class StudentServiceTest {
     void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
         Student firstStudent = service.addOne(student);
 
-        Student firstStudentUpdated = new Student();
-        firstStudentUpdated.setId(firstStudent.getId());
+        StudentCreateUpdateDto firstStudentUpdated = new StudentCreateUpdateDto();
         firstStudentUpdated.setFirstName(null);
-        Student result = service.update(firstStudentUpdated);
+        Student result = service.update(firstStudentUpdated, firstStudent.getId());
 
         assertEquals(firstStudent.getId(), result.getId());
         assertEquals("Jack", result.getFirstName());

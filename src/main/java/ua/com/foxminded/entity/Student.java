@@ -6,16 +6,23 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import ua.com.foxminded.enums.UserRole;
+
 @Entity
 @Table(name = "students")
 @PrimaryKeyJoinColumn(name = "user_id")
-public class Student extends User{
-    
+public class Student extends User {
+
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
 
     public Student() {
+    }
+
+    public Student(Integer id, String firstName, String middleName, String lastName, UserRole userRole, Group group) {
+        super(id, firstName, middleName, lastName, userRole);
+        this.group = group;
     }
 
     public Student(Group group) {
@@ -29,7 +36,5 @@ public class Student extends User{
     public void setGroup(Group group) {
         this.group = group;
     }
-    
-    
 
 }

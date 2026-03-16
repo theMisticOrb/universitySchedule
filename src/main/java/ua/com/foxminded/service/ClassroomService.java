@@ -4,25 +4,38 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ua.com.foxminded.dto.classroom.ClassroomCreateUpdateDto;
 import ua.com.foxminded.entity.Classroom;
+import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
-import ua.com.foxminded.sdjpa.ClassroomRepository;
+import ua.com.foxminded.mapper.ClassroomMapper;
+import ua.com.foxminded.repository.ClassroomRepository;
 
 @Service
 @Transactional
 public class ClassroomService {
 
     private ClassroomRepository classroomRapository;
+    private ClassroomMapper classroomMapper;
 
-    public ClassroomService(ClassroomRepository classroomRapository) {
+    public ClassroomService(ClassroomRepository classroomRapository, ClassroomMapper classroomMapper) {
         this.classroomRapository = classroomRapository;
+        this.classroomMapper = classroomMapper;
     }
 
-    public Classroom addOne(Classroom classroom) {
-        return classroomRapository.save(classroom);
+    public Classroom addOne(ClassroomCreateUpdateDto dto) {
+
+        Classroom classroom = classroomMapper.toEntity(dto);
+
+        try {
+            return classroomRapository.save(classroom);
+        } catch (DataIntegrityViolationException e) {
+            throw new DuplicateEntityException("Classroom with title: " + dto.getName() + " alredy exists!");
+        }
     }
 
     public Classroom findById(Integer id) {
@@ -30,12 +43,18 @@ public class ClassroomService {
                 .orElseThrow(() -> new EntityNotFoundException("Classroom not found: " + id));
     }
 
+    public Classroom findByName(String name) {
+        return classroomRapository.findByName(name)
+                .orElseThrow(() -> new EntityNotFoundException("Classroom not found: " + name));
+    }
+
     public List<Classroom> findAll() {
         return classroomRapository.findAll();
     }
 
-    public Classroom update(Classroom updated) {
-        Classroom classroom = findById(updated.getId());
+    public Classroom update(ClassroomCreateUpdateDto updated, Integer id) {
+        Classroom classroom = findById(id);
+
         UpdateUtil.setIfNotNull(updated.getName(), classroom::setName);
         return classroom;
     }

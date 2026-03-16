@@ -10,6 +10,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import ua.com.foxminded.enums.UserRole;
+
 @Entity
 @Table(name = "teachers")
 @PrimaryKeyJoinColumn(name = "user_id")
@@ -25,7 +27,9 @@ public class Teacher extends User {
     public Teacher() {
     }
 
-    public Teacher(AcademicDepartment department, List<Subject> subjects) {
+    public Teacher(Integer id, String firstName, String middleName, String lastName, UserRole userRole,
+            AcademicDepartment department, List<Subject> subjects) {
+        super(id, firstName, middleName, lastName, userRole);
         this.department = department;
         this.subjects = subjects;
     }
@@ -45,7 +49,5 @@ public class Teacher extends User {
     public void setSubjects(List<Subject> subjects) {
         this.subjects = subjects;
     }
-    
-    
 
 }

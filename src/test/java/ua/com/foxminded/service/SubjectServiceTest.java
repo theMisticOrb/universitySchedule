@@ -17,20 +17,21 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import ua.com.foxminded.BootTest;
+import ua.com.foxminded.MainApp;
+import ua.com.foxminded.dto.subject.SubjectCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
-import ua.com.foxminded.sdjpa.AcademicDepartmentRepository;
-import ua.com.foxminded.sdjpa.FacultyRepository;
-import ua.com.foxminded.sdjpa.TeacherRepository;
+import ua.com.foxminded.repository.AcademicDepartmentRepository;
+import ua.com.foxminded.repository.FacultyRepository;
+import ua.com.foxminded.repository.TeacherRepository;
 
 @Testcontainers
 @Transactional
-@SpringBootTest(classes = { BootTest.class })
+@SpringBootTest(classes = { MainApp.class })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
+@ActiveProfiles({ "test" })
 class SubjectServiceTest {
 
     @Autowired
@@ -43,17 +44,19 @@ class SubjectServiceTest {
     @Autowired
     private AcademicDepartmentRepository departmentRepository;
 
-    private Subject subject = new Subject();
+    private SubjectCreateUpdateDto subject = new SubjectCreateUpdateDto();
 
     @BeforeEach
     void setUp() {
 
         Faculty faculty = new Faculty();
         faculty.setTitle("Engineering");
+        faculty.setCode("EN");
         Faculty engineeringFaculty = facultyRepository.save(faculty);
 
         AcademicDepartment computerScience = new AcademicDepartment();
         computerScience.setTitle("Computer Science");
+        computerScience.setCode("CS");
         computerScience.setFaculty(engineeringFaculty);
         AcademicDepartment csDepartment = departmentRepository.save(computerScience);
 
@@ -64,8 +67,9 @@ class SubjectServiceTest {
         teacher.setDepartment(csDepartment);
         Teacher jonTeacher = teacherRepository.save(teacher);
 
-        subject.setTeacher(jonTeacher);
+        subject.setTeacherId(jonTeacher.getId());
         subject.setTitle("Math");
+        subject.setDepartmentCode(csDepartment.getCode());
 
     }
 
@@ -105,13 +109,23 @@ class SubjectServiceTest {
     }
 
     @Test
+    void findByTitle_shouldReturnStudent_whenExists() {
+        Subject saved = service.addOne(subject);
+
+        Subject result = service.findByTitle("Math");
+
+        assertNotNull(result);
+        assertEquals("Math", result.getTitle());
+        assertEquals(saved.getId(), result.getId());
+    }
+
+    @Test
     void update_shouldUpdateEntity_whenCalled() {
         Subject firstSubject = service.addOne(subject);
 
-        Subject firstSubjectUpdated = new Subject();
-        firstSubjectUpdated.setId(firstSubject.getId());
+        SubjectCreateUpdateDto firstSubjectUpdated = new SubjectCreateUpdateDto();
         firstSubjectUpdated.setTitle("History");
-        Subject result = service.update(firstSubjectUpdated);
+        Subject result = service.update(firstSubjectUpdated, firstSubject.getId());
 
         assertEquals(firstSubject.getId(), result.getId());
         assertEquals("History", result.getTitle());
@@ -122,10 +136,9 @@ class SubjectServiceTest {
     void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
         Subject firstSubject = service.addOne(subject);
 
-        Subject firstSubjectUpdated = new Subject();
-        firstSubjectUpdated.setId(firstSubject.getId());
+        SubjectCreateUpdateDto firstSubjectUpdated = new SubjectCreateUpdateDto();
         firstSubjectUpdated.setTitle(null);
-        Subject result = service.update(firstSubjectUpdated);
+        Subject result = service.update(firstSubjectUpdated, firstSubject.getId());
 
         assertEquals(firstSubject.getId(), result.getId());
         assertEquals("Math", result.getTitle());

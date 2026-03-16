@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Specializations</title>
+</head>
+
+<body>
+
+    <div th:replace="fragments/header :: header"></div>
+    <div th:replace="fragments/menu :: menu"></div>
+
+    <h2> All Specializations Of University</h2>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Department Code</th>
+                <th>Title</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="specialization : ${specializations}">
+                <td th:text="${specialization.departmentCode}"></td>
+                <td th:text="${specialization.title}"></td>
+            </tr>
+        </tbody>
+
+    </table>
+
+
+</body>
+
+</html>

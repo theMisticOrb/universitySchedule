@@ -17,20 +17,21 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import ua.com.foxminded.BootTest;
+import ua.com.foxminded.MainApp;
+import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Specialization;
-import ua.com.foxminded.sdjpa.AcademicDepartmentRepository;
-import ua.com.foxminded.sdjpa.FacultyRepository;
-import ua.com.foxminded.sdjpa.SpecializationRepository;
+import ua.com.foxminded.repository.AcademicDepartmentRepository;
+import ua.com.foxminded.repository.FacultyRepository;
+import ua.com.foxminded.repository.SpecializationRepository;
 
 @Testcontainers
 @Transactional
-@SpringBootTest(classes = { BootTest.class })
+@SpringBootTest(classes = { MainApp.class })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
+@ActiveProfiles({ "test" })
 class GroupServiceTest {
 
     @Autowired
@@ -43,27 +44,28 @@ class GroupServiceTest {
     @Autowired
     private SpecializationRepository specializationRepository;
 
-    private Group group = new Group();
+    private GroupCreateUpdateDto group = new GroupCreateUpdateDto();
 
     @BeforeEach
     void setUp() {
         Faculty faculty = new Faculty();
+        faculty.setCode("EN");
         faculty.setTitle("Engineering");
         Faculty engineeringFaculty = facultyRepository.save(faculty);
 
         AcademicDepartment computerScience = new AcademicDepartment();
         computerScience.setTitle("Computer Science");
+        computerScience.setCode("CS");
         computerScience.setFaculty(engineeringFaculty);
         AcademicDepartment csDepartment = departmentRepository.save(computerScience);
 
         Specialization specialization = new Specialization();
         specialization.setDepartment(csDepartment);
         specialization.setTitle("Security");
+        specialization.setCode("SE");
         Specialization security = specializationRepository.save(specialization);
 
-        group.setFaculty(engineeringFaculty);
-        group.setDepartment(csDepartment);
-        group.setSpecialization(security);
+        group.setSpecializationCode(security.getCode());
 
     }
 
@@ -103,21 +105,45 @@ class GroupServiceTest {
     }
 
     @Test
+    void findByTitle_shouldReturnGroup_whenExists() {
+        Group saved = service.addOne(group);
+        String groupName = saved.getName();
+
+        Group result = service.findByName(groupName);
+
+        assertNotNull(result);
+        assertEquals(groupName, result.getName());
+        assertEquals(saved.getId(), result.getId());
+    }
+
+    @Test
     void update_shouldUpdateEntity_whenCalled() {
         Group firstGroup = service.addOne(group);
 
         Faculty faculty = new Faculty();
-        faculty.setTitle("Math");
-        Faculty mathFaculty = facultyRepository.save(faculty);
+        faculty.setTitle("Data Science");
+        faculty.setCode("DS");
+        Faculty engineeringFaculty = facultyRepository.save(faculty);
 
-        Group firstGroupUpdated = new Group();
-        firstGroupUpdated.setId(firstGroup.getId());
-        firstGroupUpdated.setFaculty(mathFaculty);
-        Group result = service.update(firstGroupUpdated);
+        AcademicDepartment computerScience = new AcademicDepartment();
+        computerScience.setTitle("Analitics");
+        computerScience.setCode("AN");
+        computerScience.setFaculty(engineeringFaculty);
+        AcademicDepartment csDepartment = departmentRepository.save(computerScience);
+
+        Specialization specialization = new Specialization();
+        specialization.setTitle("Math");
+        specialization.setCode("MT");
+        specialization.setDepartment(csDepartment);
+        Specialization mathSpecialization = specializationRepository.save(specialization);
+
+        GroupCreateUpdateDto firstGroupUpdated = new GroupCreateUpdateDto();
+        firstGroupUpdated.setSpecializationCode(mathSpecialization.getCode());
+        Group result = service.update(firstGroupUpdated, firstGroup.getId());
 
         assertEquals(firstGroup.getId(), result.getId());
-        assertEquals(mathFaculty.getId(), result.getFaculty().getId());
-        assertEquals(mathFaculty.getTitle(), result.getFaculty().getTitle());
+        assertEquals(mathSpecialization.getId(), result.getSpecialization().getId());
+        assertEquals(mathSpecialization.getTitle(), result.getSpecialization().getTitle());
 
     }
 
@@ -126,12 +152,11 @@ class GroupServiceTest {
 
         Group firstGroup = service.addOne(group);
 
-        Group computerScienceUpdated = new Group();
-        computerScienceUpdated.setId(firstGroup.getId());
-        computerScienceUpdated.setFaculty(null);
-        Group result = service.update(computerScienceUpdated);
+        GroupCreateUpdateDto computerScienceUpdated = new GroupCreateUpdateDto();
+        computerScienceUpdated.setSpecializationCode(null);
+        Group result = service.update(computerScienceUpdated, firstGroup.getId());
 
-        assertEquals("Engineering", result.getFaculty().getTitle());
+        assertEquals("Security", result.getSpecialization().getTitle());
     }
 
     @Test

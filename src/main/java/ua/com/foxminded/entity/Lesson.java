@@ -34,22 +34,33 @@ public class Lesson {
     private Classroom classroom;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "class_hours")
+    @Column(name = "class_hour")
     private ClassHour classHour;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "week_days")
+    @Column(name = "week_day")
     private WeekDay weekDay;
+
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private Group group;
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
 
     public Lesson() {
     }
 
-    public Lesson(Integer id, Subject subject, Classroom classroom, ClassHour classHour, WeekDay weekDay) {
+    public Lesson(Integer id, Subject subject, Classroom classroom, ClassHour classHour, WeekDay weekDay, Group group,
+            Teacher teacher) {
         this.id = id;
         this.subject = subject;
         this.classroom = classroom;
         this.classHour = classHour;
         this.weekDay = weekDay;
+        this.group = group;
+        this.teacher = teacher;
     }
 
     public Integer getId() {
@@ -58,14 +69,6 @@ public class Lesson {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public WeekDay getWeekDays() {
-        return weekDay;
-    }
-
-    public void setWeekDays(WeekDay weekDays) {
-        this.weekDay = weekDays;
     }
 
     public Subject getSubject() {
@@ -84,12 +87,35 @@ public class Lesson {
         this.classroom = classroom;
     }
 
-    public ClassHour getClassHours() {
+    public ClassHour getClassHour() {
         return classHour;
     }
 
-    public void setClassHours(ClassHour classHours) {
-        this.classHour = classHours;
+    public void setClassHour(ClassHour classHour) {
+        this.classHour = classHour;
     }
 
+    public WeekDay getWeekDay() {
+        return weekDay;
+    }
+
+    public void setWeekDay(WeekDay weekDay) {
+        this.weekDay = weekDay;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
 }

@@ -1,0 +1,24 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+        
+  flyway:
+    enabled: true
+    
+  logging:
+    level:
+    net.ttddyy.dsproxy: DEBUG
+    net.ttddyy.dsproxy.listener: DEBUG
+    
+dev:
+  facultyCount: 5
+  departmentsPerFaculty: 2
+  specializationsPerDepartment: 3
+  groupsPerSpecialization: 5
+  studentsPerGroup: 5
+  teachersPerDepartment: 5
+  subjectsPerTeacher: 3
+  classroomsPerDepartment: 15
+  lessonsPerWeek: 7
+  

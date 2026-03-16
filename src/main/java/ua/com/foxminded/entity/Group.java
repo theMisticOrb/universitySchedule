@@ -29,14 +29,6 @@ public class Group {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "faculty_id")
-    private Faculty faculty;
-
-    @ManyToOne
-    @JoinColumn(name = "department_id")
-    private AcademicDepartment department;
-
-    @ManyToOne
     @JoinColumn(name = "specialization_id")
     private Specialization specialization;
 
@@ -52,6 +44,9 @@ public class Group {
     @OneToMany(mappedBy = "group")
     private Set<Student> students = new HashSet<>();
 
+    @OneToMany(mappedBy = "group")
+    private Set<Lesson> lessons = new HashSet<>();
+
     @ManyToMany
     @JoinTable(name = "groups_subjects", joinColumns = @JoinColumn(name = "group_id"), inverseJoinColumns = @JoinColumn(name = "subject_id"))
     private Set<Subject> subjects = new HashSet<>();
@@ -59,17 +54,15 @@ public class Group {
     public Group() {
     }
 
-    public Group(Integer id, Faculty faculty, AcademicDepartment department, Specialization specialization,
-            YearOfUniv yearOfUniv, Set<Student> students, Set<Subject> subjects) {
-        super();
+    public Group(Integer id, Specialization specialization, YearOfUniv yearOfUniv, LocalDate startDate, String name,
+            Set<Student> students, Set<Subject> subjects) {
         this.id = id;
-        this.faculty = faculty;
-        this.department = department;
         this.specialization = specialization;
         this.yearOfUniv = yearOfUniv;
+        this.startDate = startDate;
+        this.name = name;
         this.students = students;
         this.subjects = subjects;
-
     }
 
     public Integer getId() {
@@ -78,22 +71,6 @@ public class Group {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Faculty getFaculty() {
-        return faculty;
-    }
-
-    public void setFaculty(Faculty faculty) {
-        this.faculty = faculty;
-    }
-
-    public AcademicDepartment getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(AcademicDepartment department) {
-        this.department = department;
     }
 
     public Specialization getSpecialization() {
@@ -121,7 +98,7 @@ public class Group {
     }
 
     public String getName() {
-        return toString();
+        return name;
     }
 
     public void setName(String name) {
@@ -144,9 +121,4 @@ public class Group {
         this.subjects = subjects;
     }
 
-    @Override
-    public String toString() {
-        return faculty.getId().toString() + "." + department.getId().toString() + "."
-                + specialization.getId().toString() + "." + getYearOfUniv().getCurentYearInUniv();
-    }
 }

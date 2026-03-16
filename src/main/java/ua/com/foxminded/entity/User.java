@@ -2,6 +2,8 @@ package ua.com.foxminded.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -9,6 +11,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import ua.com.foxminded.enums.UserRole;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -30,14 +34,19 @@ public abstract class User {
     @Column(name = "user_last_name")
     private String lastName;
 
+    @Column(name = "user_role")
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
+
     protected User() {
     }
 
-    protected User(Integer id, String firstName, String middleName, String lastName) {
+    protected User(Integer id, String firstName, String middleName, String lastName, UserRole userRole) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
+        this.userRole = userRole;
     }
 
     public Integer getId() {
@@ -70,6 +79,14 @@ public abstract class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public UserRole getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
     }
 
 }

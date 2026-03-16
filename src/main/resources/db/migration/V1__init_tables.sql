@@ -6,23 +6,29 @@ CREATE SEQUENCE IF NOT EXISTS lesson_id_seq START WITH 1 INCREMENT BY 30 CACHE 3
 
 CREATE TABLE IF NOT EXISTS faculties(
 faculty_id BIGSERIAL PRIMARY KEY,
-faculty_title varchar(225) UNIQUE
+faculty_title varchar(225) UNIQUE,
+faculty_code varchar(225) UNIQUE
 );
 
 
 CREATE TABLE IF NOT EXISTS departments (
 department_id BIGSERIAL PRIMARY KEY,
-department_title varchar(225) UNIQUE,
+department_title varchar(225),
+department_code varchar(225) UNIQUE,
 faculty_id INTEGER NOT NULL,
 
+CONSTRAINT uk_department_title_faculty UNIQUE (department_title, faculty_id),
 CONSTRAINT fk_department_faculty FOREIGN KEY (faculty_id) REFERENCES faculties (faculty_id)
 );
 
 
 CREATE TABLE IF NOT EXISTS specializations (
 specialization_id BIGSERIAL PRIMARY KEY,
-specialization_title varchar(225) UNIQUE,
+specialization_title varchar(225),
+specialization_code varchar(225) UNIQUE,
 department_id INTEGER NOT NULL,
+
+CONSTRAINT uk_specialization_title_department UNIQUE (specialization_title, department_id),
 
 CONSTRAINT fk_specialization_department FOREIGN KEY (department_id) REFERENCES departments (department_id)
 );
@@ -31,16 +37,12 @@ CONSTRAINT fk_specialization_department FOREIGN KEY (department_id) REFERENCES d
 CREATE TABLE IF NOT EXISTS academic_groups(
 group_id INTEGER PRIMARY KEY,
 group_name varchar(225),
-faculty_id INTEGER NOT NULL,
-department_id INTEGER NOT NULL,
 specialization_id INTEGER NOT NULL,
 year_of_univ INTEGER,
 start_date DATE NOT NULL,
 
-CONSTRAINT uk_group_name_faculty UNIQUE (group_name, faculty_id),
+CONSTRAINT uk_group_name_specialization UNIQUE (group_name, specialization_id),
 
-CONSTRAINT fk_group_faculty FOREIGN KEY (faculty_id) REFERENCES faculties (faculty_id),
-CONSTRAINT fk_group_department FOREIGN KEY (department_id) REFERENCES departments (department_id),
 CONSTRAINT fk_group_specialization FOREIGN KEY (specialization_id) REFERENCES specializations (specialization_id)
 );
 
@@ -49,13 +51,17 @@ CREATE TABLE IF NOT EXISTS users(
 user_id INTEGER PRIMARY KEY,
 user_first_name varchar(225) NOT NULL,
 user_middle_name varchar(225),
-user_last_name varchar(225) NOT NULL
+user_last_name varchar(225) NOT NULL,
+user_role varchar(225) NOT NULL
+
+CONSTRAINT chk_user_role CHECK (role IN ('STUDENT','TEACHER','ADMIN'));
 );
 
 
 CREATE TABLE IF NOT EXISTS teachers(
 user_id INTEGER PRIMARY KEY,
 department_id INTEGER NOT NULL,
+
 
 CONSTRAINT fk_teacher_department FOREIGN KEY (department_id) REFERENCES departments (department_id),
 CONSTRAINT fk_teacher_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
@@ -64,16 +70,22 @@ CONSTRAINT fk_teacher_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON D
 
 CREATE TABLE IF NOT EXISTS subjects(
 subject_id BIGSERIAL PRIMARY KEY,
-subject_title varchar(225) UNIQUE,
+subject_title varchar(225),
 teacher_id  INTEGER NOT NULL,
+department_id  INTEGER NOT NULL,
 
-CONSTRAINT fk_subject_teacher FOREIGN KEY (teacher_id ) REFERENCES teachers (user_id)
+CONSTRAINT uk_subject_title_department UNIQUE (subject_title, department_id),
+
+CONSTRAINT fk_subject_teacher FOREIGN KEY (teacher_id ) REFERENCES teachers (user_id),
+CONSTRAINT fk_subject_department FOREIGN KEY (department_id) REFERENCES departments (department_id)
+
 );
 
 
 CREATE TABLE IF NOT EXISTS students(
 user_id INTEGER PRIMARY KEY,
 group_id INTEGER NOT NULL,
+
 
 CONSTRAINT fk_student_group FOREIGN KEY (group_id) REFERENCES academic_groups (group_id),
 CONSTRAINT fk_student_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
@@ -90,11 +102,19 @@ CREATE TABLE IF NOT EXISTS lessons(
 lesson_id INTEGER PRIMARY KEY,
 subject_id INTEGER NOT NULL,
 classroom_id INTEGER NOT NULL,
-class_hours varchar(225) NOT NULL,
-week_days varchar(225) NOT NULL,
+group_id INTEGER NOT NULL,
+teacher_id INTEGER NOT NULL,
+class_hour varchar(225) NOT NULL,
+week_day varchar(225) NOT NULL,
+
+CONSTRAINT uk_teacher_lesson UNIQUE (teacher_id, class_hour, week_day),
+CONSTRAINT uk_group_lesson UNIQUE (group_id, class_hour, week_day),
+CONSTRAINT uk_classroom_lesson UNIQUE (classroom_id, class_hour, week_day),
 
 CONSTRAINT fk_lesson_subject FOREIGN KEY (subject_id) REFERENCES subjects (subject_id),
-CONSTRAINT fk_lesson_classroom FOREIGN KEY (classroom_id) REFERENCES classrooms (classroom_id)
+CONSTRAINT fk_lesson_classroom FOREIGN KEY (classroom_id) REFERENCES classrooms (classroom_id),
+CONSTRAINT fk_lesson_group FOREIGN KEY (group_id) REFERENCES academic_groups (group_id),
+CONSTRAINT fk_lesson_teacher FOREIGN KEY (teacher_id) REFERENCES teachers (user_id)
 );
 
 

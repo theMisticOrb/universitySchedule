@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Groups</title>
+</head>
+
+<body>
+
+    <div th:replace="fragments/header :: header"></div>
+    <div th:replace="fragments/menu :: menu"></div>
+
+    <h2> All Academic Groups Of University</h2>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Specialization Code</th>
+                <th>Group name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="group : ${groups}">
+                <td th:text="${group.specializationCode}"></td>
+                <td th:text="${group.name}"></td>
+            </tr>
+        </tbody>
+
+    </table>
+
+
+</body>
+
+</html>
