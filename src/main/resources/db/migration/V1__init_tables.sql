@@ -54,7 +54,7 @@ user_middle_name varchar(225),
 user_last_name varchar(225) NOT NULL,
 user_role varchar(225) NOT NULL
 
-CONSTRAINT chk_user_role CHECK (role IN ('STUDENT','TEACHER','ADMIN'));
+CONSTRAINT chk_user_role CHECK (user_role IN ('STUDENT','TEACHER','ADMIN'))
 );
 
 

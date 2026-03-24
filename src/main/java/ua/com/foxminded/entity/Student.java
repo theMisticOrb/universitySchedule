@@ -20,8 +20,9 @@ public class Student extends User {
     public Student() {
     }
 
-    public Student(Integer id, String firstName, String middleName, String lastName, UserRole userRole, Group group) {
-        super(id, firstName, middleName, lastName, userRole);
+    public Student(Integer id, String firstName, String middleName, String lastName, String email, String password,
+            UserRole userRole, Group group) {
+        super(id, firstName, middleName, lastName, email, password, userRole);
         this.group = group;
     }
 
