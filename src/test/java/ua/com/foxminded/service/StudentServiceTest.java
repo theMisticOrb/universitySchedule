@@ -25,6 +25,7 @@ import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Specialization;
 import ua.com.foxminded.entity.Student;
+import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.repository.AcademicDepartmentRepository;
 import ua.com.foxminded.repository.FacultyRepository;
 import ua.com.foxminded.repository.SpecializationRepository;
@@ -77,6 +78,9 @@ class StudentServiceTest {
         student.setFirstName("Jack");
         student.setLastName("Sparrow");
         student.setGroupId(firstGroup.getId());
+        student.setEmail("Sparrow@university.com");
+        student.setPassword("JackSparrow1234");
+        student.setUserRole(UserRole.STUDENT);
     }
 
     @Test

@@ -22,6 +22,7 @@ import ua.com.foxminded.dto.user.TeacherCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Teacher;
+import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.repository.AcademicDepartmentRepository;
 import ua.com.foxminded.repository.FacultyRepository;
 
@@ -57,6 +58,9 @@ class TeacherServiceTest {
         teacher.setDepartmentId(csDepartment.getId());
         teacher.setFirstName("Jhon");
         teacher.setLastName("Devis");
+        teacher.setEmail("Devis@university.com");
+        teacher.setPassword("JhonDevis1234");
+        teacher.setUserRole(UserRole.TEACHER);
     }
 
     @Test

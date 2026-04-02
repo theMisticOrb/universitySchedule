@@ -15,7 +15,7 @@ import ua.com.foxminded.enums.UserRole;
 @Entity
 @Table(name = "teachers")
 @PrimaryKeyJoinColumn(name = "user_id")
-public class Teacher extends User {
+public class Teacher extends AppUser {
 
     @ManyToOne
     @JoinColumn(name = "department_id", nullable = false)

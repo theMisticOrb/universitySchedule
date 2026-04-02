@@ -52,7 +52,9 @@ user_id INTEGER PRIMARY KEY,
 user_first_name varchar(225) NOT NULL,
 user_middle_name varchar(225),
 user_last_name varchar(225) NOT NULL,
-user_role varchar(225) NOT NULL
+user_role varchar(225) NOT NULL,
+user_email varchar(225) NOT NULL UNIQUE,
+user_password varchar(225) NOT NULL UNIQUE,
 
 CONSTRAINT chk_user_role CHECK (user_role IN ('STUDENT','TEACHER','ADMIN'))
 );

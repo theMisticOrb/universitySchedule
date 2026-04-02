@@ -17,13 +17,13 @@ import com.github.javafaker.Faker;
 
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Student;
-import ua.com.foxminded.repository.StudentRepository;
+import ua.com.foxminded.service.StudentService;
 
 @ExtendWith(MockitoExtension.class)
 class StudentGeneratorTest {
 
     @Mock
-    private StudentRepository repository;
+    private StudentService service;
 
     private Faker faker;
 
@@ -32,7 +32,7 @@ class StudentGeneratorTest {
     @BeforeEach
     void setUp() {
         faker = new Faker(new Random(42));
-        generator = new StudentGenerator(repository, faker);
+        generator = new StudentGenerator(service, faker);
     }
 
     @Test
@@ -41,7 +41,7 @@ class StudentGeneratorTest {
         Group group = new Group();
         group.setId(1);
 
-        when(repository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(service.addAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<Student> result = generator.generateStudents(140, group);
 

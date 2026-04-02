@@ -23,6 +23,8 @@ public class TeacherMapper {
         entity.setLastName(dto.getLastName());
         entity.setDepartment(department);
         entity.setUserRole(dto.getUserRole());
+        entity.setEmail(dto.getEmail());
+        entity.setPassword(dto.getPassword());
         return entity;
     }
 
@@ -37,6 +39,8 @@ public class TeacherMapper {
         dto.setLastName(entity.getLastName());
         dto.setDepartmentId(entity.getDepartment().getId());
         dto.setDepartmentCode(entity.getDepartment().getCode());
+        dto.setEmail(entity.getEmail());
+        dto.setPassword(entity.getPassword());
         return dto;
     }
 }

@@ -8,49 +8,55 @@ import org.springframework.stereotype.Component;
 
 import com.github.javafaker.Faker;
 
+import ua.com.foxminded.dto.user.StudentCreateUpdateDto;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Student;
 import ua.com.foxminded.enums.UserRole;
-import ua.com.foxminded.repository.StudentRepository;
+import ua.com.foxminded.service.StudentService;
 
 @Component
 @Profile("dev")
 public class StudentGenerator {
 
-    private final StudentRepository repository;
+    private final StudentService service;
     private final Faker faker;
 
-    public StudentGenerator(StudentRepository repository, Faker faker) {
-        this.repository = repository;
+    public StudentGenerator(StudentService service, Faker faker) {
+        this.service = service;
         this.faker = faker;
     }
 
     public List<Student> generateStudents(int studentCount, Group group) {
-        List<Student> students = new ArrayList<>();
+        List<StudentCreateUpdateDto> students = new ArrayList<>();
 
         for (int i = 0; i < studentCount; i++) {
 
             String firstName;
             String middleName;
             String lastName;
+            String email;
+            String password;
 
             firstName = faker.name().firstName();
             middleName = faker.name().firstName();
             lastName = faker.name().lastName();
+            email = faker.internet().emailAddress();
+            password = faker.internet().password();
 
-            Student student = new Student();
+            StudentCreateUpdateDto student = new StudentCreateUpdateDto();
             student.setFirstName(firstName);
             student.setMiddleName(middleName);
             student.setLastName(lastName);
-            student.setGroup(group);
+            student.setGroupId(group.getId());
             student.setUserRole(UserRole.STUDENT);
+            student.setEmail(email);
+            student.setPassword(password);
 
             students.add(student);
 
         }
-        students = repository.saveAll(students);
 
-        return students;
+        return service.addAll(students);
     }
 
 }

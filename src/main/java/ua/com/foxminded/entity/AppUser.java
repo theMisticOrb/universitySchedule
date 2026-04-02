@@ -17,7 +17,7 @@ import ua.com.foxminded.enums.UserRole;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "users")
-public abstract class User {
+public abstract class AppUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_gen")
@@ -44,10 +44,10 @@ public abstract class User {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    protected User() {
+    protected AppUser() {
     }
 
-    public User(Integer id, String firstName, String middleName, String lastName, String email, String password,
+    public AppUser(Integer id, String firstName, String middleName, String lastName, String email, String password,
             UserRole userRole) {
         this.id = id;
         this.firstName = firstName;

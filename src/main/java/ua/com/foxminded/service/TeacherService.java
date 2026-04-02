@@ -1,9 +1,11 @@
 package ua.com.foxminded.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,28 +26,40 @@ public class TeacherService {
     private AcademicDepartmentService departmentService;
     private TeacherMapper teacherMapper;
     private SubjectMapper subjectMapper;
+    private PasswordEncoder passwordEncoder;
 
     public TeacherService(TeacherRepository teacherRepository, AcademicDepartmentService departmentService,
-            TeacherMapper teacherMapper, SubjectMapper subjectMapper) {
+            TeacherMapper teacherMapper, SubjectMapper subjectMapper, PasswordEncoder passwordEncoder) {
         this.teacherRepository = teacherRepository;
         this.departmentService = departmentService;
         this.teacherMapper = teacherMapper;
         this.subjectMapper = subjectMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Teacher addOne(TeacherCreateUpdateDto dto) {
-
-        AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
-        Teacher teacher = teacherMapper.toEntity(dto, department);
-        if (teacher.getUserRole() != UserRole.TEACHER) {
-            throw new IllegalStateException("User must have TEACHER role");
-        }
+        Teacher teacher = setTeacherValues(dto);
         return teacherRepository.save(teacher);
+    }
+    
+    public List<Teacher> addAll(List<TeacherCreateUpdateDto> teachersDto){
+        List<Teacher> teachers  = new ArrayList<>();
+        
+        for (TeacherCreateUpdateDto dto : teachersDto) {
+            Teacher teacher = setTeacherValues(dto);
+            teachers.add(teacher);
+        }
+        return teacherRepository.saveAll(teachers);
     }
 
     public Teacher findById(Integer id) {
         return teacherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Teacher not found: " + id));
+    }
+    
+    public Teacher findByEmail(String email) {
+        return teacherRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Teacher are not found by this email: " + email));
     }
 
     public Teacher findByFullName(String lastName, String firstName, String middleName) {
@@ -76,6 +90,18 @@ public class TeacherService {
 
     public void deleteById(Integer id) {
         teacherRepository.deleteById(id);
+    }
+    
+    private Teacher setTeacherValues(TeacherCreateUpdateDto dto) {
+        AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
+        Teacher teacher = teacherMapper.toEntity(dto, department);
+
+        teacher.setPassword(passwordEncoder.encode(dto.getPassword()));
+        
+        if (teacher.getUserRole() != UserRole.TEACHER) {
+            throw new IllegalStateException("User must have TEACHER role");
+        }
+        return teacher;
     }
 
 }

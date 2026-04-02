@@ -23,6 +23,7 @@ import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
+import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.repository.AcademicDepartmentRepository;
 import ua.com.foxminded.repository.FacultyRepository;
 import ua.com.foxminded.repository.TeacherRepository;
@@ -65,6 +66,9 @@ class SubjectServiceTest {
         teacher.setMiddleName("Bon");
         teacher.setLastName("Jon");
         teacher.setDepartment(csDepartment);
+        teacher.setEmail("Jon@ua.com");
+        teacher.setPassword("Jon1234");
+        teacher.setUserRole(UserRole.TEACHER);
         Teacher jonTeacher = teacherRepository.save(teacher);
 
         subject.setTeacherId(jonTeacher.getId());

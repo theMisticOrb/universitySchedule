@@ -31,6 +31,7 @@ import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.entity.YearOfUniv;
 import ua.com.foxminded.enums.ClassHour;
+import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.enums.WeekDay;
 import ua.com.foxminded.repository.AcademicDepartmentRepository;
 import ua.com.foxminded.repository.ClassroomRepository;
@@ -93,6 +94,9 @@ class LessonServiceTest {
         teacher.setMiddleName("Bon");
         teacher.setLastName("Jon");
         teacher.setDepartment(csDepartment);
+        teacher.setEmail("Jon@ua.com");
+        teacher.setPassword("Jon1234");
+        teacher.setUserRole(UserRole.TEACHER);
         Teacher jonTeacher = teacherRepository.save(teacher);
 
         Subject subject = new Subject();

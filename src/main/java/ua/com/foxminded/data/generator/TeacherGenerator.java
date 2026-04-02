@@ -8,49 +8,55 @@ import org.springframework.stereotype.Component;
 
 import com.github.javafaker.Faker;
 
+import ua.com.foxminded.dto.user.TeacherCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.enums.UserRole;
-import ua.com.foxminded.repository.TeacherRepository;
+import ua.com.foxminded.service.TeacherService;
 
 @Component
 @Profile("dev")
 public class TeacherGenerator {
 
-    private final TeacherRepository repository;
+    private final TeacherService service;
     private final Faker faker;
 
-    public TeacherGenerator(TeacherRepository repository, Faker faker) {
-        this.repository = repository;
+    public TeacherGenerator(TeacherService service, Faker faker) {
+        this.service = service;
         this.faker = faker;
     }
 
     public List<Teacher> generateTeachers(int teacherCount, AcademicDepartment department) {
-        List<Teacher> teachers = new ArrayList<>();
+        List<TeacherCreateUpdateDto> teachers = new ArrayList<>();
 
         for (int i = 0; i < teacherCount; i++) {
 
             String firstName;
             String middleName;
             String lastName;
+            String email;
+            String password;
 
             firstName = faker.name().firstName();
             middleName = faker.name().firstName();
             lastName = faker.name().lastName();
+            email = faker.internet().emailAddress();
+            password = faker.internet().password();
 
-            Teacher teacher = new Teacher();
+            TeacherCreateUpdateDto teacher = new TeacherCreateUpdateDto();
             teacher.setFirstName(firstName);
             teacher.setMiddleName(middleName);
             teacher.setLastName(lastName);
-            teacher.setDepartment(department);
+            teacher.setDepartmentId(department.getId());
             teacher.setUserRole(UserRole.TEACHER);
+            teacher.setEmail(email);
+            teacher.setPassword(password);
 
             teachers.add(teacher);
 
         }
-        teachers = repository.saveAll(teachers);
 
-        return teachers;
+        return service.addAll(teachers);
     }
 
 }
