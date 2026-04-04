@@ -1,6 +1,7 @@
 package ua.com.foxminded.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
@@ -41,10 +42,10 @@ public class TeacherService {
         Teacher teacher = setTeacherValues(dto);
         return teacherRepository.save(teacher);
     }
-    
-    public List<Teacher> addAll(List<TeacherCreateUpdateDto> teachersDto){
-        List<Teacher> teachers  = new ArrayList<>();
-        
+
+    public List<Teacher> addAll(List<TeacherCreateUpdateDto> teachersDto) {
+        List<Teacher> teachers = new ArrayList<>();
+
         for (TeacherCreateUpdateDto dto : teachersDto) {
             Teacher teacher = setTeacherValues(dto);
             teachers.add(teacher);
@@ -56,7 +57,7 @@ public class TeacherService {
         return teacherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Teacher not found: " + id));
     }
-    
+
     public Teacher findByEmail(String email) {
         return teacherRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Teacher are not found by this email: " + email));
@@ -91,14 +92,14 @@ public class TeacherService {
     public void deleteById(Integer id) {
         teacherRepository.deleteById(id);
     }
-    
+
     private Teacher setTeacherValues(TeacherCreateUpdateDto dto) {
         AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
         Teacher teacher = teacherMapper.toEntity(dto, department);
 
         teacher.setPassword(passwordEncoder.encode(dto.getPassword()));
-        
-        if (teacher.getUserRole() != UserRole.TEACHER) {
+        String[] roles = teacher.getRoles().stream().map(UserRole::name).toArray(String[]::new);
+        if (Arrays.stream(roles).noneMatch("TEACHER"::equals)) {
             throw new IllegalStateException("User must have TEACHER role");
         }
         return teacher;

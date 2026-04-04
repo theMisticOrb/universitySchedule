@@ -1,5 +1,7 @@
 package ua.com.foxminded.dto.user;
 
+import java.util.Set;
+
 import ua.com.foxminded.enums.UserRole;
 
 public class UserResponseDto {
@@ -10,20 +12,20 @@ public class UserResponseDto {
     private String lastName;
     private String email;
     private String password;
-    protected UserRole userRole;
+    protected Set<UserRole> userRoles;
 
     public UserResponseDto() {
     }
 
     public UserResponseDto(Integer id, String firstName, String middleName, String lastName, String email,
-            String password, UserRole userRole) {
+            String password, Set<UserRole> userRoles) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.userRole = userRole;
+        this.userRoles = userRoles;
     }
 
     public Integer getId() {
@@ -74,12 +76,12 @@ public class UserResponseDto {
         this.password = password;
     }
 
-    public UserRole getUserRole() {
-        return userRole;
+    public Set<UserRole> getUserRoles() {
+        return userRoles;
     }
 
-    public void setUserRole(UserRole userRole) {
-        this.userRole = userRole;
+    public void setUserRoles(Set<UserRole> userRoles) {
+        this.userRoles = userRoles;
     }
 
 }

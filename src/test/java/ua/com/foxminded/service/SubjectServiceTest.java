@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -60,7 +62,10 @@ class SubjectServiceTest {
         computerScience.setCode("CS");
         computerScience.setFaculty(engineeringFaculty);
         AcademicDepartment csDepartment = departmentRepository.save(computerScience);
-
+        
+        Set<UserRole> roles = new HashSet<>();
+        roles.add(UserRole.TEACHER);
+        
         Teacher teacher = new Teacher();
         teacher.setFirstName("Don");
         teacher.setMiddleName("Bon");
@@ -68,7 +73,7 @@ class SubjectServiceTest {
         teacher.setDepartment(csDepartment);
         teacher.setEmail("Jon@ua.com");
         teacher.setPassword("Jon1234");
-        teacher.setUserRole(UserRole.TEACHER);
+        teacher.setRoles(roles);
         Teacher jonTeacher = teacherRepository.save(teacher);
 
         subject.setTeacherId(jonTeacher.getId());

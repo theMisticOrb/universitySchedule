@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -90,13 +92,16 @@ class LessonServiceTest {
         specialization.setTitle("IT");
         Specialization savedSpecialization = specializationRepository.save(specialization);
 
+        Set<UserRole> roles = new HashSet<>();
+        roles.add(UserRole.TEACHER);
+        
         teacher.setFirstName("Don");
         teacher.setMiddleName("Bon");
         teacher.setLastName("Jon");
         teacher.setDepartment(csDepartment);
         teacher.setEmail("Jon@ua.com");
         teacher.setPassword("Jon1234");
-        teacher.setUserRole(UserRole.TEACHER);
+        teacher.setRoles(roles);
         Teacher jonTeacher = teacherRepository.save(teacher);
 
         Subject subject = new Subject();

@@ -2,6 +2,7 @@ package ua.com.foxminded.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -28,8 +29,8 @@ public class Teacher extends AppUser {
     }
 
     public Teacher(Integer id, String firstName, String middleName, String lastName, String email, String password,
-            UserRole userRole, AcademicDepartment department, List<Subject> subjects) {
-        super(id, firstName, middleName, lastName, email, password, userRole);
+            Set<UserRole> roles, AcademicDepartment department, List<Subject> subjects) {
+        super(id, firstName, middleName, lastName, email, password, roles);
         this.department = department;
         this.subjects = subjects;
     }

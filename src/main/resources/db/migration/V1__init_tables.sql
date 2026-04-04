@@ -56,9 +56,15 @@ user_role varchar(225) NOT NULL,
 user_email varchar(225) NOT NULL UNIQUE,
 user_password varchar(225) NOT NULL UNIQUE,
 
-CONSTRAINT chk_user_role CHECK (user_role IN ('STUDENT','TEACHER','ADMIN'))
 );
 
+CREATE TABLE IF NOT EXISTS user_roles(
+user_id INTEGER NOT NULL,
+user_role varchar(50) NOT NULL,
+
+PRIMARY KEY(user_id, user_role),
+CONSTRAINT fk_user_roles_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
+);
 
 CREATE TABLE IF NOT EXISTS teachers(
 user_id INTEGER PRIMARY KEY,

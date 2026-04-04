@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import ua.com.foxminded.entity.AppUser;
+import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.repository.UserRepository;
 
 @Service
@@ -22,7 +23,10 @@ public class CustomUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         AppUser user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found by this email: " + email));
-        return User.withUsername(user.getEmail()).password(user.getPassword()).roles(user.getUserRole().name()).build();
+
+        String[] roles = user.getRoles().stream().map(UserRole::name).toArray(String[]::new);
+
+        return User.withUsername(user.getEmail()).password(user.getPassword()).roles(roles).build();
     }
 
 }

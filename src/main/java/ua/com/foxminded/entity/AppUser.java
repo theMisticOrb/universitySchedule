@@ -1,14 +1,21 @@
 package ua.com.foxminded.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -40,22 +47,24 @@ public abstract class AppUser {
     @Column(name = "user_password")
     private String password;
 
-    @Column(name = "user_role")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(referencedColumnName = "user_id"))
     @Enumerated(EnumType.STRING)
-    private UserRole userRole;
+    @Column(name = "user_role")
+    private Set<UserRole> roles = new HashSet<>();
 
     protected AppUser() {
     }
 
     public AppUser(Integer id, String firstName, String middleName, String lastName, String email, String password,
-            UserRole userRole) {
+            Set<UserRole> roles) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.userRole = userRole;
+        this.roles = roles;
     }
 
     public Integer getId() {
@@ -106,12 +115,12 @@ public abstract class AppUser {
         this.password = password;
     }
 
-    public UserRole getUserRole() {
-        return userRole;
+    public Set<UserRole> getRoles() {
+        return roles;
     }
 
-    public void setUserRole(UserRole userRole) {
-        this.userRole = userRole;
+    public void setRoles(Set<UserRole> roles) {
+        this.roles = roles;
     }
 
 }

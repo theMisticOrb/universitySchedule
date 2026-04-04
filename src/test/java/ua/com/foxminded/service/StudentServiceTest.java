@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -74,13 +76,16 @@ class StudentServiceTest {
         GroupCreateUpdateDto group = new GroupCreateUpdateDto();
         group.setSpecializationCode(security.getCode());
         Group firstGroup = groupService.addOne(group);
-
+        
+        Set<UserRole> roles = new HashSet<>();
+        roles.add(UserRole.STUDENT);
+        
         student.setFirstName("Jack");
         student.setLastName("Sparrow");
         student.setGroupId(firstGroup.getId());
         student.setEmail("Sparrow@university.com");
         student.setPassword("JackSparrow1234");
-        student.setUserRole(UserRole.STUDENT);
+        student.setUserRoles(roles);
     }
 
     @Test

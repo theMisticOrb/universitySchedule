@@ -1,7 +1,9 @@
 package ua.com.foxminded.data.generator;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -44,11 +46,14 @@ public class StudentGenerator {
             password = faker.internet().password();
 
             StudentCreateUpdateDto student = new StudentCreateUpdateDto();
+            Set<UserRole> roles = new HashSet<>();
+            roles.add(UserRole.STUDENT);
+
             student.setFirstName(firstName);
             student.setMiddleName(middleName);
             student.setLastName(lastName);
             student.setGroupId(group.getId());
-            student.setUserRole(UserRole.STUDENT);
+            student.setUserRoles(roles);
             student.setEmail(email);
             student.setPassword(password);
 

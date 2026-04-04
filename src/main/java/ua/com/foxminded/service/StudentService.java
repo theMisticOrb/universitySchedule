@@ -1,6 +1,7 @@
 package ua.com.foxminded.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
@@ -98,8 +99,9 @@ public class StudentService {
         Student student = studentMapper.toEntity(dto, group);
 
         student.setPassword(passwordEncoder.encode(dto.getPassword()));
+        String[] roles = student.getRoles().stream().map(UserRole::name).toArray(String[]::new);
 
-        if (student.getUserRole() != UserRole.STUDENT) {
+        if (Arrays.stream(roles).noneMatch("STUDENT"::equals)) {
             throw new IllegalStateException("User must have STUDENT role");
         }
         return student;
