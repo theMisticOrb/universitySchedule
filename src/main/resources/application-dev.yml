@@ -22,3 +22,6 @@ dev:
   classroomsPerDepartment: 15
   lessonsPerWeek: 7
   
+  admin:
+    email: admin@school.com
+    password: adminPassword123

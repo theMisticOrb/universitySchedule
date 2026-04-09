@@ -31,9 +31,22 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("User are not found by this email: " + email));
     }
 
+    public AppUser findById(Integer id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User are not found by this id: " + id));
+    }
+
     public void changeRole(Integer id, Set<UserRole> newRoles) {
         AppUser user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
         user.setRoles(newRoles);
         userRepository.save(user);
+    }
+
+    public void deleteById(Integer id) {
+        userRepository.deleteById(id);
+    }
+
+    public long count() {
+        return userRepository.count();
     }
 }

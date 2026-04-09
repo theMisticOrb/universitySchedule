@@ -22,7 +22,6 @@ public class StudentMapper {
         entity.setMiddleName(dto.getMiddleName());
         entity.setLastName(dto.getLastName());
         entity.setEmail(dto.getEmail());
-        entity.setPassword(dto.getPassword());
         entity.setRoles(dto.getUserRoles());
         entity.setGroup(group);
         return entity;
@@ -39,7 +38,6 @@ public class StudentMapper {
         dto.setGroupId(entity.getGroup().getId());
         dto.setGroupName(entity.getGroup().getName());
         dto.setEmail(entity.getEmail());
-        dto.setPassword(entity.getPassword());
         dto.setUserRoles(entity.getRoles());
         return dto;
     }

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <title>Admin DashBoard</title>
+</head>
+
+<body>
+
+    <div th:replace="fragments/header :: header"></div>
+
+    <h2>Панель администратора</h2>
+    <div>
+        <div>
+            <span th:text="${totalStudents}">0</span>
+            <p>Студентов</p>
+        </div>
+        <div>
+            <span th:text="${totalTeachers}">0</span>
+            <p>Учителей</p>
+        </div>
+        <div>
+            <span th:text="${totalUsers}">0</span>
+            <p>Всего пользователей</p>
+        </div>
+    </div>
+    <nav>
+        <a th:href="@{/admin/users}">Управление пользователями</a>
+        <a th:href="@{/admin/students}">Управление студентами</a>
+        <a th:href="@{/admin/teachers}">Управление преподавателями</a>
+    </nav>
+
+</body>
+
+</html>

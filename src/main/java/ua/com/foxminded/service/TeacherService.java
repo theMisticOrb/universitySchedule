@@ -105,4 +105,14 @@ public class TeacherService {
         return teacher;
     }
 
+    public void changeTeacherDepartment(Integer id, Integer newDepartmentid) {
+        Teacher teacher = findById(id);
+        AcademicDepartment newDepartment = departmentService.findById(newDepartmentid);
+        UpdateUtil.setIfNotNull(newDepartment, teacher::setDepartment);
+    }
+
+    public long count() {
+        return teacherRepository.count();
+    }
+
 }

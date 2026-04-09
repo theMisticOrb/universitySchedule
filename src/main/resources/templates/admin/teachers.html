@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Change teacher department</title>
+</head>
+
+<body>
+
+    <div th:replace="fragments/header :: header"></div>
+
+    <h2>Преподаватели</h2>
+
+    <table>
+        <tr>
+            <th>Имя</th>
+            <th>Текущая кафедра</th>
+            <th>Изменить кафедру</th>
+        </tr>
+        <tr th:each="teacher : ${teachers}">
+            <td th:text="${teacher.firstName + ' ' + teacher.lastName}"></td>
+            <td th:text="${teacher.department?.title}"></td>
+            <td>
+                <form th:action="@{/admin/teachers/{id}/department(id=${teacher.id})}" method="post">
+                    <select name="departmentId">
+                        <option th:each="department : ${departments}" th:value="${department.id}" th:text="${department.title}"
+                            th:selected="${department.id == teacher.department?.id}">
+                        </option>
+                    </select>
+                    <button type="submit">Назначить</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+
+</body>
+
+</html>

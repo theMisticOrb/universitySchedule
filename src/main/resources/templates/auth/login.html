@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Login</title>
+</head>
+
+<head>
+    <title>Вход</title>
+</head>
+
+<body>
+
+    <div th:replace="fragments/header :: header"></div>
+
+    <h2>Вход</h2>
+
+    <!-- сообщение об успешной регистрации -->
+    <div th:if="${param.registered}">
+        Регистрация прошла успешно. Войдите в систему.
+    </div>
+
+    <!-- сообщение об ошибке входа -->
+    <div th:if="${param.error}">
+        Неверный email или пароль.
+    </div>
+
+    <!-- сообщение о выходе -->
+    <div th:if="${param.logout}">
+        Вы вышли из системы.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+
+        <label><input type="text" />Email:</label>
+        <input type="email" name="username" placeholder="email@school.com" />
+
+        <label><input type="text" />Пароль:</label>
+        <input type="password" name="password" />
+
+        <button type="submit">Войти</button>
+
+    </form>
+
+    <a th:href="@{/register}">Нет аккаунта? Зарегистрироваться</a>
+
+</body>
+
+</html>

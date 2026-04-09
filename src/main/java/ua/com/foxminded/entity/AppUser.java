@@ -56,7 +56,7 @@ public abstract class AppUser {
     protected AppUser() {
     }
 
-    public AppUser(Integer id, String firstName, String middleName, String lastName, String email, String password,
+    protected AppUser(Integer id, String firstName, String middleName, String lastName, String email, String password,
             Set<UserRole> roles) {
         this.id = id;
         this.firstName = firstName;

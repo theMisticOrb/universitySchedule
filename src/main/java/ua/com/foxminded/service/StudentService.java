@@ -107,4 +107,14 @@ public class StudentService {
         return student;
     }
 
+    public void changeStudentGroup(Integer id, Integer newGroupId) {
+        Student student = findById(id);
+        Group newGroup = groupService.findById(newGroupId);
+        UpdateUtil.setIfNotNull(newGroup, student::setGroup);
+    }
+
+    public long count() {
+        return studentRepository.count();
+    }
+
 }
