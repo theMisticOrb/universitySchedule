@@ -22,7 +22,7 @@ public class TeacherMapper {
         entity.setMiddleName(dto.getMiddleName());
         entity.setLastName(dto.getLastName());
         entity.setDepartment(department);
-        entity.setRoles(dto.getUserRoles());
+        entity.setRoles(dto.getRoles());
         entity.setEmail(dto.getEmail());
         return entity;
     }

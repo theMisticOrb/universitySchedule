@@ -65,14 +65,12 @@ public class DataStructureGenerator {
 
     private List<Classroom> classrooms;
 
-    public DataStructureGenerator(String adminEmail, String adminPassword, FacultyGenerator facultyGen,
-            AcademicDepartmentGenerator departmentGen, SpecializationGenerator specializationGen,
-            GroupGenerator groupGen, StudentGenerator studentGen, TeacherGenerator teacherGen,
-            SubjectGenerator subjectGen, LessonGenerator lessonGen, ClassroomGenerator classroomGen,
-            GeneratorConfig config, UserRepository userRepository, AcademicDepartmentRepository departmentRepository,
-            TeacherService teacherService, FacultyService facultyService, List<Classroom> classrooms) {
-        this.adminEmail = adminEmail;
-        this.adminPassword = adminPassword;
+    public DataStructureGenerator(FacultyGenerator facultyGen, AcademicDepartmentGenerator departmentGen,
+            SpecializationGenerator specializationGen, GroupGenerator groupGen, StudentGenerator studentGen,
+            TeacherGenerator teacherGen, SubjectGenerator subjectGen, LessonGenerator lessonGen,
+            ClassroomGenerator classroomGen, GeneratorConfig config, UserRepository userRepository,
+            AcademicDepartmentRepository departmentRepository, TeacherService teacherService,
+            FacultyService facultyService, List<Classroom> classrooms) {
         this.facultyGen = facultyGen;
         this.departmentGen = departmentGen;
         this.specializationGen = specializationGen;
@@ -94,14 +92,13 @@ public class DataStructureGenerator {
     public void generate() {
         if (!isDatabaseEmpty()) {
             log.info("Database is not empty. Skipping data generation.");
+            addAdmin();
             return;
         }
         log.info("Database empty. Starting data generation...");
-
         generateAll();
         addAdmin();
         log.info("Data generation completed successfully.");
-
     }
 
     public void generateAll() {
@@ -151,13 +148,14 @@ public class DataStructureGenerator {
 
     private void addAdmin() {
         if (userRepository.findByEmail(adminEmail).isPresent()) {
+            log.info("Admin alredy exists!");
             return;
         }
         TeacherCreateUpdateDto adminDto = new TeacherCreateUpdateDto();
 
         AcademicDepartment anyDepartment = departmentRepository.findAll().stream().findAny()
                 .orElseThrow(() -> new IllegalArgumentException("Departments must be generated before admin!"));
-        
+
         adminDto.setDepartmentCode(anyDepartment.getCode());
         adminDto.setEmail(adminEmail);
         adminDto.setPassword(adminPassword);
@@ -168,8 +166,9 @@ public class DataStructureGenerator {
         roles.add(UserRole.ADMIN);
         roles.add(UserRole.TEACHER);
 
-        adminDto.setUserRoles(roles);
+        adminDto.setRoles(roles);
 
         teacherService.addOne(adminDto);
+        log.info("Admin added!");
     }
 }

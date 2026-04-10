@@ -52,8 +52,8 @@ public class TeacherGenerator {
             teacher.setFirstName(firstName);
             teacher.setMiddleName(middleName);
             teacher.setLastName(lastName);
-            teacher.setDepartmentId(department.getId());
-            teacher.setUserRoles(roles);
+            teacher.setDepartmentCode(department.getCode());
+            teacher.setRoles(roles);
             teacher.setEmail(email);
             teacher.setPassword(password);
 

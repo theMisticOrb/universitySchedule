@@ -11,19 +11,19 @@ public class UserCreateUpdateDto {
     private String lastName;
     private String email;
     private String password;
-    private Set<UserRole> userRoles;
+    private Set<UserRole> roles;
 
     public UserCreateUpdateDto() {
     }
 
     public UserCreateUpdateDto(String firstName, String middleName, String lastName, String email, String password,
-            Set<UserRole> userRoles) {
+            Set<UserRole> roles) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.userRoles = userRoles;
+        this.roles = roles;
     }
 
     public String getFirstName() {
@@ -66,12 +66,12 @@ public class UserCreateUpdateDto {
         this.password = password;
     }
 
-    public Set<UserRole> getUserRoles() {
-        return userRoles;
+    public Set<UserRole> getRoles() {
+        return roles;
     }
 
-    public void setUserRoles(Set<UserRole> userRoles) {
-        this.userRoles = userRoles;
+    public void setRoles(Set<UserRole> userRoles) {
+        this.roles = userRoles;
     }
 
 }

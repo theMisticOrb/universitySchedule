@@ -134,7 +134,7 @@ class TeacherControllerTest {
         TeacherResponseDto responseDto = createResponseDto();
 
         TeacherCreateUpdateDto requestDto = new TeacherCreateUpdateDto();
-        requestDto.setDepartmentId(1);
+        requestDto.setDepartmentCode("CV");
         requestDto.setFirstName("Bob");
         requestDto.setMiddleName("Bobovitch");
         requestDto.setLastName("Bobinski");
@@ -161,7 +161,7 @@ class TeacherControllerTest {
         TeacherResponseDto responseDto = createResponseDto();
 
         TeacherCreateUpdateDto requestDto = new TeacherCreateUpdateDto();
-        requestDto.setDepartmentId(1);
+        requestDto.setDepartmentCode("CV");
         requestDto.setFirstName("Bob");
         requestDto.setMiddleName("Bobovitch");
         requestDto.setLastName("Bobinski");

@@ -85,7 +85,7 @@ class StudentServiceTest {
         student.setGroupId(firstGroup.getId());
         student.setEmail("Sparrow@university.com");
         student.setPassword("JackSparrow1234");
-        student.setUserRoles(roles);
+        student.setRoles(roles);
     }
 
     @Test

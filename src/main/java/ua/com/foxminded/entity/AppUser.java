@@ -48,7 +48,7 @@ public abstract class AppUser {
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(referencedColumnName = "user_id"))
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")
     private Set<UserRole> roles = new HashSet<>();

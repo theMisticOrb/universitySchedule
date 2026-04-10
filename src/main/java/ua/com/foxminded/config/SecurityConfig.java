@@ -18,8 +18,8 @@ public class SecurityConfig {
                 .mvcMatchers("/teachers/**").hasAnyRole("TEACHER", "ADMIN")
                 .mvcMatchers("/students/**").hasRole("STUDENT").anyRequest().authenticated())
         .formLogin(form -> form
-                .loginPage("login")
-                .defaultSuccessUrl("/",true)
+                .loginPage("/login")
+                .defaultSuccessUrl("/", true)
                 .failureUrl("/login?error")
                 .permitAll());
         return http.build();

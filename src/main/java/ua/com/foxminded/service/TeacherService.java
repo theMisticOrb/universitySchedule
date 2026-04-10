@@ -77,8 +77,8 @@ public class TeacherService {
     public Teacher update(TeacherCreateUpdateDto updated, Integer id) {
         Teacher teacher = findById(id);
 
-        if (updated.getDepartmentId() != null) {
-            AcademicDepartment department = departmentService.findById(updated.getDepartmentId());
+        if (updated.getDepartmentCode() != null) {
+            AcademicDepartment department = departmentService.findByCode(updated.getDepartmentCode());
             UpdateUtil.setIfNotNull(department, teacher::setDepartment);
             UpdateUtil.updateListIfNotNull(updated.getSubjects(),
                     dto -> subjectMapper.toEntity(dto, teacher, department));
@@ -94,7 +94,7 @@ public class TeacherService {
     }
 
     private Teacher setTeacherValues(TeacherCreateUpdateDto dto) {
-        AcademicDepartment department = departmentService.findById(dto.getDepartmentId());
+        AcademicDepartment department = departmentService.findByCode(dto.getDepartmentCode());
         Teacher teacher = teacherMapper.toEntity(dto, department);
 
         teacher.setPassword(passwordEncoder.encode(dto.getPassword()));

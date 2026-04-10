@@ -53,7 +53,7 @@ public class StudentGenerator {
             student.setMiddleName(middleName);
             student.setLastName(lastName);
             student.setGroupId(group.getId());
-            student.setUserRoles(roles);
+            student.setRoles(roles);
             student.setEmail(email);
             student.setPassword(password);
 

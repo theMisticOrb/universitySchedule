@@ -14,8 +14,8 @@
     <p th:text="${user.firstName + ' ' + user.lastName}"></p>
     <p th:text="${user.email}"></p>
 
-    <form th:action="@{/admin/users/{id}/roles(id=${user.id})}" method="post">
-        <label><input type="text"/>Роли:</label>
+    <form th:action="@{/admin/users/{id}/edit/roles(id=${user.id})}" method="post">
+        <label>Роли:</label>
 
         <div th:each="role : ${roles}">
             <input type="checkbox" name="roles" th:value="${role}" th:checked="${user.roles.contains(role)}" />

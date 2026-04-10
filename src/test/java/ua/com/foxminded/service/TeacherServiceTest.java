@@ -60,12 +60,12 @@ class TeacherServiceTest {
         Set<UserRole> roles = new HashSet<>();
         roles.add(UserRole.TEACHER);
         
-        teacher.setDepartmentId(csDepartment.getId());
+        teacher.setDepartmentCode(csDepartment.getCode());
         teacher.setFirstName("Jhon");
         teacher.setLastName("Devis");
         teacher.setEmail("Devis@university.com");
         teacher.setPassword("JhonDevis1234");
-        teacher.setUserRoles(roles);
+        teacher.setRoles(roles);
     }
 
     @Test
