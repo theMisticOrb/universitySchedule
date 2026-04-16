@@ -1,13 +1,11 @@
-package ua.com.foxminded.service;
+package ua.com.foxminded.security;
 
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import ua.com.foxminded.entity.AppUser;
-import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.repository.UserRepository;
 
 @Service
@@ -24,9 +22,8 @@ public class CustomUserDetailService implements UserDetailsService {
         AppUser user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found by this email: " + email));
 
-        String[] roles = user.getRoles().stream().map(UserRole::name).toArray(String[]::new);
+        return new CustomUserDetails(user);
 
-        return User.withUsername(user.getEmail()).password(user.getPassword()).roles(roles).build();
     }
 
 }

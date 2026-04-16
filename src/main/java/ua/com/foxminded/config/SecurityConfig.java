@@ -12,11 +12,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain publicFilterChain(HttpSecurity http) throws Exception {
+        
         http.authorizeHttpRequests(auth -> auth.mvcMatchers("/css/**", "/js/**").permitAll()
                 .mvcMatchers("/login", "/register").permitAll()
                 .mvcMatchers("/admin/**").hasRole("ADMIN")
                 .mvcMatchers("/teachers/**").hasAnyRole("TEACHER", "ADMIN")
-                .mvcMatchers("/students/**").hasRole("STUDENT").anyRequest().authenticated())
+                .mvcMatchers("/students/**").hasAnyRole("STUDENT", "ADMIN").anyRequest().authenticated())
         .formLogin(form -> form
                 .loginPage("/login")
                 .defaultSuccessUrl("/", true)

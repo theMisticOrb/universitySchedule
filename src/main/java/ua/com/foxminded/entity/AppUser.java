@@ -26,6 +26,7 @@ import ua.com.foxminded.enums.UserRole;
 @Table(name = "users")
 public abstract class AppUser {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_gen")
     @SequenceGenerator(name = "user_id_gen", sequenceName = "user_id_seq", allocationSize = 30)
