@@ -52,18 +52,11 @@ user_id INTEGER PRIMARY KEY,
 user_first_name varchar(225) NOT NULL,
 user_middle_name varchar(225),
 user_last_name varchar(225) NOT NULL,
-user_email varchar(225) NOT NULL UNIQUE,
-user_password varchar(225) NOT NULL UNIQUE
+user_role varchar(225) NOT NULL,
 
+CONSTRAINT chk_user_role CHECK (user_role IN ('STUDENT','TEACHER','ADMIN'))
 );
 
-CREATE TABLE IF NOT EXISTS user_roles(
-user_id INTEGER NOT NULL,
-user_role varchar(50) NOT NULL,
-
-PRIMARY KEY(user_id, user_role),
-CONSTRAINT fk_user_roles_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
-);
 
 CREATE TABLE IF NOT EXISTS teachers(
 user_id INTEGER PRIMARY KEY,
@@ -83,7 +76,7 @@ department_id  INTEGER NOT NULL,
 
 CONSTRAINT uk_subject_title_department UNIQUE (subject_title, department_id),
 
-CONSTRAINT fk_subject_teacher FOREIGN KEY (teacher_id ) REFERENCES teachers (user_id) ON DELETE CASCADE,
+CONSTRAINT fk_subject_teacher FOREIGN KEY (teacher_id ) REFERENCES teachers (user_id),
 CONSTRAINT fk_subject_department FOREIGN KEY (department_id) REFERENCES departments (department_id)
 
 );
@@ -118,10 +111,10 @@ CONSTRAINT uk_teacher_lesson UNIQUE (teacher_id, class_hour, week_day),
 CONSTRAINT uk_group_lesson UNIQUE (group_id, class_hour, week_day),
 CONSTRAINT uk_classroom_lesson UNIQUE (classroom_id, class_hour, week_day),
 
-CONSTRAINT fk_lesson_subject FOREIGN KEY (subject_id) REFERENCES subjects (subject_id) ON DELETE CASCADE,
+CONSTRAINT fk_lesson_subject FOREIGN KEY (subject_id) REFERENCES subjects (subject_id),
 CONSTRAINT fk_lesson_classroom FOREIGN KEY (classroom_id) REFERENCES classrooms (classroom_id),
 CONSTRAINT fk_lesson_group FOREIGN KEY (group_id) REFERENCES academic_groups (group_id),
-CONSTRAINT fk_lesson_teacher FOREIGN KEY (teacher_id) REFERENCES teachers (user_id) ON DELETE CASCADE
+CONSTRAINT fk_lesson_teacher FOREIGN KEY (teacher_id) REFERENCES teachers (user_id)
 );
 
 

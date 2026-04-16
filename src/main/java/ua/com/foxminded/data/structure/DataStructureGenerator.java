@@ -170,5 +170,8 @@ public class DataStructureGenerator {
 
         teacherService.addOne(adminDto);
         log.info("Admin added!");
+        log.info("Admin email: admin@school.com");
+        log.info("Admin password: adminPassword123");
+        
     }
 }

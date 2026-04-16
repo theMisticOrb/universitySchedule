@@ -21,6 +21,13 @@ public class CustomUserDetails implements UserDetails {
     public AppUser getUser() {
         return user;
     }
+    
+    public <T extends AppUser> T as(Class<T> entity) {
+        if(!entity.isInstance(user)) {
+            throw new ClassCastException("Invalid user type!");
+        }
+        return entity.cast(user);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
