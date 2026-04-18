@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Groups</title>
+    <title th:text="#{group.list.head.title}"></title>
 </head>
 
 <body>
@@ -11,13 +11,13 @@
     <div th:replace="fragments/header :: header"></div>
     <div th:replace="fragments/menu :: menu"></div>
 
-    <h2> All Academic Groups Of University</h2>
+    <h2 th:text="#{group.list.title}"></h2>
 
     <table border="1">
         <thead>
             <tr>
-                <th>Specialization Code</th>
-                <th>Group name</th>
+                <th th:text="#{group.list.table.code}"></th>
+                <th th:text="#{group.list.table.title}"></th>
             </tr>
         </thead>
         <tbody>

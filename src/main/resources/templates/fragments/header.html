@@ -1,30 +1,47 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <header th:fragment="header">
     <nav>
-        <span>University Schedule</span>
+        <span th:text="#{fragments.header.appname}"></span>
+        <span th:text="#{lang.change}"></span>:
+        <select id="locales">
+            <option value=""></option>
+            <option value="en" th:text="#{lang.eng}"></option>
+            <option value="ru" th:text="#{lang.ru}"></option>
+        </select>
     </nav>
     <div sec:authorize="isAuthenticated()">
         <span sec:authentication="name"></span>
-        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/dashboard}">
-            Админ панель
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/dashboard}" th:text="#{fragments.header.adminpanel}">
         </a>
-        <a sec:authorize="hasRole('TEACHER')" th:href="@{/teacher/dashboard}">
-            Мой кабинет
+        <a sec:authorize="hasAnyRole('TEACHER', 'ADMIN')" th:href="@{/teacher/dashboard}"
+            th:text="#{fragments.header.cabinet}">
         </a>
-        <a sec:authorize="hasRole('STUDENT')" th:href="@{/student/dashboard}">
-            Мой кабинет
+        <a sec:authorize="hasRole('STUDENT')" th:href="@{/student/dashboard}" th:text="#{fragments.header.cabinet}">
         </a>
         <form th:action="@{/logout}" method="post">
-            <button type="submit">Выйти</button>
+            <button type="submit" th:text="#{fragments.header.button.logout}"></button>
         </form>
     </div>
 
     <div sec:authorize="!isAuthenticated()">
-        <a th:href="@{/login}">Войти</a>
-        <a th:href="@{/register}">Регистрация</a>
+        <a th:href="@{/login}" th:text="#{fragments.header.button.login}"></a>
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#locales").change(function () {
+                var selected = $('#locales').val();
+                if (selected != '') {
+                    var url = window.location.pathname;
+                    window.location.replace(url + '?lang=' + selected);
+                }
+            });
+        });
+    </script>
+
 </header>
 
-</htmllang="en">
+</html>

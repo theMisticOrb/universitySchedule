@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import ua.com.foxminded.entity.Teacher;
+import ua.com.foxminded.entity.AppUser;
 import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.security.CustomUserDetails;
 import ua.com.foxminded.service.AcademicDepartmentService;
@@ -42,7 +42,7 @@ public class AdminController {
     @GetMapping("/dashboard")
     public String dashboard(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
         
-        Teacher user = userDetails.as(Teacher.class);
+        AppUser user = userDetails.as(AppUser.class);
         
         model.addAttribute("totalStudents", studentService.count());
         model.addAttribute("totalTeachers", teacherService.count());

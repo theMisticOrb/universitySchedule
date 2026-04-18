@@ -2,12 +2,12 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>University TimeTable</title>
+    <title th:text="#{index.title}"></title>
 </head>
 
 <body>
     <header th:insert="fragments/header :: header"></header>
-    <h4>Welcome to <span th:text="${appName}">!</span></h4>
+    <h4 th:text="#{index.welcome}"><span th:text="${appName}">!</span></h4>
     <div th:insert="fragments/menu :: menu"></div>
 </body>
 

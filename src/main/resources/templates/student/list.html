@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Students</title>
+    <title th:text="#{student.list.head.title}"></title>
 </head>
 
 <body>
@@ -11,15 +11,15 @@
     <div th:replace="fragments/header :: header"></div>
     <div th:replace="fragments/menu :: menu"></div>
 
-    <h2> All Students Of University</h2>
+    <h2 th:text="#{student.list.title}"></h2>
 
     <table border="1">
         <thead>
             <tr>
-                <th>Group Name</th>
-                <th>First name</th>
-                <th>Middle name</th>
-                <th>Last name</th>
+                <th th:text="#{student.list.table.group}"></th>
+                <th th:text="#{student.list.table.firstname}"></th>
+                <th th:text="#{student.list.table.middlename}"></th>
+                <th th:text="#{student.list.table.lastname}"></th>
             </tr>
         </thead>
         <tbody>

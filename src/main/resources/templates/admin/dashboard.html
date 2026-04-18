@@ -2,29 +2,29 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
-    <title>Admin DashBoard</title>
+    <title th:text="#{admin.dashboard.head.title}"></title>
 </head>
 
 <body>
 
     <div th:replace="fragments/header :: header"></div>
 
-    <h2>Панель администратора</h2>
+    <h2 th:text="#{admin.dashboard.adminpanel}">Admin panel</h2>
     <div>
         <div>
-            <p>Студентов - <span th:text="${totalStudents}">0</span></p>
+            <span th:text="#{admin.dashboard.students}"></span><span th:text="${totalStudents}"></span>
         </div>
         <div>
-            <p>Учителей - <span th:text="${totalTeachers}">0</span></p>
+            <span th:text="#{admin.dashboard.teachers}"></span><span th:text="${totalTeachers}"></span>
         </div>
         <div>
-            <p>Всего пользователей - <span th:text="${totalUsers}">0</span></p>
+            <span th:text="#{admin.dashboard.users}"></span><span th:text="${totalUsers}"></span>
         </div>
     </div>
     <nav>
-        <a th:href="@{/admin/users}">Управление пользователями</a><br>
-        <a th:href="@{/admin/students}">Управление студентами</a><br>
-        <a th:href="@{/admin/teachers}">Управление преподавателями</a>
+        <a th:href="@{/admin/users}" th:text="#{admin.dashboard.users.management}"></a><br>
+        <a th:href="@{/admin/students}" th:text="#{admin.dashboard.students.management}"></a><br>
+        <a th:href="@{/admin/teachers}" th:text="#{admin.dashboard.teachers.management}"></a>
     </nav>
 
 </body>
