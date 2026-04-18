@@ -149,6 +149,8 @@ public class DataStructureGenerator {
     private void addAdmin() {
         if (userRepository.findByEmail(adminEmail).isPresent()) {
             log.info("Admin alredy exists!");
+            log.info("Admin email: admin@school.com");
+            log.info("Admin password: adminPassword123");
             return;
         }
         TeacherCreateUpdateDto adminDto = new TeacherCreateUpdateDto();
