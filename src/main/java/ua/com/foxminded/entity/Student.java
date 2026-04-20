@@ -1,5 +1,7 @@
 package ua.com.foxminded.entity;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -11,7 +13,7 @@ import ua.com.foxminded.enums.UserRole;
 @Entity
 @Table(name = "students")
 @PrimaryKeyJoinColumn(name = "user_id")
-public class Student extends User {
+public class Student extends AppUser {
 
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = false)
@@ -20,8 +22,9 @@ public class Student extends User {
     public Student() {
     }
 
-    public Student(Integer id, String firstName, String middleName, String lastName, UserRole userRole, Group group) {
-        super(id, firstName, middleName, lastName, userRole);
+    public Student(Integer id, String firstName, String middleName, String lastName, String email, String password,
+            Set<UserRole> roles, Group group) {
+        super(id, firstName, middleName, lastName, email, password, roles);
         this.group = group;
     }
 

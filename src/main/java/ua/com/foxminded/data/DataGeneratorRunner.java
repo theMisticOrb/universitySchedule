@@ -12,6 +12,7 @@ import ua.com.foxminded.data.structure.DataStructureGenerator;
 @Order(1)
 public class DataGeneratorRunner implements CommandLineRunner {
 
+    
     private final DataStructureGenerator generator;
 
     public DataGeneratorRunner(DataStructureGenerator generator) {

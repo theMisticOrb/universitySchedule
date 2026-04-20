@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Lessons</title>
+    <title th:text="#{lesson.list.head.title}"></title>
 </head>
 
 <body>
@@ -11,15 +11,15 @@
     <div th:replace="fragments/header :: header"></div>
     <div th:replace="fragments/menu :: menu"></div>
 
-    <h2> All Planned Lessons Of University</h2>
+    <h2 th:text="#{lesson.list.title}"></h2>
 
     <table border="1">
         <thead>
             <tr>
-                <th>Week day</th>
-                <th>Class hour</th>
-                <th>Classroom name</th>
-                <th>Subject title</th>
+                <th th:text="#{lesson.list.table.day}"></th>
+                <th th:text="#{lesson.list.table.hour}"></th>
+                <th th:text="#{lesson.list.table.classroom}"></th>
+                <th th:text="#{lesson.list.table.subject}"></th>
             </tr>
         </thead>
         <tbody>

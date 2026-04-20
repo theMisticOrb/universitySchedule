@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -25,6 +27,7 @@ import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Specialization;
 import ua.com.foxminded.entity.Student;
+import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.repository.AcademicDepartmentRepository;
 import ua.com.foxminded.repository.FacultyRepository;
 import ua.com.foxminded.repository.SpecializationRepository;
@@ -73,10 +76,16 @@ class StudentServiceTest {
         GroupCreateUpdateDto group = new GroupCreateUpdateDto();
         group.setSpecializationCode(security.getCode());
         Group firstGroup = groupService.addOne(group);
-
+        
+        Set<UserRole> roles = new HashSet<>();
+        roles.add(UserRole.STUDENT);
+        
         student.setFirstName("Jack");
         student.setLastName("Sparrow");
         student.setGroupId(firstGroup.getId());
+        student.setEmail("Sparrow@university.com");
+        student.setPassword("JackSparrow1234");
+        student.setRoles(roles);
     }
 
     @Test

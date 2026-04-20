@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Menu Fragment</title>
 </head>
+
 <body>
     <div th:fragment="menu">
         <ul>
-            <li><a th:href="@{/faculties}">Faculties</a></li>
-            <li><a th:href="@{/departments}">Departments</a></li>
-            <li><a th:href="@{/specializations}">Specializations</a></li>
-            <li><a th:href="@{/groups}">Groups</a></li>
-            <li><a th:href="@{/students}">Students</a></li>
-            <li><a th:href="@{/teachers}">Teachers</a></li>
-            <li><a th:href="@{/subjects}">Subjects</a></li>
-            <li><a th:href="@{/lessons}">Lessons</a></li>
-            <li><a th:href="@{/classrooms}">Classrooms</a></li>
+            <li><a th:href="@{/faculties}" th:text="#{fragments.menu.link.faculties}"></a></li>
+            <li><a th:href="@{/departments}" th:text="#{fragments.menu.link.departments}"></a></li>
+            <li><a th:href="@{/specializations}" th:text="#{fragments.menu.link.specializations}"></a></li>
+            <li><a th:href="@{/groups}" th:text="#{fragments.menu.link.groups}"></a></li>
+            <li><a th:href="@{/students}" th:text="#{fragments.menu.link.students}"></a></li>
+            <li><a th:href="@{/teachers}" th:text="#{fragments.menu.link.teachers}"></a></li>
+            <li><a th:href="@{/subjects}" th:text="#{fragments.menu.link.subjects}"></a></li>
+            <li><a th:href="@{/lessons}" th:text="#{fragments.menu.link.lessons}"></a></li>
+            <li><a th:href="@{/classrooms}" th:text="#{fragments.menu.link.classrooms}"></a></li>
         </ul>
         <hr>
     </div>

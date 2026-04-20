@@ -11,6 +11,8 @@ import ua.com.foxminded.entity.Student;
 @Repository
 @Transactional
 public interface StudentRepository extends JpaRepository<Student, Integer> {
+    
+    Optional<Student> findByEmail(String email);
 
     Optional<Student> findByLastNameAndFirstNameAndMiddleName(
             String lastName, 

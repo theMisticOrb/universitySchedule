@@ -2,12 +2,15 @@ package ua.com.foxminded.controller.view;
 
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import ua.com.foxminded.entity.Student;
 import ua.com.foxminded.mapper.StudentMapper;
+import ua.com.foxminded.security.CustomUserDetails;
 import ua.com.foxminded.service.StudentService;
 
 @Controller
@@ -29,4 +32,10 @@ public class StudentViewController {
         return "student/list";
     }
 
+    @GetMapping("/dashboard")
+    public String dashboard(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Student user = userDetails.as(Student.class);
+        model.addAttribute("currentUser", user);
+        return "student/dashboard";
+    }
 }

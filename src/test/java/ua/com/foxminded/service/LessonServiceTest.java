@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -31,6 +33,7 @@ import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.entity.YearOfUniv;
 import ua.com.foxminded.enums.ClassHour;
+import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.enums.WeekDay;
 import ua.com.foxminded.repository.AcademicDepartmentRepository;
 import ua.com.foxminded.repository.ClassroomRepository;
@@ -89,10 +92,16 @@ class LessonServiceTest {
         specialization.setTitle("IT");
         Specialization savedSpecialization = specializationRepository.save(specialization);
 
+        Set<UserRole> roles = new HashSet<>();
+        roles.add(UserRole.TEACHER);
+        
         teacher.setFirstName("Don");
         teacher.setMiddleName("Bon");
         teacher.setLastName("Jon");
         teacher.setDepartment(csDepartment);
+        teacher.setEmail("Jon@ua.com");
+        teacher.setPassword("Jon1234");
+        teacher.setRoles(roles);
         Teacher jonTeacher = teacherRepository.save(teacher);
 
         Subject subject = new Subject();

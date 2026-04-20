@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -22,6 +24,7 @@ import ua.com.foxminded.dto.user.TeacherCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Teacher;
+import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.repository.AcademicDepartmentRepository;
 import ua.com.foxminded.repository.FacultyRepository;
 
@@ -54,9 +57,15 @@ class TeacherServiceTest {
         computerScience.setFaculty(engineeringFaculty);
         AcademicDepartment csDepartment = departmentRepository.save(computerScience);
 
-        teacher.setDepartmentId(csDepartment.getId());
+        Set<UserRole> roles = new HashSet<>();
+        roles.add(UserRole.TEACHER);
+        
+        teacher.setDepartmentCode(csDepartment.getCode());
         teacher.setFirstName("Jhon");
         teacher.setLastName("Devis");
+        teacher.setEmail("Devis@university.com");
+        teacher.setPassword("JhonDevis1234");
+        teacher.setRoles(roles);
     }
 
     @Test

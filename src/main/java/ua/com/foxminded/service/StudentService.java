@@ -1,9 +1,12 @@
 package ua.com.foxminded.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,21 +25,32 @@ public class StudentService {
     private StudentRepository studentRepository;
     private GroupService groupService;
     private StudentMapper studentMapper;
+    private PasswordEncoder passwordEncoder;
 
-    public StudentService(StudentRepository studentRepository, GroupService groupService, StudentMapper studentMapper) {
+    public StudentService(StudentRepository studentRepository, GroupService groupService, StudentMapper studentMapper,
+            PasswordEncoder passwordEncoder) {
         this.studentRepository = studentRepository;
         this.groupService = groupService;
         this.studentMapper = studentMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Student addOne(StudentCreateUpdateDto dto) {
-
-        Group group = groupService.findById(dto.getGroupId());
-        Student student = studentMapper.toEntity(dto, group);
-        if (student.getUserRole() != UserRole.STUDENT) {
-            throw new IllegalStateException("User must have STUDENT role");
-        }
+        Student student = setStudentValues(dto);
         return studentRepository.save(student);
+    }
+
+    public List<Student> addAll(List<StudentCreateUpdateDto> studentsDto) {
+        List<Student> students = new ArrayList<>();
+
+        for (StudentCreateUpdateDto dto : studentsDto) {
+
+            Student student = setStudentValues(dto);
+            students.add(student);
+        }
+
+        return studentRepository.saveAll(students);
+
     }
 
     public Student findById(Integer id) {
@@ -48,6 +62,12 @@ public class StudentService {
         return studentRepository.findByLastNameAndFirstNameAndMiddleName(lastName, firstName, middleName)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Student not found: " + lastName + " " + firstName + " " + middleName));
+
+    }
+
+    public Student findByEmail(String email) {
+        return studentRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Student are not found by this email: " + email));
 
     }
 
@@ -72,6 +92,29 @@ public class StudentService {
 
     public void deleteById(Integer id) {
         studentRepository.deleteById(id);
+    }
+
+    private Student setStudentValues(StudentCreateUpdateDto dto) {
+        Group group = groupService.findById(dto.getGroupId());
+        Student student = studentMapper.toEntity(dto, group);
+
+        student.setPassword(passwordEncoder.encode(dto.getPassword()));
+        String[] roles = student.getRoles().stream().map(UserRole::name).toArray(String[]::new);
+
+        if (Arrays.stream(roles).noneMatch("STUDENT"::equals)) {
+            throw new IllegalStateException("User must have STUDENT role");
+        }
+        return student;
+    }
+
+    public void changeStudentGroup(Integer id, Integer newGroupId) {
+        Student student = findById(id);
+        Group newGroup = groupService.findById(newGroupId);
+        UpdateUtil.setIfNotNull(newGroup, student::setGroup);
+    }
+
+    public long count() {
+        return studentRepository.count();
     }
 
 }

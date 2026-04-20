@@ -17,13 +17,13 @@ import com.github.javafaker.Faker;
 
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Teacher;
-import ua.com.foxminded.repository.TeacherRepository;
+import ua.com.foxminded.service.TeacherService;
 
 @ExtendWith(MockitoExtension.class)
 class TeacherGeneratorTest {
 
     @Mock
-    private TeacherRepository repository;
+    private TeacherService service;
 
     private Faker faker;
 
@@ -32,7 +32,7 @@ class TeacherGeneratorTest {
     @BeforeEach
     void setUp() {
         faker = new Faker(new Random(42));
-        generator = new TeacherGenerator(repository, faker);
+        generator = new TeacherGenerator(service, faker);
     }
 
     @Test
@@ -41,7 +41,7 @@ class TeacherGeneratorTest {
         AcademicDepartment department = new AcademicDepartment();
         department.setId(1);
 
-        when(repository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(service.addAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<Teacher> result = generator.generateTeachers(140, department);
 

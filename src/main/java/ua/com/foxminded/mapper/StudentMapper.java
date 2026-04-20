@@ -21,6 +21,8 @@ public class StudentMapper {
         entity.setFirstName(dto.getFirstName());
         entity.setMiddleName(dto.getMiddleName());
         entity.setLastName(dto.getLastName());
+        entity.setEmail(dto.getEmail());
+        entity.setRoles(dto.getRoles());
         entity.setGroup(group);
         return entity;
     }
@@ -35,6 +37,8 @@ public class StudentMapper {
         dto.setLastName(entity.getLastName());
         dto.setGroupId(entity.getGroup().getId());
         dto.setGroupName(entity.getGroup().getName());
+        dto.setEmail(entity.getEmail());
+        dto.setUserRoles(entity.getRoles());
         return dto;
     }
 

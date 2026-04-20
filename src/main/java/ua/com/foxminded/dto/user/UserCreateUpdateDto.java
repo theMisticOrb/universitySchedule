@@ -1,5 +1,7 @@
 package ua.com.foxminded.dto.user;
 
+import java.util.Set;
+
 import ua.com.foxminded.enums.UserRole;
 
 public class UserCreateUpdateDto {
@@ -7,16 +9,21 @@ public class UserCreateUpdateDto {
     private String firstName;
     private String middleName;
     private String lastName;
-    private UserRole userRole;
+    private String email;
+    private String password;
+    private Set<UserRole> roles;
 
     public UserCreateUpdateDto() {
     }
 
-    public UserCreateUpdateDto(String firstName, String middleName, String lastName, UserRole userRole) {
+    public UserCreateUpdateDto(String firstName, String middleName, String lastName, String email, String password,
+            Set<UserRole> roles) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
-        this.userRole = userRole;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
     }
 
     public String getFirstName() {
@@ -43,12 +50,28 @@ public class UserCreateUpdateDto {
         this.lastName = lastName;
     }
 
-    public UserRole getUserRole() {
-        return userRole;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUserRole(UserRole userRole) {
-        this.userRole = userRole;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Set<UserRole> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<UserRole> userRoles) {
+        this.roles = userRoles;
     }
 
 }

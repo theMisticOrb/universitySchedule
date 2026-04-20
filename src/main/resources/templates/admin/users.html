@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title th:text="#{admin.users.head.title}"></title>
+</head>
+
+<body>
+
+    <div th:replace="fragments/header :: header"></div>
+
+    <h2 th:text="#{admin.users.title}">Users</h2>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th th:text="#{admin.users.table.name}">Name</th>
+                <th th:text="#{admin.users.table.email}">Email</th>
+                <th th:text="#{admin.users.table.role}">Role</th>
+                <th th:text="#{admin.users.table.actions}">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.firstName + ' ' + user.lastName}"></td>
+                <td th:text="${user.email}"></td>
+                <td th:text="${user.roles}"></td>
+                <td>
+                    <a th:href="@{/admin/users/{id}/edit(id=${user.id})}" th:text="#{admin.users.table.change}">
+                    </a>
+
+                    <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" method="post">
+                        <button type="submit" onclick="return confirm('Удалить пользователя?')"
+                            th:text="#{admin.users.button.delete}">
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+
+</html>

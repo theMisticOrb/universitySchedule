@@ -2,6 +2,7 @@ package ua.com.foxminded.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -15,7 +16,7 @@ import ua.com.foxminded.enums.UserRole;
 @Entity
 @Table(name = "teachers")
 @PrimaryKeyJoinColumn(name = "user_id")
-public class Teacher extends User {
+public class Teacher extends AppUser {
 
     @ManyToOne
     @JoinColumn(name = "department_id", nullable = false)
@@ -27,9 +28,9 @@ public class Teacher extends User {
     public Teacher() {
     }
 
-    public Teacher(Integer id, String firstName, String middleName, String lastName, UserRole userRole,
-            AcademicDepartment department, List<Subject> subjects) {
-        super(id, firstName, middleName, lastName, userRole);
+    public Teacher(Integer id, String firstName, String middleName, String lastName, String email, String password,
+            Set<UserRole> roles, AcademicDepartment department, List<Subject> subjects) {
+        super(id, firstName, middleName, lastName, email, password, roles);
         this.department = department;
         this.subjects = subjects;
     }

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title th:text="#{admin.teachers.head.title}"></title>
+</head>
+
+<body>
+
+    <div th:replace="fragments/header :: header"></div>
+
+    <h2 th:text="#{admin.teachers.title}"></h2>
+
+    <table border="1">
+        <tr>
+            <th th:text="#{admin.teachers.table.name}"></th>
+            <th th:text="#{admin.teachers.table.department}"></th>
+            <th th:text="#{admin.teachers.table.change}"></th>
+        </tr>
+        <tr th:each="teacher : ${teachers}">
+            <td th:text="${teacher.firstName + ' ' + teacher.lastName}"></td>
+            <td th:text="${teacher.department?.title}"></td>
+            <td>
+                <form th:action="@{/admin/teachers/{id}/department(id=${teacher.id})}" method="post">
+                    <select name="departmentId">
+                        <option th:each="department : ${departments}" th:value="${department.id}" th:text="${department.title}"
+                            th:selected="${department.id == teacher.department?.id}">
+                        </option>
+                    </select>
+                    <button type="submit" th:text="#{admin.teachers.button.setdepartment}"></button>
+                </form>
+            </td>
+        </tr>
+    </table>
+
+</body>
+
+</html>

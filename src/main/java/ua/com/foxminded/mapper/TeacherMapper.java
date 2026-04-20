@@ -22,7 +22,8 @@ public class TeacherMapper {
         entity.setMiddleName(dto.getMiddleName());
         entity.setLastName(dto.getLastName());
         entity.setDepartment(department);
-        entity.setUserRole(dto.getUserRole());
+        entity.setRoles(dto.getRoles());
+        entity.setEmail(dto.getEmail());
         return entity;
     }
 
@@ -31,12 +32,13 @@ public class TeacherMapper {
 
         TeacherResponseDto dto = new TeacherResponseDto();
         dto.setId(entity.getId());
-        dto.setUserRole(entity.getUserRole());
+        dto.setUserRoles(entity.getRoles());
         dto.setFirstName(entity.getFirstName());
         dto.setMiddleName(entity.getMiddleName());
         dto.setLastName(entity.getLastName());
         dto.setDepartmentId(entity.getDepartment().getId());
         dto.setDepartmentCode(entity.getDepartment().getCode());
+        dto.setEmail(entity.getEmail());
         return dto;
     }
 }
