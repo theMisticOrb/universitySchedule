@@ -26,10 +26,25 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, ex.getLocalizedMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST,
                 request);
     }
-    
+
     @ExceptionHandler(DuplicateEntityException.class)
-    public ResponseEntity<Object> handleConflict(DuplicateEntityException ex, WebRequest request){
+    public ResponseEntity<Object> handleConflict(DuplicateEntityException ex, WebRequest request) {
         return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<Object> handleExpired(TokenExpiredException ex, WebRequest request) {
+        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.GONE, request);
+    }
+
+    @ExceptionHandler(TokenNotFoundException.class)
+    public ResponseEntity<Object> handleNotFound(TokenNotFoundException ex, WebRequest request) {
+        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(TokenAlreadyUsedException.class)
+    public ResponseEntity<Object> handleUsed(TokenAlreadyUsedException ex, WebRequest request) {
+        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
 }

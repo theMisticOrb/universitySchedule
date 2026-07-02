@@ -1,8 +1,10 @@
 package ua.com.foxminded.config;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,32 +15,46 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import ua.com.foxminded.security.CustomUserDetails;
+
 @Configuration
 public class AuthenticationConfig {
-    
+
     private static final Logger log = LogManager.getLogger();
 
     @Bean
     public AuthenticationSuccessHandler customSuccessHandler() {
-        
+
         Map<String, String> roleRedirectMap = new LinkedHashMap<>();
         roleRedirectMap.put("ADMIN", "/admin/dashboard");
         roleRedirectMap.put("TEACHER", "/teacher/dashboard");
         roleRedirectMap.put("STUDENT", "/student/dashboard");
-        
-        
+
+        Set<String> rolesToSkipRegistrationCheck = new HashSet<>();
+        rolesToSkipRegistrationCheck.add("ADMIN");
+
         return (request, response, authentication) -> {
             Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
             for (Map.Entry<String, String> entry : roleRedirectMap.entrySet()) {
                 if (authorities.stream().anyMatch(a -> a.getAuthority().equals(entry.getKey()))) {
-                    response.sendRedirect(entry.getValue());
+                    boolean skipRegistrationCheck = rolesToSkipRegistrationCheck.contains(entry.getKey());
+                    
+                    if (!skipRegistrationCheck && !userDetails.isRegistrationCompleted()) {
+                        response.sendRedirect("/complete_registration");
+                    } else {
+                        response.sendRedirect(entry.getValue());
+                    }
                     return;
                 }
+
             }
-            
+
             log.warn("Unknown role: {}", authorities);
             response.sendRedirect("/");
+
         };
     }
 

@@ -26,7 +26,6 @@ import ua.com.foxminded.enums.UserRole;
 @Table(name = "users")
 public abstract class AppUser {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_gen")
     @SequenceGenerator(name = "user_id_gen", sequenceName = "user_id_seq", allocationSize = 30)
@@ -53,6 +52,9 @@ public abstract class AppUser {
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")
     private Set<UserRole> roles = new HashSet<>();
+
+    @Column(name = "is_registration_completed")
+    private boolean isRegistrationCompleted;
 
     protected AppUser() {
     }
@@ -123,5 +125,15 @@ public abstract class AppUser {
     public void setRoles(Set<UserRole> roles) {
         this.roles = roles;
     }
+
+    public boolean isRegistrationCompleted() {
+        return isRegistrationCompleted;
+    }
+
+    public void setRegistrationCompleted(boolean isRegistrationCompleted) {
+        this.isRegistrationCompleted = isRegistrationCompleted;
+    }
+    
+    
 
 }

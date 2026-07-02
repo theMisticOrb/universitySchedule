@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import ua.com.foxminded.dto.user.UserCreateUpdateDto;
 import ua.com.foxminded.entity.AppUser;
 import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.security.CustomUserDetails;
@@ -88,6 +89,12 @@ public class AdminController {
         model.addAttribute("teachers", teacherService.findAll());
         model.addAttribute("departments", departmentService.findAll());
         return "admin/teachers";
+    }
+    
+    @GetMapping("/add-user")
+    public String showAddUserForm(Model model) {
+        model.addAttribute("addUserForm",new UserCreateUpdateDto());       
+        return "admin/add-user";
     }
 
     @PostMapping("/students/{id}/group")

@@ -1,6 +1,18 @@
 ALTER TABLE users
 ADD COLUMN user_email VARCHAR(225),
-ADD COLUMN user_password VARCHAR(225);
+ADD COLUMN user_password VARCHAR(225),
+ADD COLUMN is_registration_completed BOOLEAN DEFAULT false;
+
+UPDATE users
+SET user_email = CONCAT('user_', user_id, '@temp.com')
+WHERE user_email IS NULL;
+
+UPDATE users
+SET user_password = 'TEMP_PASSWORD'
+WHERE user_password IS NULL;
+
+UPDATE users
+SET is_registration_completed = false;
 
 CREATE TABLE IF NOT EXISTS user_roles(
 user_id INTEGER NOT NULL,

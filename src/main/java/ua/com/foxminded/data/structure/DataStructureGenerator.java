@@ -149,8 +149,8 @@ public class DataStructureGenerator {
     private void addAdmin() {
         if (userRepository.findByEmail(adminEmail).isPresent()) {
             log.info("Admin alredy exists!");
-            log.info("Admin email: admin@school.com");
-            log.info("Admin password: adminPassword123");
+            log.info("Admin email: {}", adminEmail);
+            log.info("Admin password: {}", adminPassword);
             return;
         }
         TeacherCreateUpdateDto adminDto = new TeacherCreateUpdateDto();
@@ -172,8 +172,7 @@ public class DataStructureGenerator {
 
         teacherService.addOne(adminDto);
         log.info("Admin added!");
-        log.info("Admin email: admin@school.com");
-        log.info("Admin password: adminPassword123");
-        
+        log.info("Admin email: {}", adminEmail);
+        log.info("Admin password: {}", adminPassword);
     }
 }
