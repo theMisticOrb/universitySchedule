@@ -6,9 +6,160 @@
 </head>
 
 <body>
-    
+
     <div th:replace="fragments/header :: header"></div>
     <h2 th:text="#{admin.dashboard.users.addusers}">Add Users</h2>
 
-    
+    <div>
+
+        <input type="text" id="firstName" placeholder="First Name" />
+        <input type="text" id="middleName" placeholder="Middle Name" />
+        <input type="text" id="lastName" placeholder="Last Name" />
+        <input type="email" id="email" placeholder="Email" />
+
+        <select id="role" onchange="onRoleChange()">
+            <option value="">— Select role —</option>
+            <option value="STUDENT">Student</option>
+            <option value="TEACHER">Teacher</option>
+        </select>
+
+        <!-- Поле для студента -->
+        <div id="group-field" style="display:none;">
+            <select id="groupId">
+                <option value="">— Select group —</option>
+                <option th:each="group : ${groups}" th:value="${group.name}" th:text="${group.name}">
+                </option>
+            </select>
+        </div>
+
+        <!-- Поле для учителя -->
+        <div id="department-field" style="display:none;">
+            <select id="departmentId">
+                <option value="">— Select department —</option>
+                <option th:each="dept : ${departments}" th:value="${dept.code}"
+                    th:text="${dept.title + ' (' + dept.code + ')'}">
+                </option>
+            </select>
+        </div>
+
+        <div id="form-error" style="color:red; display:none;"></div>
+        <button type="button" onclick="addToList()">+ Add to list</button>
+    </div>
+
+    <div id="preview" style="display:none;">
+        <h3>Будут добавлены:</h3>
+        <ul id="user-list"></ul>
+        <button type="button" onclick="saveAll()">Сохранить всех</button>
+        <div id="save-error" style="color:red; display:none;"></div>
+    </div>
+
+
+    <script th:inline="javascript">
+
+        const users = [];
+
+        function onRoleChange() {
+            const role = document.getElementById('role').value;
+            document.getElementById('group-field').style.display =
+                role === 'STUDENT' ? 'block' : 'none';
+            document.getElementById('department-field').style.display =
+                role === 'TEACHER' ? 'block' : 'none';
+        }
+
+        function addToList() {
+            const errorDiv = document.getElementById('form-error');
+            errorDiv.style.display = 'none';
+
+            const firstName = document.getElementById('firstName').value.trim();
+            const middleName = document.getElementById('middleName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const role = document.getElementById('role').value;
+            const groupId = document.getElementById('groupId').value;
+            const deptId = document.getElementById('departmentId').value;
+
+            // Валидация
+            if (!firstName || !lastName || !email || !role) {
+                showError(errorDiv, 'Заполните имя, фамилию, email и роль');
+                return;
+            }
+            if (role === 'STUDENT' && !groupName) {
+                showError(errorDiv, 'Выберите группу');
+                return;
+            }
+            if (role === 'TEACHER' && !departmentCode) {
+                showError(errorDiv, 'Выберите кафедру');
+                return;
+            }
+
+            const groupName = document.getElementById('groupName').value;
+            const departmentCode = document.getElementById('departmentCode').value;
+
+            const user = {
+                firstName, middleName, lastName, email, role,
+                groupName: role === 'STUDENT' ? groupName : null,
+                departmentCode: role === 'TEACHER' ? departmentCode : null
+            };
+            users.push(user);
+
+            // Превью
+            const extraInfo = role === 'STUDENT' ? 'группа: ' + groupName
+                : role === 'TEACHER' ? 'кафедра: ' + departmentCode
+                    : '';
+
+            const li = document.createElement('li');
+            li.textContent = `${lastName} ${firstName} (${email}) — ${role}${extraInfo ? ', ' + extraInfo : ''}`;
+
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = '✕';
+            removeBtn.onclick = () => {
+                const index = [...li.parentNode.children].indexOf(li);
+                users.splice(index, 1);
+                li.remove();
+                if (users.length === 0) {
+                    document.getElementById('preview').style.display = 'none';
+                }
+            };
+            li.appendChild(removeBtn);
+            document.getElementById('user-list').appendChild(li);
+            document.getElementById('preview').style.display = 'block';
+
+            // Очистка формы
+            ['firstName', 'middleName', 'lastName', 'email'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('role').value = '';
+            document.getElementById('groupId').value = '';
+            document.getElementById('departmentId').value = '';
+            onRoleChange();
+            document.getElementById('firstName').focus();
+        }
+
+        function saveAll() {
+            if (users.length === 0) return;
+            const errorDiv = document.getElementById('save-error');
+
+            fetch('/admin/add-user/batch', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({users})
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    } else if (data.error) {
+                        showError(errorDiv, data.error);
+                    }
+                })
+                .catch(() => showError(errorDiv, 'Ошибка при сохранении'));
+        }
+
+        function showError(div, message) {
+            div.textContent = message;
+            div.style.display = 'block';
+        }
+    </script>
+
 </body>
+</html>

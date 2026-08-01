@@ -1,17 +1,22 @@
 package ua.com.foxminded.controller.view;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import ua.com.foxminded.dto.user.UserCreateUpdateDto;
+import ua.com.foxminded.dto.user.UserCreateUpdateListDto;
 import ua.com.foxminded.entity.AppUser;
 import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.security.CustomUserDetails;
@@ -42,9 +47,9 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        
+
         AppUser user = userDetails.as(AppUser.class);
-        
+
         model.addAttribute("totalStudents", studentService.count());
         model.addAttribute("totalTeachers", teacherService.count());
         model.addAttribute("totalUsers", userService.count());
@@ -90,11 +95,27 @@ public class AdminController {
         model.addAttribute("departments", departmentService.findAll());
         return "admin/teachers";
     }
-    
+
     @GetMapping("/add-user")
     public String showAddUserForm(Model model) {
-        model.addAttribute("addUserForm",new UserCreateUpdateDto());       
+        model.addAttribute("addUserForm", new UserCreateUpdateDto());
         return "admin/add-user";
+    }
+
+    @PostMapping("/add-user/batch")
+    public ResponseEntity<Map<String, String>> saveBatch(@RequestBody UserCreateUpdateListDto userListRequest) {
+        try {
+            userService.createUsers(userListRequest.getUserList());
+            Map<String, String> success = new HashMap<>();
+            success.put("redirect", "/admin/users");
+            return ResponseEntity.ok(success);
+            
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+
     }
 
     @PostMapping("/students/{id}/group")

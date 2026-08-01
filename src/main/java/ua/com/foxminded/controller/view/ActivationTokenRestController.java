@@ -13,16 +13,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import ua.com.foxminded.dto.user.ActivationRequestDto;
 import ua.com.foxminded.exception.TokenExpiredException;
-import ua.com.foxminded.service.ActivationService;
+import ua.com.foxminded.service.ActivationUserService;
 
 @Controller
 @RequestMapping("/activation")
 public class ActivationTokenRestController {
 
-    private final ActivationService activationService;
+    private final ActivationUserService activationService;
     private static final String TOKEN = "token";
 
-    public ActivationTokenRestController(ActivationService activationService) {
+    public ActivationTokenRestController(ActivationUserService activationService) {
         this.activationService = activationService;
     }
 

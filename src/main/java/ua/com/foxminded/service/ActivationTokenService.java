@@ -10,11 +10,11 @@ import ua.com.foxminded.entity.AppUser;
 import ua.com.foxminded.repository.ActivationTokenRepository;
 
 @Service
-public class TokenService {
+public class ActivationTokenService {
 
     private final ActivationTokenRepository tokenRepo;
 
-    public TokenService(ActivationTokenRepository tokenRepo) {
+    public ActivationTokenService(ActivationTokenRepository tokenRepo) {
         this.tokenRepo = tokenRepo;
     }
     

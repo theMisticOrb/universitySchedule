@@ -15,17 +15,21 @@ import ua.com.foxminded.repository.ActivationTokenRepository;
 import ua.com.foxminded.repository.UserRepository;
 
 @Service
-public class ActivationService {
+public class ActivationUserService {
 
     private final ActivationTokenRepository tokenRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ActivationTokenService activationTokenService;
+    private final EmailService emailService;
 
-    public ActivationService(ActivationTokenRepository tokenRepository, UserRepository userRepository,
-            PasswordEncoder passwordEncoder) {
+    public ActivationUserService(ActivationTokenRepository tokenRepository, UserRepository userRepository,
+            PasswordEncoder passwordEncoder, ActivationTokenService activationTokenService, EmailService emailService) {
         this.tokenRepository = tokenRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.activationTokenService = activationTokenService;
+        this.emailService = emailService;
     }
 
     public void validateToken(String tokenValue) {
@@ -47,9 +51,20 @@ public class ActivationService {
         tokenRepository.save(token);
     }
 
+    public void sendResetEmail(AppUser user) {
+        String token = activationTokenService.createToken(user);
+        emailService.sendActivationEmail(user.getEmail(), token);
+
+    }
+
+    public void sendResetEmailIfTempPassword(AppUser user) {
+        if (!user.isRegistrationCompleted()) {
+            sendResetEmail(user);
+        }
+    }
+
     private ActivationToken getValidToken(String tokenValue) {
-        ActivationToken token = tokenRepository.findByToken(tokenValue)
-                .orElseThrow(TokenNotFoundException::new);
+        ActivationToken token = tokenRepository.findByToken(tokenValue).orElseThrow(TokenNotFoundException::new);
 
         if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
             throw new TokenExpiredException();
