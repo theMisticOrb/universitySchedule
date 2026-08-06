@@ -117,7 +117,7 @@ public class GroupService {
         UpdateUtil.updateListIfNotNull(updated.getStudents(), dto -> studentMapper.toEntity(dto, group));
         if (updated.getSubjects() != null) {
             Set<Subject> subjects = updated.getSubjects().stream().map(dto -> {
-                Teacher teacher = teacherService.findById(dto.getTeacherId());
+                Teacher teacher = teacherService.findByEmail(dto.getTeacherEmail());
                 AcademicDepartment department = departmentService.findByCode(dto.getDepartmentCode());
                 return subjectMapper.toEntity(dto, teacher, department);
             }).collect(Collectors.toSet());

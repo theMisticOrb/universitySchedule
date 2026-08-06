@@ -73,6 +73,7 @@ public class UserService {
     public void createUsers(List<UserCreateUpdateDto> usersList) {
         List<AppUser> users = usersList.stream().map(this::buildUser).collect(Collectors.toList());
         userRepository.saveAll(users);
+        userRepository.flush();
         users.forEach(activationUserService::sendResetEmailIfTempPassword); 
 
     }

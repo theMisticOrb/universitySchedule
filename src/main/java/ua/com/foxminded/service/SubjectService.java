@@ -46,7 +46,7 @@ public class SubjectService {
 
     public Subject addOne(SubjectCreateUpdateDto dto) {
 
-        Teacher teacher = teacherService.findById(dto.getTeacherId());
+        Teacher teacher = teacherService.findByEmail(dto.getTeacherEmail());
         AcademicDepartment department = departmentService.findByCode(dto.getDepartmentCode());
 
         Subject subject = subjectMapper.toEntity(dto, teacher, department);
@@ -77,8 +77,8 @@ public class SubjectService {
 
         Subject subject = findById(id);
 
-        if (updated.getTeacherId() != null) {
-            Teacher teacher = teacherService.findById(updated.getTeacherId());
+        if (updated.getTeacherEmail() != null) {
+            Teacher teacher = teacherService.findByEmail(updated.getTeacherEmail());
             UpdateUtil.setIfNotNull(teacher, subject::setTeacher);
 
         }

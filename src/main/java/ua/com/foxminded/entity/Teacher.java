@@ -1,5 +1,6 @@
 package ua.com.foxminded.entity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -29,8 +30,9 @@ public class Teacher extends AppUser {
     }
 
     public Teacher(Integer id, String firstName, String middleName, String lastName, String email, String password,
-            Set<UserRole> roles, AcademicDepartment department, List<Subject> subjects) {
-        super(id, firstName, middleName, lastName, email, password, roles);
+            LocalDateTime createdAt, Set<UserRole> roles, boolean isRegistrationCompleted,
+            AcademicDepartment department, List<Subject> subjects) {
+        super(id, firstName, middleName, lastName, email, password, createdAt, roles, isRegistrationCompleted);
         this.department = department;
         this.subjects = subjects;
     }

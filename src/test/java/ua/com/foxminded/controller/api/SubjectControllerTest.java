@@ -67,7 +67,7 @@ class SubjectControllerTest {
     private SubjectResponseDto createResponseDto() {
         SubjectResponseDto dto = new SubjectResponseDto();
         dto.setId(1);
-        dto.setTeacherId(1);
+        dto.setTeacherEmail("teacher@gmail.com");
         dto.setTitle("Computer Science");
         return dto;
     }
@@ -128,7 +128,7 @@ class SubjectControllerTest {
         SubjectResponseDto responseDto = createResponseDto();
 
         SubjectCreateUpdateDto requestDto = new SubjectCreateUpdateDto();
-        requestDto.setTeacherId(1);
+        requestDto.setTeacherEmail("teacher@gmail.com");
         requestDto.setTitle("Computer Science");
 
         when(service.addOne(any(SubjectCreateUpdateDto.class))).thenReturn(subject);
@@ -154,7 +154,7 @@ class SubjectControllerTest {
         SubjectResponseDto responseDto = createResponseDto();
 
         SubjectCreateUpdateDto requestDto = new SubjectCreateUpdateDto();
-        requestDto.setTeacherId(1);
+        requestDto.setTeacherEmail("teacher@gmail.com");
         requestDto.setTitle("Computer Science");
 
         when(service.update(any(SubjectCreateUpdateDto.class), eq(1))).thenReturn(subject);

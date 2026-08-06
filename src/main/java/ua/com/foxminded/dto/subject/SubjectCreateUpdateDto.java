@@ -8,8 +8,8 @@ import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
 public class SubjectCreateUpdateDto {
 
     private String title;
-    private Integer teacherId;
     private String teacherFullName;
+    private String teacherEmail;
     private String departmentCode;
     private List<GroupCreateUpdateDto> groups;
     private List<LessonCreateUpdateDto> lessons;
@@ -17,11 +17,11 @@ public class SubjectCreateUpdateDto {
     public SubjectCreateUpdateDto() {
     }
 
-    public SubjectCreateUpdateDto(String title, Integer teacherId, String teacherFullName, String departmentCode,
+    public SubjectCreateUpdateDto(String title, String teacherFullName, String teacherEmail, String departmentCode,
             List<GroupCreateUpdateDto> groups, List<LessonCreateUpdateDto> lessons) {
         this.title = title;
-        this.teacherId = teacherId;
         this.teacherFullName = teacherFullName;
+        this.teacherEmail = teacherEmail;
         this.departmentCode = departmentCode;
         this.groups = groups;
         this.lessons = lessons;
@@ -33,14 +33,6 @@ public class SubjectCreateUpdateDto {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public Integer getTeacherId() {
-        return teacherId;
-    }
-
-    public void setTeacherId(Integer teacherId) {
-        this.teacherId = teacherId;
     }
 
     public String getTeacherFullName() {
@@ -75,5 +67,14 @@ public class SubjectCreateUpdateDto {
         this.lessons = lessons;
     }
 
+    public String getTeacherEmail() {
+        return teacherEmail;
+    }
+
+    public void setTeacherEmail(String teacherEmail) {
+        this.teacherEmail = teacherEmail;
+    }
+    
+    
 
 }

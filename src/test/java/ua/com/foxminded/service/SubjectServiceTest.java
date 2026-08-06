@@ -76,7 +76,7 @@ class SubjectServiceTest {
         teacher.setRoles(roles);
         Teacher jonTeacher = teacherRepository.save(teacher);
 
-        subject.setTeacherId(jonTeacher.getId());
+        subject.setTeacherEmail(jonTeacher.getEmail());
         subject.setTitle("Math");
         subject.setDepartmentCode(csDepartment.getCode());
 

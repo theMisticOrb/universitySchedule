@@ -3,6 +3,8 @@
 
 <head>
     <title th:text="#{admin.dashboard.users.addusers}">Add users</title>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 </head>
 
 <body>
@@ -25,7 +27,7 @@
 
         <!-- Поле для студента -->
         <div id="group-field" style="display:none;">
-            <select id="groupId">
+            <select id="groupName">
                 <option value="">— Select group —</option>
                 <option th:each="group : ${groups}" th:value="${group.name}" th:text="${group.name}">
                 </option>
@@ -34,7 +36,7 @@
 
         <!-- Поле для учителя -->
         <div id="department-field" style="display:none;">
-            <select id="departmentId">
+            <select id="departmentCode">
                 <option value="">— Select department —</option>
                 <option th:each="dept : ${departments}" th:value="${dept.code}"
                     th:text="${dept.title + ' (' + dept.code + ')'}">
@@ -67,6 +69,9 @@
         }
 
         function addToList() {
+
+            console.log('addToList called');
+
             const errorDiv = document.getElementById('form-error');
             errorDiv.style.display = 'none';
 
@@ -75,8 +80,9 @@
             const lastName = document.getElementById('lastName').value.trim();
             const email = document.getElementById('email').value.trim();
             const role = document.getElementById('role').value;
-            const groupId = document.getElementById('groupId').value;
-            const deptId = document.getElementById('departmentId').value;
+            const groupName = document.getElementById('groupName').value;
+            const departmentCode = document.getElementById('departmentCode').value;
+
 
             // Валидация
             if (!firstName || !lastName || !email || !role) {
@@ -92,8 +98,6 @@
                 return;
             }
 
-            const groupName = document.getElementById('groupName').value;
-            const departmentCode = document.getElementById('departmentCode').value;
 
             const user = {
                 firstName, middleName, lastName, email, role,
@@ -129,19 +133,25 @@
                 document.getElementById(id).value = '';
             });
             document.getElementById('role').value = '';
-            document.getElementById('groupId').value = '';
-            document.getElementById('departmentId').value = '';
+            document.getElementById('groupName').value = '';
+            document.getElementById('departmentCode').value = '';
             onRoleChange();
             document.getElementById('firstName').focus();
         }
 
         function saveAll() {
             if (users.length === 0) return;
+
+            const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
             const errorDiv = document.getElementById('save-error');
 
             fetch('/admin/add-user/batch', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
                 body: JSON.stringify({users})
             })
                 .then(res => res.json())
@@ -162,4 +172,5 @@
     </script>
 
 </body>
+
 </html>
