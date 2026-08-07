@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import ua.com.foxminded.dto.user.UserCreateUpdateDto;
 import ua.com.foxminded.dto.user.UserCreateUpdateListDto;
@@ -70,9 +71,10 @@ public class AdminUsersController {
     }
 
     @PostMapping("/add-user/batch")
+    @ResponseBody
     public ResponseEntity<Map<String, String>> saveBatch(@RequestBody UserCreateUpdateListDto userListRequest) {
         try {
-            userService.createUsers(userListRequest.getUserList());
+            userService.createUsers(userListRequest.getUsers());
             Map<String, String> success = new HashMap<>();
             success.put("redirect", "/admin/users");
             return ResponseEntity.ok(success);

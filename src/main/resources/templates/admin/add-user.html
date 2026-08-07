@@ -100,7 +100,7 @@
 
 
             const user = {
-                firstName, middleName, lastName, email, role,
+                firstName, middleName, lastName, email, roles:[role],
                 groupName: role === 'STUDENT' ? groupName : null,
                 departmentCode: role === 'TEACHER' ? departmentCode : null
             };
@@ -146,7 +146,7 @@
             const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
             const errorDiv = document.getElementById('save-error');
 
-            fetch('/admin/add-user/batch', {
+            fetch('/admin/users/add-user/batch', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

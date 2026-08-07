@@ -12,6 +12,6 @@ import ua.com.foxminded.entity.AppUser;
 public interface ActivationTokenRepository extends JpaRepository<ActivationToken, Long> {
     
     Optional<ActivationToken> findByToken(String token);
-    ActivationToken deleteByUser(AppUser user);
+    void deleteByUser(AppUser user);
 
 }

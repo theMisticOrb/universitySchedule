@@ -1,6 +1,7 @@
 package ua.com.foxminded.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -77,5 +78,10 @@ public class FacultyService {
 
     public long count() {
         return facultyRepository.count();
+    }
+
+    public void createFaculties(List<FacultyCreateUpdateDto> list) {
+        List<Faculty> faculties = list.stream().map(this::addOne).collect(Collectors.toList());
+        facultyRepository.saveAllAndFlush(faculties);
     }
 }

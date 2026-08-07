@@ -5,21 +5,18 @@ import java.util.List;
 
 public class UserCreateUpdateListDto {
 
-    private List<UserCreateUpdateDto> userList = new ArrayList<>();
+    private List<UserCreateUpdateDto> users = new ArrayList<>();
 
     public UserCreateUpdateListDto() {
     }
 
-    public UserCreateUpdateListDto(List<UserCreateUpdateDto> userList) {
-        this.userList = userList;
+    public List<UserCreateUpdateDto> getUsers() {
+        return users;
     }
 
-    public List<UserCreateUpdateDto> getUserList() {
-        return userList;
+    public void setUsers(List<UserCreateUpdateDto> users) {
+        this.users = users;
     }
 
-    public void setUserList(List<UserCreateUpdateDto> userList) {
-        this.userList = userList;
-    }
 
 }
