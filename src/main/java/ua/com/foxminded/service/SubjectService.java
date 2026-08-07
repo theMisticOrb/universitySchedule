@@ -100,4 +100,10 @@ public class SubjectService {
         subjectRepository.deleteById(id);
     }
 
+    public void createSubjects(List<SubjectCreateUpdateDto> list) {
+
+        List<Subject> subjects = list.stream().map(this::addOne).collect(Collectors.toList());
+        subjectRepository.saveAllAndFlush(subjects);
+    }
+
 }

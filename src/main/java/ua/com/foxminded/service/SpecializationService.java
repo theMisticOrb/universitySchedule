@@ -1,6 +1,7 @@
 package ua.com.foxminded.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -86,6 +87,12 @@ public class SpecializationService {
 
     public void deleteById(Integer id) {
         specializationRepository.deleteById(id);
+    }
+
+    public void createSpecializations(List<SpecializationCreateUpdateDto> list) {
+
+        List<Specialization> specializations = list.stream().map(this::addOne).collect(Collectors.toList());
+        specializationRepository.saveAllAndFlush(specializations);
     }
 
 }

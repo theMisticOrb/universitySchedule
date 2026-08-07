@@ -1,6 +1,7 @@
 package ua.com.foxminded.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -84,6 +85,12 @@ public class AcademicDepartmentService {
 
     public void deleteById(Integer id) {
         departmentRepository.deleteById(id);
+    }
+
+    public void createDepartments(List<AcademicDepartmentCreateUpdateDto> list) {
+        List<AcademicDepartment> departments = list.stream().map(this::addOne).collect(Collectors.toList());
+        departmentRepository.saveAllAndFlush(departments);
+        
     }
 
 }
