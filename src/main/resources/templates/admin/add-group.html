@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title th:text="#{admin.add.group}">Add a group</title>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+</head>
+
+<body>
+    <div th:replace="fragments/header :: header"></div>
+    <h2 th:text="#{admin.add.group}">Add a group</h2>
+
+    <div>
+        <input type="text" id="name" th:placeholder="#{admin.add.group.name}" />
+
+        <select id="departmentCode" onchange="filterSpecializations()">
+            <option value="" th:text="#{admin.add.group.selectDepartment}">— Select a department —</option>
+            <option th:each="dept : ${departments}" th:value="${dept.code}"
+                th:text="${dept.title + ' (' + dept.code + ')'}">
+            </option>
+        </select>
+
+        <select id="specializationCode">
+            <option value="" th:text="#{admin.add.group.selectDepartment2}">— First, select a department —</option>
+        </select>
+
+        <div id="form-error" style="color:red; display:none;"></div>
+        <button type="button" onclick="addToList()" th:text="#{admin.add.group.toList}">+ Add to list</button>
+    </div>
+
+    <div id="preview" style="display:none;">
+        <h3 th:text="#{admin.add.group.preview}">The following will be added:</h3>
+        <ul id="item-list"></ul>
+        <button type="button" onclick="saveAll()" th:text="#{admin.add.group.saveAll}">Save All</button>
+        <div id="save-error" style="color:red; display:none;"></div>
+    </div>
+
+    <script th:inline="javascript">
+        // Все специализации 
+        const allSpecializations = [];
+        /*[# th:each="spec : ${specializations}"]*/
+        allSpecializations.push({
+            code:           /*[[${spec.code}]]*/ '',
+            title:          /*[[${spec.title}]]*/ '',
+            departmentCode: /*[[${spec.department.code}]]*/ ''
+        });
+        /*[/]*/
+
+        const items = [];
+
+        function filterSpecializations() {
+            const deptCode = document.getElementById('departmentCode').value;
+            const select = document.getElementById('specializationCode');
+
+            select.innerHTML = '<option value="">— #{admin.add.group.selectSpec} —</option>';
+
+            if (!deptCode) return;
+
+            allSpecializations
+                .filter(s => s.departmentCode === deptCode)
+                .forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.code;
+                    opt.textContent = `${s.title} (${s.code})`;
+                    select.appendChild(opt);
+                });
+        }
+
+        function addToList() {
+            const errorDiv = document.getElementById('form-error');
+            errorDiv.style.display = 'none';
+
+            const name = document.getElementById('name').value.trim();
+            const specializationCode = document.getElementById('specializationCode').value;
+
+            if (!name || !specializationCode) {
+                errorDiv.textContent = '#{admin.add.script.fieldsError}';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            items.push({name, specializationCode});
+
+            const li = document.createElement('li');
+            li.textContent = `${name} — #{admin.add.group.script.spec}: ${specializationCode}`;
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = '✕';
+            removeBtn.onclick = () => {
+                items.splice([...li.parentNode.children].indexOf(li), 1);
+                li.remove();
+                if (items.length === 0)
+                    document.getElementById('preview').style.display = 'none';
+            };
+            li.appendChild(removeBtn);
+            document.getElementById('item-list').appendChild(li);
+            document.getElementById('preview').style.display = 'block';
+
+            document.getElementById('name').value = '';
+            document.getElementById('departmentCode').value = '';
+            document.getElementById('specializationCode').innerHTML =
+                '<option value="">— #{admin.add.group.selectDepartment2} —</option>';
+            document.getElementById('name').focus();
+        }
+
+        function saveAll() {
+            const errorDiv = document.getElementById('save-error');
+            
+            const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+            fetch('/admin/groups/batch', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', [csrfHeader]: csrfToken},
+                body: JSON.stringify({items})
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.redirect) window.location.href = data.redirect;
+                    else if (data.error) {errorDiv.textContent = data.error; errorDiv.style.display = 'block';}
+                })
+                .catch(() => {errorDiv.textContent = '#{admin.add.script.error}'; errorDiv.style.display = 'block';});
+        }
+    </script>
+</body>
+
+</html>

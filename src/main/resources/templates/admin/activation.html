@@ -2,39 +2,39 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title th:text="#{admin.dashboard.users.addusers}">Add users</title>
+    <title th:text="#{admin.activation}">Account Activation</title>
 </head>
 
 <body>
-    <h2>Активация аккаунта</h2>
-    <p>Подтвердите email и задайте пароль для входа в систему.</p>
+    <h2 th:text="#{admin.activation}">Account Activation</h2>
+    <p th:text="#{admin.activation.message}">Confirm your email address and set a password to log in.</p>
 
     <div th:if="${error}" style="color:red;" th:text="${error}"></div>
 
     <form th:action="@{/activation(tokenValue=${token})}" th:object="${request}" method="post">
 
         <div>
-            <label>Email</label>
+            <label th:text="#{admin.activation.email}">Email</label>
             <input type="email" th:field="*{email}" />
             <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color:red;">
             </span>
         </div>
 
         <div>
-            <label>Пароль</label>
+            <label th:text="#{admin.activation.password}">Password</label>
             <input type="password" th:field="*{password}" />
             <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color:red;">
             </span>
         </div>
 
         <div>
-            <label>Подтвердите пароль</label>
+            <label th:text="#{admin.activation.confirm}">Confirm your password</label>
             <input type="password" th:field="*{confirmPassword}" />
             <span th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" style="color:red;">
             </span>
         </div>
 
-        <button type="submit">Активировать аккаунт</button>
+        <button type="submit" th:text="#{admin.activation.activate}">Activate account</button>
     </form>
 
 

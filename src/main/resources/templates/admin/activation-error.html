@@ -2,16 +2,16 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title th:text="#{admin.dashboard.users.addusers}">Add users</title>
+    <title th:text="#{admin.activation.error}">Account activation error</title>
 </head>
 
 <body>
 
-    <h2>Ссылка устарела или недействительна</h2>
+    <h2 th:text="#{admin.activation.error.message}">The link is outdated or invalid</h2>
     <p th:text="${error}"></p>
-    <p>Обратитесь к администратору для получения новой ссылки.</p>
+    <p th:text="#{admin.activation.error.message2}">Please contact the administrator to get a new link.</p>
 
-    <a th:href="@{/login}">Вернуться на страницу входа</a>
+    <a th:href="@{/login}" th:text="#{admin.activation.back}">Return to the login page</a>
 
 </body>
 

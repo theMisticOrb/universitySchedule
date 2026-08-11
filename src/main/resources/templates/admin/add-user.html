@@ -14,21 +14,21 @@
 
     <div>
 
-        <input type="text" id="firstName" placeholder="First Name" />
-        <input type="text" id="middleName" placeholder="Middle Name" />
-        <input type="text" id="lastName" placeholder="Last Name" />
-        <input type="email" id="email" placeholder="Email" />
+        <input type="text" id="firstName" th:placeholder="#{admin.add.placeholder.user.first}" />
+        <input type="text" id="middleName" th:placeholder="#{admin.add.placeholder.user.middle}" />
+        <input type="text" id="lastName" th:placeholder="#{admin.add.placeholder.user.last}" />
+        <input type="email" id="email" th:placeholder="Email" />
 
         <select id="role" onchange="onRoleChange()">
-            <option value="">— Select role —</option>
-            <option value="STUDENT">Student</option>
-            <option value="TEACHER">Teacher</option>
+            <option value="" th:text="#{admin.add.user.role}">— Select role —</option>
+            <option value="STUDENT" th:text="#{admin.add.user.role.student}">Student</option>
+            <option value="TEACHER" th:text="#{admin.add.user.role.teacher}">Teacher</option>
         </select>
 
         <!-- Поле для студента -->
         <div id="group-field" style="display:none;">
             <select id="groupName">
-                <option value="">— Select group —</option>
+                <option value="" th:text="#{admin.add.user.student.group}">— Select group —</option>
                 <option th:each="group : ${groups}" th:value="${group.name}" th:text="${group.name}">
                 </option>
             </select>
@@ -37,7 +37,7 @@
         <!-- Поле для учителя -->
         <div id="department-field" style="display:none;">
             <select id="departmentCode">
-                <option value="">— Select department —</option>
+                <option value="" th:text="#{admin.add.user.teacher.dep}">— Select department —</option>
                 <option th:each="dept : ${departments}" th:value="${dept.code}"
                     th:text="${dept.title + ' (' + dept.code + ')'}">
                 </option>
@@ -49,9 +49,9 @@
     </div>
 
     <div id="preview" style="display:none;">
-        <h3>Будут добавлены:</h3>
+        <h3 th:text="#{admin.add.user.preview}">The following will be added:</h3>
         <ul id="user-list"></ul>
-        <button type="button" onclick="saveAll()">Сохранить всех</button>
+        <button type="button" onclick="saveAll()" th:text="#{admin.add.user.saveAll}">Save All</button>
         <div id="save-error" style="color:red; display:none;"></div>
     </div>
 
@@ -70,7 +70,6 @@
 
         function addToList() {
 
-            console.log('addToList called');
 
             const errorDiv = document.getElementById('form-error');
             errorDiv.style.display = 'none';
@@ -86,29 +85,29 @@
 
             // Валидация
             if (!firstName || !lastName || !email || !role) {
-                showError(errorDiv, 'Заполните имя, фамилию, email и роль');
+                showError(errorDiv, '#{admin.add.user.script.fillName}');
                 return;
             }
             if (role === 'STUDENT' && !groupName) {
-                showError(errorDiv, 'Выберите группу');
+                showError(errorDiv, '#{admin.add.user.student.group}');
                 return;
             }
             if (role === 'TEACHER' && !departmentCode) {
-                showError(errorDiv, 'Выберите кафедру');
+                showError(errorDiv, '#{admin.add.user.teacher.dep}');
                 return;
             }
 
 
             const user = {
-                firstName, middleName, lastName, email, roles:[role],
+                firstName, middleName, lastName, email, roles: [role],
                 groupName: role === 'STUDENT' ? groupName : null,
                 departmentCode: role === 'TEACHER' ? departmentCode : null
             };
             users.push(user);
 
             // Превью
-            const extraInfo = role === 'STUDENT' ? 'группа: ' + groupName
-                : role === 'TEACHER' ? 'кафедра: ' + departmentCode
+            const extraInfo = role === 'STUDENT' ? '#{admin.add.user.script.group}: ' + groupName
+                : role === 'TEACHER' ? '#{admin.add.user.script.dep}: ' + departmentCode
                     : '';
 
             const li = document.createElement('li');
@@ -162,7 +161,7 @@
                         showError(errorDiv, data.error);
                     }
                 })
-                .catch(() => showError(errorDiv, 'Ошибка при сохранении'));
+                .catch(() => showError(errorDiv, '#{admin.add.script.error}'));
         }
 
         function showError(div, message) {

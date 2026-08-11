@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title th:text="#{admin.add.subject}">Add a subject</title>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+</head>
+
+<body>
+    <div th:replace="fragments/header :: header"></div>
+    <h2 th:text="#{admin.add.subject}">Add a subject</h2>
+
+    <div>
+        <input type="text" id="title" th:placeholder="#{admin.add.placeholder.subject}" />
+
+        <select id="departmentCode">
+            <option value="" th:text="#{admin.add.subject.selectDepartment}">— Select a Department —</option>
+            <option th:each="dept : ${departments}" th:value="${dept.code}"
+                th:text="${dept.title + ' (' + dept.code + ')'}">
+            </option>
+        </select>
+
+        <input list="teachers-list" id="teacherFullName" placeholder="#{admin.add.subject.teacherInput}" />
+        <datalist id="teachers-list">
+            <option th:each="teacher : ${teachers}"
+                th:value="${teacher.lastName + ' ' + teacher.firstName + ' ' + teacher.middleName}">
+            </option>
+        </datalist>
+
+        <div id="form-error" style="color:red; display:none;"></div>
+        <button type="button" onclick="addToList()" th:text="#{admin.add.subject.toList}">+ Add to list</button>
+    </div>
+
+    <div id="preview" style="display:none;">
+        <h3 th:text="#{admin.add.subject.preview}">The following will be added:</h3>
+        <ul id="item-list"></ul>
+        <button type="button" onclick="saveAll()" th:text="#{admin.add.subject.saveAll}">Save all</button>
+        <div id="save-error" style="color:red; display:none;"></div>
+    </div>
+
+    <script th:inline="javascript">
+        const items = [];
+
+        function addToList() {
+            const errorDiv = document.getElementById('form-error');
+            errorDiv.style.display = 'none';
+
+            const title = document.getElementById('title').value.trim();
+            const departmentCode = document.getElementById('departmentCode').value;
+            const teacherFullName = document.getElementById('teacherFullName').value.trim();
+
+            if (!title || !departmentCode || !teacherFullName) {
+                errorDiv.textContent = '#{admin.add.script.fieldsError}';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            items.push({title, departmentCode, teacherFullName});
+
+            const li = document.createElement('li');
+            li.textContent = `${title} — #{admin.add.group.script.dep}: ${departmentCode}, викладач: ${teacherFullName}`;
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = '✕';
+            removeBtn.onclick = () => {
+                items.splice([...li.parentNode.children].indexOf(li), 1);
+                li.remove();
+                if (items.length === 0)
+                    document.getElementById('preview').style.display = 'none';
+            };
+            li.appendChild(removeBtn);
+            document.getElementById('item-list').appendChild(li);
+            document.getElementById('preview').style.display = 'block';
+
+            document.getElementById('title').value = '';
+            document.getElementById('departmentCode').value = '';
+            document.getElementById('teacherFullName').value = '';
+            document.getElementById('title').focus();
+        }
+
+        function saveAll() {
+            const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+            const errorDiv = document.getElementById('save-error');
+
+            fetch('/admin/subjects/batch', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', [csrfHeader]: csrfToken},
+                body: JSON.stringify({items})
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.redirect) window.location.href = data.redirect;
+                    else if (data.error) {errorDiv.textContent = data.error; errorDiv.style.display = 'block';}
+                })
+                .catch(() => {errorDiv.textContent = '#{admin.add.script.error}'; errorDiv.style.display = 'block';});
+        }
+    </script>
+</body>
+
+</html>
