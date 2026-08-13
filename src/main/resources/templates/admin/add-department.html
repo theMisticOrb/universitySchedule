@@ -43,7 +43,7 @@
             const facultyCode = document.getElementById('facultyCode').value;
 
             if (!title || !code || !facultyCode) {
-                errorDiv.textContent = '#{admin.add.script.fieldsError}';
+                errorDiv.textContent = '[[#{admin.add.script.fieldsError}]]';
                 errorDiv.style.display = 'block';
                 return;
             }
@@ -51,7 +51,7 @@
             items.push({title, code, facultyCode});
 
             const li = document.createElement('li');
-            li.textContent = `${title} (${code}) — #{admin.add.department.script.faculty}: ${facultyCode}`;
+            li.textContent = `${title} (${code}) — [[#{admin.add.department.script.faculty}]]: ${facultyCode}`;
             const removeBtn = document.createElement('button');
             removeBtn.textContent = '✕';
             removeBtn.onclick = () => {
@@ -86,7 +86,7 @@
                     if (data.redirect) window.location.href = data.redirect;
                     else if (data.error) {errorDiv.textContent = data.error; errorDiv.style.display = 'block';}
                 })
-                .catch(() => {errorDiv.textContent = '#{admin.add.script.error}'; errorDiv.style.display = 'block';});
+                .catch(() => {errorDiv.textContent = '[[#{admin.add.script.error}]]'; errorDiv.style.display = 'block';});
         }
     </script>
 </body>

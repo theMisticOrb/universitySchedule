@@ -51,7 +51,7 @@
             const teacherFullName = document.getElementById('teacherFullName').value.trim();
 
             if (!title || !departmentCode || !teacherFullName) {
-                errorDiv.textContent = '#{admin.add.script.fieldsError}';
+                errorDiv.textContent = '[[#{admin.add.script.fieldsError}]]';
                 errorDiv.style.display = 'block';
                 return;
             }
@@ -59,7 +59,7 @@
             items.push({title, departmentCode, teacherFullName});
 
             const li = document.createElement('li');
-            li.textContent = `${title} — #{admin.add.group.script.dep}: ${departmentCode}, викладач: ${teacherFullName}`;
+            li.textContent = `${title} — [[#{admin.add.group.script.dep}]]: ${departmentCode}, [[#{admin.add.group.script.teacher}]]: ${teacherFullName}`;
             const removeBtn = document.createElement('button');
             removeBtn.textContent = '✕';
             removeBtn.onclick = () => {
@@ -93,7 +93,7 @@
                     if (data.redirect) window.location.href = data.redirect;
                     else if (data.error) {errorDiv.textContent = data.error; errorDiv.style.display = 'block';}
                 })
-                .catch(() => {errorDiv.textContent = '#{admin.add.script.error}'; errorDiv.style.display = 'block';});
+                .catch(() => {errorDiv.textContent = '[[#{admin.add.script.error}]]'; errorDiv.style.display = 'block';});
         }
     </script>
 </body>

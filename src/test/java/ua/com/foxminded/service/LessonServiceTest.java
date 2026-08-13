@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -47,7 +46,6 @@ import ua.com.foxminded.repository.TeacherRepository;
 @Transactional
 @SpringBootTest(classes = { MainApp.class })
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles({ "test" })
 class LessonServiceTest {
 
     @Autowired
@@ -102,6 +100,7 @@ class LessonServiceTest {
         teacher.setEmail("Jon@ua.com");
         teacher.setPassword("Jon1234");
         teacher.setRoles(roles);
+        teacher.setId(1);
         Teacher jonTeacher = teacherRepository.save(teacher);
 
         Subject subject = new Subject();
@@ -112,22 +111,22 @@ class LessonServiceTest {
 
         Group group = new Group();
         group.setSpecialization(savedSpecialization);
+        group.setName("1K");
         group.setStartDate(LocalDate.now());
         group.setYearOfUniv(new YearOfUniv(2, 6));
         Group savedGroup = groupRepository.save(group);
 
-        lesson.setClassroomId(secondAClassroom.getId());
-        lesson.setSubjectId(math.getId());
+        lesson.setClassroomName(secondAClassroom.getName());
+        lesson.setSubjectName(math.getTitle());
         lesson.setWeekDay(WeekDay.FRIDAY);
         lesson.setClassHour(ClassHour.FIRST_CLASS);
-        lesson.setGroupId(savedGroup.getId());
-        lesson.setTeacherId(jonTeacher.getId());
+        lesson.setGroupName(savedGroup.getName());
     }
 
     @Test
     void addOne_shouldSaveNewEntity_whenCalled() {
 
-        Lesson firstLesson = service.addOne(lesson);
+        Lesson firstLesson = service.addOne(lesson, 1);
 
         assertNotNull(firstLesson.getId());
     }
@@ -135,7 +134,7 @@ class LessonServiceTest {
     @Test
     void findById_shouldFindEntityById_whenCalledIfEntityExists() {
 
-        Lesson saved = service.addOne(lesson);
+        Lesson saved = service.addOne(lesson, 1);
         Lesson found = service.findById(saved.getId());
 
         assertNotNull(found);
@@ -159,7 +158,7 @@ class LessonServiceTest {
 
     @Test
     void findByTitle_shouldReturnLessonBySubjectName_whenExists() {
-        Lesson saved = service.addOne(lesson);
+        Lesson saved = service.addOne(lesson, 1);
 
         List<Lesson> result = service.findBySubjectTitleAndWeekDay("Math", WeekDay.FRIDAY);
 
@@ -169,7 +168,7 @@ class LessonServiceTest {
 
     @Test
     void update_shouldUpdateEntity_whenCalled() {
-        Lesson firstLesson = service.addOne(lesson);
+        Lesson firstLesson = service.addOne(lesson, 1);
 
         Subject subject = new Subject();
         subject.setTitle("History");
@@ -178,7 +177,7 @@ class LessonServiceTest {
         Subject history = subjectRepository.save(subject);
 
         LessonCreateUpdateDto firstLessonUpdated = new LessonCreateUpdateDto();
-        firstLessonUpdated.setSubjectId(history.getId());
+        firstLessonUpdated.setSubjectName(history.getTitle());
         Lesson result = service.update(firstLessonUpdated, firstLesson.getId());
 
         assertEquals(firstLesson.getId(), result.getId());
@@ -190,10 +189,10 @@ class LessonServiceTest {
     @Test
     void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
 
-        Lesson firstLesson = service.addOne(lesson);
+        Lesson firstLesson = service.addOne(lesson, 1);
 
         LessonCreateUpdateDto firstLessonUpdated = new LessonCreateUpdateDto();
-        firstLessonUpdated.setSubjectId(null);
+        firstLessonUpdated.setSubjectName(null);
         Lesson result = service.update(firstLessonUpdated, firstLesson.getId());
 
         assertEquals("Math", result.getSubject().getTitle());
@@ -201,7 +200,7 @@ class LessonServiceTest {
 
     @Test
     void delete_shouldDeleteEntityById_whenEntityExists() {
-        Lesson firstLesson = service.addOne(lesson);
+        Lesson firstLesson = service.addOne(lesson, 1);
         int id = firstLesson.getId();
 
         assertNotNull(service.findById(id));

@@ -36,7 +36,7 @@
             const code = document.getElementById('code').value.trim();
 
             if (!title || !code) {
-                errorDiv.textContent = '#{admin.add.script.fieldsError}';
+                errorDiv.textContent = '[[{admin.add.script.fieldsError}]]';
                 errorDiv.style.display = 'block';
                 return;
             }
@@ -78,7 +78,7 @@
                     if (data.redirect) window.location.href = data.redirect;
                     else if (data.error) {errorDiv.textContent = data.error; errorDiv.style.display = 'block';}
                 })
-                .catch(() => {errorDiv.textContent = '#{admin.add.script.error}'; errorDiv.style.display = 'block';});
+                .catch(() => {errorDiv.textContent = '[[{admin.add.script.error}]]'; errorDiv.style.display = 'block';});
         }
     </script>
 </body>

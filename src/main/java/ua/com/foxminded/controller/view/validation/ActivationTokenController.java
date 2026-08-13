@@ -1,4 +1,4 @@
-package ua.com.foxminded.controller.view;
+package ua.com.foxminded.controller.view.validation;
 
 import javax.validation.Valid;
 
@@ -17,12 +17,12 @@ import ua.com.foxminded.service.ActivationUserService;
 
 @Controller
 @RequestMapping("/activation")
-public class ActivationTokenRestController {
+public class ActivationTokenController {
 
     private final ActivationUserService activationService;
     private static final String TOKEN = "token";
 
-    public ActivationTokenRestController(ActivationUserService activationService) {
+    public ActivationTokenController(ActivationUserService activationService) {
         this.activationService = activationService;
     }
 

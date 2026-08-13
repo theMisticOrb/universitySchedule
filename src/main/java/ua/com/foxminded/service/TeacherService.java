@@ -38,6 +38,7 @@ public class TeacherService {
         this.passwordEncoder = passwordEncoder;
     }
 
+//    for generating test data
     public Teacher addOne(TeacherCreateUpdateDto dto) {
         Teacher teacher = setTeacherValues(dto);
         return teacherRepository.save(teacher);

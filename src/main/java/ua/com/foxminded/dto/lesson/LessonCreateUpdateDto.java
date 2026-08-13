@@ -5,40 +5,38 @@ import ua.com.foxminded.enums.WeekDay;
 
 public class LessonCreateUpdateDto {
 
-    private Integer classroomId;
-    private Integer subjectId;
+    private String classroomName;
+    private String subjectName;
     private ClassHour classHour;
     private WeekDay weekDay;
-    private Integer groupId;
-    private Integer teacherId;
+    private String groupName;
 
     public LessonCreateUpdateDto() {
     }
 
-    public LessonCreateUpdateDto(Integer classroomId, Integer subjectId, ClassHour classHour, WeekDay weekDay,
-            Integer groupId, Integer teacherId) {
-        this.classroomId = classroomId;
-        this.subjectId = subjectId;
+    public LessonCreateUpdateDto(String classroomName, String subjectName, ClassHour classHour, WeekDay weekDay,
+            String groupName) {
+        this.classroomName = classroomName;
+        this.subjectName = subjectName;
         this.classHour = classHour;
         this.weekDay = weekDay;
-        this.groupId = groupId;
-        this.teacherId = teacherId;
+        this.groupName = groupName;
     }
 
-    public Integer getClassroomId() {
-        return classroomId;
+    public String getClassroomName() {
+        return classroomName;
     }
 
-    public void setClassroomId(Integer classroomId) {
-        this.classroomId = classroomId;
+    public void setClassroomName(String classroomName) {
+        this.classroomName = classroomName;
     }
 
-    public Integer getSubjectId() {
-        return subjectId;
+    public String getSubjectName() {
+        return subjectName;
     }
 
-    public void setSubjectId(Integer subjectId) {
-        this.subjectId = subjectId;
+    public void setSubjectName(String subjectName) {
+        this.subjectName = subjectName;
     }
 
     public ClassHour getClassHour() {
@@ -57,20 +55,12 @@ public class LessonCreateUpdateDto {
         this.weekDay = weekDay;
     }
 
-    public Integer getGroupId() {
-        return groupId;
+    public String getGroupName() {
+        return groupName;
     }
 
-    public void setGroupId(Integer groupId) {
-        this.groupId = groupId;
-    }
-
-    public Integer getTeacherId() {
-        return teacherId;
-    }
-
-    public void setTeacherId(Integer teacherId) {
-        this.teacherId = teacherId;
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
 }

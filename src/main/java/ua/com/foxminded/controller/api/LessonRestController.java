@@ -50,10 +50,10 @@ public class LessonRestController {
         return mapper.toResponseDto(service.findById(id));
     }
 
-    @PostMapping
+    @PostMapping("/{teacherId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public LessonResponseDto create(@RequestBody LessonCreateUpdateDto dto) {
-        return mapper.toResponseDto(service.addOne(dto));
+    public LessonResponseDto create(@RequestBody LessonCreateUpdateDto dto, @PathVariable Integer teacherId) {
+        return mapper.toResponseDto(service.addOne(dto, teacherId));
     }
 
     @DeleteMapping("/{id}")

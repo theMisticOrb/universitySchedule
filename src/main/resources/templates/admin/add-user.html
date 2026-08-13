@@ -83,17 +83,16 @@
             const departmentCode = document.getElementById('departmentCode').value;
 
 
-            // Валидация
             if (!firstName || !lastName || !email || !role) {
-                showError(errorDiv, '#{admin.add.user.script.fillName}');
+                showError(errorDiv, '[[#{admin.add.user.script.fillName}]]');
                 return;
             }
             if (role === 'STUDENT' && !groupName) {
-                showError(errorDiv, '#{admin.add.user.student.group}');
+                showError(errorDiv, '[[#{admin.add.user.student.group}]]');
                 return;
             }
             if (role === 'TEACHER' && !departmentCode) {
-                showError(errorDiv, '#{admin.add.user.teacher.dep}');
+                showError(errorDiv, '[[#{admin.add.user.teacher.dep}]]');
                 return;
             }
 
@@ -105,9 +104,8 @@
             };
             users.push(user);
 
-            // Превью
-            const extraInfo = role === 'STUDENT' ? '#{admin.add.user.script.group}: ' + groupName
-                : role === 'TEACHER' ? '#{admin.add.user.script.dep}: ' + departmentCode
+            const extraInfo = role === 'STUDENT' ? '[[#{admin.add.user.script.group}]]: ' + groupName
+                : role === 'TEACHER' ? '[[#{admin.add.user.script.dep}]]: ' + departmentCode
                     : '';
 
             const li = document.createElement('li');
@@ -127,7 +125,6 @@
             document.getElementById('user-list').appendChild(li);
             document.getElementById('preview').style.display = 'block';
 
-            // Очистка формы
             ['firstName', 'middleName', 'lastName', 'email'].forEach(id => {
                 document.getElementById(id).value = '';
             });
@@ -161,7 +158,7 @@
                         showError(errorDiv, data.error);
                     }
                 })
-                .catch(() => showError(errorDiv, '#{admin.add.script.error}'));
+                .catch(() => showError(errorDiv, '[[#{admin.add.script.error}]]'));
         }
 
         function showError(div, message) {

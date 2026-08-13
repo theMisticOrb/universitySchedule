@@ -53,7 +53,7 @@
             const deptCode = document.getElementById('departmentCode').value;
             const select = document.getElementById('specializationCode');
 
-            select.innerHTML = '<option value="">— #{admin.add.group.selectSpec} —</option>';
+            select.innerHTML = '<option value="">— [[#{admin.add.group.selectSpec}]] —</option>';
 
             if (!deptCode) return;
 
@@ -75,7 +75,7 @@
             const specializationCode = document.getElementById('specializationCode').value;
 
             if (!name || !specializationCode) {
-                errorDiv.textContent = '#{admin.add.script.fieldsError}';
+                errorDiv.textContent = '[[#{admin.add.script.fieldsError}]]';
                 errorDiv.style.display = 'block';
                 return;
             }
@@ -83,7 +83,7 @@
             items.push({name, specializationCode});
 
             const li = document.createElement('li');
-            li.textContent = `${name} — #{admin.add.group.script.spec}: ${specializationCode}`;
+            li.textContent = `${name} — [[#{admin.add.group.script.spec}]]: ${specializationCode}`;
             const removeBtn = document.createElement('button');
             removeBtn.textContent = '✕';
             removeBtn.onclick = () => {
@@ -99,7 +99,7 @@
             document.getElementById('name').value = '';
             document.getElementById('departmentCode').value = '';
             document.getElementById('specializationCode').innerHTML =
-                '<option value="">— #{admin.add.group.selectDepartment2} —</option>';
+                '<option value="">— [[#{admin.add.group.selectDepartment2}]] —</option>';
             document.getElementById('name').focus();
         }
 
@@ -119,7 +119,7 @@
                     if (data.redirect) window.location.href = data.redirect;
                     else if (data.error) {errorDiv.textContent = data.error; errorDiv.style.display = 'block';}
                 })
-                .catch(() => {errorDiv.textContent = '#{admin.add.script.error}'; errorDiv.style.display = 'block';});
+                .catch(() => {errorDiv.textContent = '[[#{admin.add.script.error}]]'; errorDiv.style.display = 'block';});
         }
     </script>
 </body>

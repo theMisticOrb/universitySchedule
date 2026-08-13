@@ -1,5 +1,6 @@
 package ua.com.foxminded.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,5 +14,6 @@ import ua.com.foxminded.entity.Subject;
 public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 
     Optional<Subject> findByTitle(String title);
+    List<Subject> findByTeacher_Id(Integer teacherId);
     boolean existsByTitle(String title);
 }
