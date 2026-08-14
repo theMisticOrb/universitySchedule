@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -103,9 +104,13 @@ class LessonServiceTest {
         teacher.setId(1);
         Teacher jonTeacher = teacherRepository.save(teacher);
 
+        List<Teacher> teachers = new ArrayList<>();
+        teachers.add(jonTeacher);
+       
+        
         Subject subject = new Subject();
         subject.setTitle("Math");
-        subject.setTeacher(jonTeacher);
+        subject.setTeachers(teachers);
         subject.setDepartment(computerScience);
         Subject math = subjectRepository.save(subject);
 
@@ -169,10 +174,12 @@ class LessonServiceTest {
     @Test
     void update_shouldUpdateEntity_whenCalled() {
         Lesson firstLesson = service.addOne(lesson, 1);
-
+        List<Teacher> teachers = new ArrayList<>();
+        teachers.add(teacher);
+       
         Subject subject = new Subject();
         subject.setTitle("History");
-        subject.setTeacher(teacher);
+        subject.setTeachers(teachers);
         subject.setDepartment(computerScience);
         Subject history = subjectRepository.save(subject);
 

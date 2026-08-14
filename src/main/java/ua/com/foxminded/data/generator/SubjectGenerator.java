@@ -28,7 +28,7 @@ public class SubjectGenerator {
         this.faker = faker;
     }
 
-    public List<Subject> generateSubjects(int subjectCount, Teacher teacher, AcademicDepartment department) {
+    public List<Subject> generateSubjects(int subjectCount, List<Teacher> teachers, AcademicDepartment department) {
         List<Subject> subjects = new ArrayList<>();
 
         int attempt = 0;
@@ -45,10 +45,10 @@ public class SubjectGenerator {
 
             Subject subject = new Subject();
             subject.setTitle(subjectTitle);
-            subject.setTeacher(teacher);
+            subject.setTeachers(teachers);
             subject.setDepartment(department);
 
-            teacher.getSubjects().add(subject);
+            teachers.forEach(teacher -> teacher.getSubjects().add(subject));
             department.getSubjects().add(subject);
             usedTitles.add(subjectTitle);
             subjects.add(subject);

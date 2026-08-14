@@ -58,16 +58,23 @@ class SubjectControllerTest {
         Teacher teacher = new Teacher();
         teacher.setId(1);
 
+        List<Teacher> teachers = new ArrayList<>();
+        teachers.add(teacher);
+
         entity.setId(1);
-        entity.setTeacher(teacher);
+        entity.setTeachers(teachers);
         entity.setTitle("Computer Science");
         return entity;
     }
 
     private SubjectResponseDto createResponseDto() {
         SubjectResponseDto dto = new SubjectResponseDto();
+
+        List<String> teacherEmails = new ArrayList<>();
+        teacherEmails.add("teacher@gmail.com");
+
         dto.setId(1);
-        dto.setTeacherEmail("teacher@gmail.com");
+        dto.setTeacherEmails(teacherEmails);
         dto.setTitle("Computer Science");
         return dto;
     }
@@ -128,7 +135,10 @@ class SubjectControllerTest {
         SubjectResponseDto responseDto = createResponseDto();
 
         SubjectCreateUpdateDto requestDto = new SubjectCreateUpdateDto();
-        requestDto.setTeacherEmail("teacher@gmail.com");
+
+        List<String> teacherEmails = new ArrayList<>();
+        teacherEmails.add("teacher@gmail.com");
+        requestDto.setTeacherEmails(teacherEmails);
         requestDto.setTitle("Computer Science");
 
         when(service.addOne(any(SubjectCreateUpdateDto.class))).thenReturn(subject);
@@ -154,7 +164,9 @@ class SubjectControllerTest {
         SubjectResponseDto responseDto = createResponseDto();
 
         SubjectCreateUpdateDto requestDto = new SubjectCreateUpdateDto();
-        requestDto.setTeacherEmail("teacher@gmail.com");
+        List<String> teacherEmails = new ArrayList<>();
+        teacherEmails.add("teacher@gmail.com");
+        requestDto.setTeacherEmails(teacherEmails);
         requestDto.setTitle("Computer Science");
 
         when(service.update(any(SubjectCreateUpdateDto.class), eq(1))).thenReturn(subject);

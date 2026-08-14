@@ -43,6 +43,15 @@
                 </option>
             </select>
         </div>
+      <!--   <div id="subject-field" style="display:none">
+            <select id="subjectTitle">
+                <option value="" th:text="admin.add.user.teacher.subject">— Select subject —</option>
+                  <option th:each="subj : ${subjects}" th:value="${subj.title}">  
+                      
+                      
+                </option>
+            </select>
+        </div> -->
 
         <div id="form-error" style="color:red; display:none;"></div>
         <button type="button" onclick="addToList()">+ Add to list</button>

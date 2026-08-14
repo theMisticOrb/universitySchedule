@@ -1,5 +1,6 @@
 package ua.com.foxminded.data.structure;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -119,7 +120,7 @@ public class DataStructureGenerator {
     private void generateDepartmentStructure(AcademicDepartment department) {
 
         List<Teacher> teachers = generateTeachers(department);
-        teachers.forEach(teacher -> subjectGen.generateSubjects(config.getSubjectsPerTeacher(), teacher, department));
+        teachers.forEach(teacher -> subjectGen.generateSubjects(config.getSubjectsPerTeacher(), Arrays.asList(teacher), department));
 
         List<Specialization> specializations = generateSpecializations(department);
         specializations.forEach(specialization -> {

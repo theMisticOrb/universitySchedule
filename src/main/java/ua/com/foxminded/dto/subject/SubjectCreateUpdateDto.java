@@ -8,8 +8,8 @@ import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
 public class SubjectCreateUpdateDto {
 
     private String title;
-    private String teacherFullName;
-    private String teacherEmail;
+    private List<String> teacherFullNames;
+    private List<String> teacherEmails;
     private String departmentCode;
     private List<GroupCreateUpdateDto> groups;
     private List<LessonCreateUpdateDto> lessons;
@@ -17,11 +17,11 @@ public class SubjectCreateUpdateDto {
     public SubjectCreateUpdateDto() {
     }
 
-    public SubjectCreateUpdateDto(String title, String teacherFullName, String teacherEmail, String departmentCode,
-            List<GroupCreateUpdateDto> groups, List<LessonCreateUpdateDto> lessons) {
+    public SubjectCreateUpdateDto(String title, List<String> teacherFullNames, List<String> teacherEmails,
+            String departmentCode, List<GroupCreateUpdateDto> groups, List<LessonCreateUpdateDto> lessons) {
         this.title = title;
-        this.teacherFullName = teacherFullName;
-        this.teacherEmail = teacherEmail;
+        this.teacherFullNames = teacherFullNames;
+        this.teacherEmails = teacherEmails;
         this.departmentCode = departmentCode;
         this.groups = groups;
         this.lessons = lessons;
@@ -35,12 +35,12 @@ public class SubjectCreateUpdateDto {
         this.title = title;
     }
 
-    public String getTeacherFullName() {
-        return teacherFullName;
+    public List<String> getTeacherFullNames() {
+        return teacherFullNames;
     }
 
-    public void setTeacherFullName(String teacherFullName) {
-        this.teacherFullName = teacherFullName;
+    public void setTeacherFullNames(List<String> teacherFullName) {
+        this.teacherFullNames = teacherFullName;
     }
 
     public String getDepartmentCode() {
@@ -67,14 +67,12 @@ public class SubjectCreateUpdateDto {
         this.lessons = lessons;
     }
 
-    public String getTeacherEmail() {
-        return teacherEmail;
+    public List<String> getTeacherEmails() {
+        return teacherEmails;
     }
 
-    public void setTeacherEmail(String teacherEmail) {
-        this.teacherEmail = teacherEmail;
+    public void setTeacherEmails(List<String> teacherEmail) {
+        this.teacherEmails = teacherEmail;
     }
-    
-    
 
 }

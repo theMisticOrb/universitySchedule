@@ -82,7 +82,7 @@ public class TeacherService {
             AcademicDepartment department = departmentService.findByCode(updated.getDepartmentCode());
             UpdateUtil.setIfNotNull(department, teacher::setDepartment);
             UpdateUtil.updateListIfNotNull(updated.getSubjects(),
-                    dto -> subjectMapper.toEntity(dto, teacher, department));
+                    dto -> subjectMapper.toEntity(dto, Arrays.asList(teacher), department));
         }
         UpdateUtil.setIfNotNull(updated.getFirstName(), teacher::setFirstName);
         UpdateUtil.setIfNotNull(updated.getMiddleName(), teacher::setMiddleName);

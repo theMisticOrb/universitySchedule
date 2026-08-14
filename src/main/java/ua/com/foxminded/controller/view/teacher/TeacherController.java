@@ -49,7 +49,7 @@ public class TeacherController {
     public String showAddLessonForm(Model model, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        model.addAttribute("subjects", subjectRepository.findByTeacher_Id(userDetails.getUser().getId()));
+        model.addAttribute("subjects", subjectRepository.findByTeacherId(userDetails.getUser().getId()));
         model.addAttribute("classrooms", classroomRepository.findAll());
         model.addAttribute("groups", groupRepository.findAll());
         model.addAttribute("weekDays", WeekDay.values());
@@ -68,7 +68,7 @@ public class TeacherController {
             return "redirect:/teacher/schedule";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
-            model.addAttribute("subjects", subjectRepository.findByTeacher_Id(userDetails.getUser().getId()));
+            model.addAttribute("subjects", subjectRepository.findByTeacherId(userDetails.getUser().getId()));
             model.addAttribute("classrooms", classroomRepository.findAll());
             model.addAttribute("groups", groupRepository.findAll());
             model.addAttribute("weekDays", WeekDay.values());

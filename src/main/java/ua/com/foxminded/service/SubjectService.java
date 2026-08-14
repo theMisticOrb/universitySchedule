@@ -46,10 +46,11 @@ public class SubjectService {
 
     public Subject addOne(SubjectCreateUpdateDto dto) {
 
-        Teacher teacher = teacherService.findByEmail(dto.getTeacherEmail());
+        List<Teacher> teachers = dto.getTeacherEmails().stream().map(teacherService::findByEmail)
+                .collect(Collectors.toList());
         AcademicDepartment department = departmentService.findByCode(dto.getDepartmentCode());
 
-        Subject subject = subjectMapper.toEntity(dto, teacher, department);
+        Subject subject = subjectMapper.toEntity(dto, teachers, department);
 
         try {
             return subjectRepository.save(subject);
@@ -77,9 +78,10 @@ public class SubjectService {
 
         Subject subject = findById(id);
 
-        if (updated.getTeacherEmail() != null) {
-            Teacher teacher = teacherService.findByEmail(updated.getTeacherEmail());
-            UpdateUtil.setIfNotNull(teacher, subject::setTeacher);
+        if (updated.getTeacherEmails() != null) {
+            List<Teacher> teachers = updated.getTeacherEmails().stream().map(teacherService::findByEmail)
+                    .collect(Collectors.toList());
+            UpdateUtil.setIfNotNull(teachers, subject::setTeachers);
 
         }
         UpdateUtil.setIfNotNull(updated.getTitle(), subject::setTitle);

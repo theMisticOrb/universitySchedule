@@ -28,9 +28,8 @@ public class Subject {
     @Column(name = "subject_title")
     private String title;
 
-    @ManyToOne
-    @JoinColumn(name = "teacher_id")
-    private Teacher teacher;
+    @ManyToMany(mappedBy = "subjects")
+    private List<Teacher> teachers = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "department_id")
@@ -45,11 +44,11 @@ public class Subject {
     public Subject() {
     }
 
-    public Subject(Integer id, String title, Teacher teacher, AcademicDepartment department, Set<Group> groups,
+    public Subject(Integer id, String title, List<Teacher> teachers, AcademicDepartment department, Set<Group> groups,
             List<Lesson> lesson) {
         this.id = id;
         this.title = title;
-        this.teacher = teacher;
+        this.teachers = teachers;
         this.department = department;
         this.groups = groups;
         this.lesson = lesson;
@@ -71,12 +70,13 @@ public class Subject {
         this.title = title;
     }
 
-    public Teacher getTeacher() {
-        return teacher;
+
+    public List<Teacher> getTeachers() {
+        return teachers;
     }
 
-    public void setTeacher(Teacher teacher) {
-        this.teacher = teacher;
+    public void setTeachers(List<Teacher> teachers) {
+        this.teachers = teachers;
     }
 
     public AcademicDepartment getDepartment() {

@@ -9,8 +9,8 @@ public class SubjectResponseDto {
 
     private Integer id;
     private String title;
-    private String teacherEmail;
-    private String teacherFullName;
+    private List<String> teacherEmails;
+    private List<String> teacherFullNames;
     private Integer departmentId;
     private List<GroupCreateUpdateDto> groups;
     private List<LessonCreateUpdateDto> lessons;
@@ -18,12 +18,12 @@ public class SubjectResponseDto {
     public SubjectResponseDto() {
     }
 
-    public SubjectResponseDto(Integer id, String title, String teacherEmail, String teacherFullName,
+    public SubjectResponseDto(Integer id, String title, List<String> teacherEmails, List<String> teacherFullNames,
             Integer departmentId, List<GroupCreateUpdateDto> groups, List<LessonCreateUpdateDto> lessons) {
         this.id = id;
         this.title = title;
-        this.teacherEmail = teacherEmail;
-        this.teacherFullName = teacherFullName;
+        this.teacherEmails = teacherEmails;
+        this.teacherFullNames = teacherFullNames;
         this.departmentId = departmentId;
         this.groups = groups;
         this.lessons = lessons;
@@ -45,20 +45,20 @@ public class SubjectResponseDto {
         this.title = title;
     }
 
-    public String getTeacherEmail() {
-        return teacherEmail;
+    public List<String> getTeacherEmails() {
+        return teacherEmails;
     }
 
-    public void setTeacherEmail(String teacherEmail) {
-        this.teacherEmail = teacherEmail;
+    public void setTeacherEmails(List<String> teacherEmails) {
+        this.teacherEmails = teacherEmails;
     }
 
-    public String getTeacherFullName() {
-        return teacherFullName;
+    public List<String> getTeacherFullNames() {
+        return teacherFullNames;
     }
 
-    public void setTeacherFullName(String teacherFullName) {
-        this.teacherFullName = teacherFullName;
+    public void setTeacherFullNames(List<String> teacherFullNames) {
+        this.teacherFullNames = teacherFullNames;
     }
 
     public Integer getDepartmentId() {

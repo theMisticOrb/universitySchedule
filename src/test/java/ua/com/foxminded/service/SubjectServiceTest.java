@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -75,8 +76,11 @@ class SubjectServiceTest {
         teacher.setPassword("Jon1234");
         teacher.setRoles(roles);
         Teacher jonTeacher = teacherRepository.save(teacher);
+        
+        List<String> teacherEmails = new ArrayList<>();
+        teacherEmails.add(jonTeacher.getEmail());
 
-        subject.setTeacherEmail(jonTeacher.getEmail());
+        subject.setTeacherEmails(teacherEmails);
         subject.setTitle("Math");
         subject.setDepartmentCode(csDepartment.getCode());
 
