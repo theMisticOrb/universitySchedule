@@ -3,6 +3,7 @@ package ua.com.foxminded.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -12,11 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.dto.user.TeacherCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
+import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.SubjectMapper;
 import ua.com.foxminded.mapper.TeacherMapper;
+import ua.com.foxminded.repository.SubjectRepository;
 import ua.com.foxminded.repository.TeacherRepository;
 
 @Service
@@ -27,14 +30,17 @@ public class TeacherService {
     private AcademicDepartmentService departmentService;
     private TeacherMapper teacherMapper;
     private SubjectMapper subjectMapper;
+    private SubjectRepository subjectRepository;
     private PasswordEncoder passwordEncoder;
 
     public TeacherService(TeacherRepository teacherRepository, AcademicDepartmentService departmentService,
-            TeacherMapper teacherMapper, SubjectMapper subjectMapper, PasswordEncoder passwordEncoder) {
+            TeacherMapper teacherMapper, SubjectMapper subjectMapper, SubjectRepository subjectRepository,
+            PasswordEncoder passwordEncoder) {
         this.teacherRepository = teacherRepository;
         this.departmentService = departmentService;
         this.teacherMapper = teacherMapper;
         this.subjectMapper = subjectMapper;
+        this.subjectRepository = subjectRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -114,6 +120,25 @@ public class TeacherService {
 
     public long count() {
         return teacherRepository.count();
+    }
+
+    public void assignSubjects(Integer teacherId, List<String> subjectTitles) {
+        Teacher teacher = findById(teacherId);
+        List<Subject> newSubjects = subjectTitles.stream()
+            .map(title -> subjectRepository.findByTitle(title)
+                .orElseThrow(() -> new EntityNotFoundException("Subject not found: " + title)))
+            .filter(subject -> !teacher.getSubjects().contains(subject)) 
+            .collect(Collectors.toList());
+        teacher.getSubjects().addAll(newSubjects);
+        teacherRepository.save(teacher);
+    }
+    
+    public void removeSubjectFromTeacher(Integer teacherId, String subjectTitle) {
+        Teacher teacher = findById(teacherId);
+        Subject subject = subjectRepository.findByTitle(subjectTitle)
+            .orElseThrow(() -> new EntityNotFoundException("Subject not found: " + subjectTitle));
+        teacher.getSubjects().remove(subject);
+        teacherRepository.save(teacher);
     }
 
 }

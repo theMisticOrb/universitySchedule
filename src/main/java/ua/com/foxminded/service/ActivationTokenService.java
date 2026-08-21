@@ -3,6 +3,8 @@ package ua.com.foxminded.service;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import ua.com.foxminded.entity.ActivationToken;
@@ -10,6 +12,7 @@ import ua.com.foxminded.entity.AppUser;
 import ua.com.foxminded.repository.ActivationTokenRepository;
 
 @Service
+@Transactional
 public class ActivationTokenService {
 
     private final ActivationTokenRepository tokenRepo;

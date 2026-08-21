@@ -3,6 +3,7 @@ package ua.com.foxminded.service;
 import java.time.LocalDateTime;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import ua.com.foxminded.repository.ActivationTokenRepository;
 import ua.com.foxminded.repository.UserRepository;
 
 @Service
+@Transactional
 public class ActivationUserService {
 
     private final ActivationTokenRepository tokenRepository;
@@ -81,14 +83,14 @@ public class ActivationUserService {
     
     public void requestPasswordReset(String email) {
         AppUser user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new EntityNotFoundException("Користувача не знайдено"));
+            .orElseThrow(() -> new EntityNotFoundException("User not found!"));
         String token = activationTokenService.createToken(user);
         emailService.sendPasswordResetEmail(user.getEmail(), token);
     }
 
     public void resetPassword(String tokenValue, String newPassword, String confirmPassword) {
         if (!newPassword.equals(confirmPassword)) {
-            throw new IllegalArgumentException("Паролі не співпадають");
+            throw new IllegalArgumentException("Passwords are not matching.");
         }
         ActivationToken token = getValidToken(tokenValue);
         AppUser user = token.getUser();

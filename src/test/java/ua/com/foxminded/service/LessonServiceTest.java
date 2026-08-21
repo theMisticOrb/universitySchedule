@@ -122,7 +122,7 @@ class LessonServiceTest {
         Group savedGroup = groupRepository.save(group);
 
         lesson.setClassroomName(secondAClassroom.getName());
-        lesson.setSubjectName(math.getTitle());
+        lesson.setSubjectTitle(math.getTitle());
         lesson.setWeekDay(WeekDay.FRIDAY);
         lesson.setClassHour(ClassHour.FIRST_CLASS);
         lesson.setGroupName(savedGroup.getName());
@@ -184,7 +184,7 @@ class LessonServiceTest {
         Subject history = subjectRepository.save(subject);
 
         LessonCreateUpdateDto firstLessonUpdated = new LessonCreateUpdateDto();
-        firstLessonUpdated.setSubjectName(history.getTitle());
+        firstLessonUpdated.setSubjectTitle(history.getTitle());
         Lesson result = service.update(firstLessonUpdated, firstLesson.getId());
 
         assertEquals(firstLesson.getId(), result.getId());
@@ -199,7 +199,7 @@ class LessonServiceTest {
         Lesson firstLesson = service.addOne(lesson, 1);
 
         LessonCreateUpdateDto firstLessonUpdated = new LessonCreateUpdateDto();
-        firstLessonUpdated.setSubjectName(null);
+        firstLessonUpdated.setSubjectTitle(null);
         Lesson result = service.update(firstLessonUpdated, firstLesson.getId());
 
         assertEquals("Math", result.getSubject().getTitle());

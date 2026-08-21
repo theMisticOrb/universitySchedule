@@ -2,65 +2,191 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Додати заняття</title>
+    <title th:text="#{teacher.add.lesson}">Add a lesson</title>
 </head>
 
 <body>
     <div th:replace="fragments/header :: header"></div>
-    <h2>Додати заняття</h2>
+    <h2 th:text="#{teacher.add.lesson}">Add a lesson</h2>
 
     <div th:if="${error}" style="color:red;" th:text="${error}"></div>
 
     <form th:action="@{/teacher/schedule/add}" method="post">
+        <div>
+
+            <select id="groupSelect" name="groupName">
+                <option value="" th:text="#{teacher.add.lesson.select.group}">-- Select group --</option>
+                <option th:each="group : ${groups}" th:value="${group.name}" th:text="${group.name}">
+                </option>
+            </select>
+            <div id="groupSchedule">
+                <p th:text="#{teacher.add.lesson.select.group.message}">Select a group to view its schedule.</p>
+            </div>
+        </div>
+
 
         <div>
-            <label>Предмет</label>
             <select name="subjectTitle">
-                <option value="">— Оберіть предмет —</option>
+                <option value="" th:text="#{teacher.add.lesson.select.subject}">-- Select a subject --</option>
                 <option th:each="subject : ${subjects}" th:value="${subject.title}" th:text="${subject.title}">
                 </option>
             </select>
         </div>
 
         <div>
-            <label>День тижня</label>
-            <select name="weekDay">
-                <option value="">— Оберіть день —</option>
+            <select id="weekDaySelect" name="weekDay">
+                <option value="" th:text="#{teacher.add.lesson.select.day}">-- Select a week day --</option>
                 <option th:each="day : ${weekDays}" th:value="${day}" th:text="${day}">
                 </option>
             </select>
         </div>
 
         <div>
-            <label>Пара</label>
-            <select name="classHour">
-                <option value="">— Оберіть пару —</option>
+            <select id="classHourSelect" name="classHour">
+                <option value="" th:text="#{teacher.add.lesson.select.hour}">-- Select a free hour --</option>
                 <option th:each="hour : ${classHours}" th:value="${hour}" th:text="${hour.start} + ' - ' + ${hour.end}">
                 </option>
             </select>
         </div>
 
         <div>
-            <label>Аудиторія</label>
-            <select name="classroomName">
-                <option value="">— Оберіть аудиторію —</option>
+            <select id="classroomSelect" name="classroomName">
+                <option value="" th:text="#{teacher.add.lesson.select.classroom}">-- Select a free classroom --</option>
                 <option th:each="classroom : ${classrooms}" th:value="${classroom.name}" th:text="${classroom.name}">
                 </option>
             </select>
         </div>
 
-        <div>
-            <label>Група</label>
-            <select name="groupName">
-                <option value="">— Оберіть групу —</option>
-                <option th:each="group : ${groups}" th:value="${group.name}" th:text="${group.name}">
-                </option>
-            </select>
-        </div>
 
-        <button type="submit">Зберегти</button>
-        <a th:href="@{/teacher/schedule}">Скасувати</a>
+
+        <button type="submit" th:text="#{admin.add.saveAll}">Save all</button>
+        <a th:href="@{/teacher/schedule}" th:text="#{admin.add.cancel}">Cancel </a>
     </form>
 </body>
+
+<script th:inline="javascript">
+
+    /*<![CDATA[*/
+    var MSG_HOUR_HEADER = /*[[#{lesson.list.table.hour}]]*/ 'Class hour';
+    var MSG_DAY_MO = /*[[#{lesson.add.script.day.mo}]]*/ 'Monday';
+    var MSG_DAY_TU = /*[[#{lesson.add.script.day.tu}]]*/ 'Tuesday';
+    var MSG_DAY_WE = /*[[#{lesson.add.script.day.we}]]*/ 'Wednesday';
+    var MSG_DAY_TH = /*[[#{lesson.add.script.day.th}]]*/ 'Thursday';
+    var MSG_DAY_FR = /*[[#{lesson.add.script.day.fr}]]*/ 'Friday';
+    var MSG_DAY_SA = /*[[#{lesson.add.script.day.sa}]]*/ 'Saturday';
+    var MSG_FREE = /*[[#{lesson.add.script.free}]]*/ 'Free hour';
+    var MSG_SELECT_CLASSROOM = /*[[#{teacher.add.lesson.select.classroom}]]*/ 'Select a free classroom';
+    var MSG_ALL_TAKEN = /*[[#{teacher.add.lesson.select.classroom.alltaken}]]*/ 'No free classroom';
+    /*]]>*/
+
+    document.getElementById('groupSelect').onchange = function () {
+        var groupName = this.value;
+
+        if (groupName === '') {
+            document.getElementById('groupSchedule');
+            return;
+        }
+
+        fetch('/teacher/schedule/group?name=' + encodeURIComponent(groupName))
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (schedule) {
+                buildScheduleTable(schedule);
+            });
+    };
+
+    function buildScheduleTable(schedule) {
+        var dayKeys = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+        var dayLabels = [
+            MSG_DAY_MO,
+            MSG_DAY_TU,
+            MSG_DAY_WE,
+            MSG_DAY_TH,
+            MSG_DAY_FR,
+            MSG_DAY_SA
+        ];
+
+
+        var hourOptions = document.querySelectorAll('select[name="classHour"] option');
+
+        var html = '<table border="1" cellpadding="5" style="border-collapse: collapse;">';
+
+        html += '<tr><th>' + MSG_HOUR_HEADER + '</th>';
+        for (var d = 0; d < dayLabels.length; d++) {
+            html += '<th>' + dayLabels[d] + '</th>';
+        }
+        html += '</tr>';
+
+        for (var h = 0; h < hourOptions.length; h++) {
+            var hourValue = hourOptions[h].value;
+
+            if (hourValue === '') {
+                continue;
+            }
+
+            var hourLabel = hourOptions[h].textContent;
+
+            html += '<tr>';
+            html += '<td>' + hourLabel + '</td>';
+
+            for (var d2 = 0; d2 < dayKeys.length; d2++) {
+                var dayKey = dayKeys[d2];
+                var lessonsOfDay = schedule[dayKey] || [];
+
+                var lessonFound = null;
+                for (var l = 0; l < lessonsOfDay.length; l++) {
+                    if (lessonsOfDay[l].classHour === hourValue) {
+                        lessonFound = lessonsOfDay[l];
+                        break;
+                    }
+                }
+
+                if (lessonFound !== null) {
+                    html += '<td style="background: #ffe0e0;">' + lessonFound.subjectTitle + '<br>' + lessonFound.classroomName + '</td>';
+                } else {
+                    html += '<td style="background: #e6ffe6;">' + MSG_FREE + '</td>';
+                }
+            }
+
+            html += '</tr>';
+        }
+
+        html += '</table>';
+
+        document.getElementById('groupSchedule').innerHTML = html;
+    }
+
+    document.getElementById('weekDaySelect').onchange = updateFreeClassrooms;
+    document.getElementById('classHourSelect').onchange = updateFreeClassrooms;
+
+    function updateFreeClassrooms() {
+        var weekDay = document.getElementById('weekDaySelect').value;
+        var classHour = document.getElementById('classHourSelect').value;
+        var classroomSelect = document.getElementById('classroomSelect');
+
+        if (weekDay === '' || classHour === '') {
+            return;
+        }
+
+        fetch('/teacher/schedule/classrooms/free?weekDay=' + weekDay + '&classHour=' + classHour)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (freeNames) {
+                var html = '<option value="">--' + MSG_SELECT_CLASSROOM + '--</option>';
+
+                for (var i = 0; i < freeNames.length; i++) {
+                    html += '<option value="' + freeNames[i] + '">' + freeNames[i] + '</option>';
+                }
+
+                if (freeNames.length === 0) {
+                    html = '<option value="">' + MSG_ALL_TAKEN + '</option>';
+                }
+
+                classroomSelect.innerHTML = html;
+            });
+    }
+</script>
 
 </html>

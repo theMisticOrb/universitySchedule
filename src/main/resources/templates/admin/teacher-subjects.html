@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title th:text="#{admin.teachers.assign.subject}">Assign Subjects</title>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+</head>
+
+<body>
+    <div th:replace="fragments/header :: header" th:text="#{admin.teachers.assign.subject}">Assign Subjects</div>
+
+    <h2 th:text="${teacher.firstName + ' ' + teacher.lastName}"></h2>
+    <p th:text="${teacher.department?.title}"></p>
+
+    <h3 th:text="#{admin.teachers.assigned}">Assigned subjects:</h3>
+    <ul>
+        <li th:each="subject : ${teacher.subjects}">
+            <span th:text="${subject.title}"></span>
+            <form th:action="@{/admin/teachers/{id}/subjects/remove(id=${teacher.id})}" method="post"
+                style="display:inline;">
+                <input type="hidden" name="subjectTitle" th:value="${subject.title}" />
+                <button type="submit">✕</button>
+            </form>
+        </li>
+        <li th:if="${admin.teachers.assigned.empty}">No subjects assigned</li>
+    </ul>
+
+    <h3 th:text="#{admin.teachers.assign.add}">Add subjects:</h3>
+
+    <label th:text="#{admin.teachers.assign.filter}">Filter by department:</label>
+    <select id="departmentFilter" onchange="onDepartmentChange(this.value)">
+        <option value="">-- All subjects --</option>
+        <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.title}"
+            th:selected="${dept.id == teacher.department?.id}">
+        </option>
+    </select>
+
+    <input type="text" id="search" placeholder="#{admin.teachers.assign.search.placeholder}" onkeyup="filterSubjects()" />
+
+    <select id="subjectSelect" size="10" onchange="addToPreview(this)">
+    </select>
+
+    <div id="preview" style="display:none;">
+        <h3 th:text="#{admin.add.preview}">The following will be added:</h3>
+        <ul id="preview-list"></ul>
+    </div>
+
+    <div id="form-error" style="color:red; display:none;"></div>
+    <button type="button" onclick="saveAll()" th:text="#{admin.add.saveAll}">Save All</button>
+    <a th:href="@{/admin/teachers}">Cancel</a>
+
+    <script th:inline="javascript">
+        const allSubjects = [];
+        const pendingTitles = []; 
+
+        /*[# th:each="subject : ${subjectsData}"]*/
+        allSubjects.push({
+            title:        /*[[${subject.title}]]*/ '',
+            departmentId: /*[[${subject.department?.id}]]*/ null
+        });
+        /*[/]*/
+
+        const teacherId = /*[[${teacher.id}]]*/ null;
+
+        window.onload = function () {
+            const deptFilter = document.getElementById('departmentFilter');
+            onDepartmentChange(deptFilter.value);
+        };
+
+        function onDepartmentChange(departmentId) {
+            const select = document.getElementById('subjectSelect');
+            const search = document.getElementById('search');
+
+            select.innerHTML = '';
+            search.value = '';
+
+            const filtered = departmentId
+                ? allSubjects.filter(s => s.departmentId == departmentId)
+                : allSubjects;
+
+            filtered.forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject.title;
+                option.textContent = subject.title;
+                select.appendChild(option);
+            });
+        }
+
+        function filterSubjects() {
+            const filter = document.getElementById('search').value.toLowerCase();
+            const options = document.getElementById('subjectSelect').getElementsByTagName('option');
+            for (let i = 0; i < options.length; i++) {
+                const text = options[i].textContent.toLowerCase();
+                options[i].style.display = text.includes(filter) ? '' : 'none';
+            }
+        }
+
+        function addToPreview(select) {
+            const selectedOption = select.options[select.selectedIndex];
+            if (!selectedOption) return;
+
+            const title = selectedOption.value;
+
+            if (pendingTitles.includes(title)) return;
+
+            pendingTitles.push(title);
+
+            const list = document.getElementById('preview-list');
+            const li = document.createElement('li');
+            li.textContent = title;
+
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = '✕';
+            removeBtn.onclick = () => {
+                const index = pendingTitles.indexOf(title);
+                if (index !== -1) pendingTitles.splice(index, 1);
+                li.remove();
+                if (pendingTitles.length === 0) {
+                    document.getElementById('preview').style.display = 'none';
+                }
+            };
+
+            li.appendChild(removeBtn);
+            list.appendChild(li);
+            document.getElementById('preview').style.display = 'block';
+
+            select.selectedIndex = -1;
+        }
+
+        function saveAll() {
+            if (pendingTitles.length === 0) return;
+
+            const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+            const errorDiv = document.getElementById('form-error');
+
+            fetch('/admin/teachers/' + teacherId + '/subjects/batch', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify({subjectTitles: pendingTitles})
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    } else if (data.error) {
+                        errorDiv.textContent = data.error;
+                        errorDiv.style.display = 'block';
+                    }
+                })
+                .catch(() => {
+                    errorDiv.textContent = '[[#{admin.add.script.error}]]';
+                    errorDiv.style.display = 'block';
+                });
+        }
+    </script>
+</body>
+
+</html>

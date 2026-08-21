@@ -6,7 +6,7 @@ import ua.com.foxminded.enums.WeekDay;
 public class LessonCreateUpdateDto {
 
     private String classroomName;
-    private String subjectName;
+    private String subjectTitle;
     private ClassHour classHour;
     private WeekDay weekDay;
     private String groupName;
@@ -14,10 +14,10 @@ public class LessonCreateUpdateDto {
     public LessonCreateUpdateDto() {
     }
 
-    public LessonCreateUpdateDto(String classroomName, String subjectName, ClassHour classHour, WeekDay weekDay,
+    public LessonCreateUpdateDto(String classroomName, String subjectTitle, ClassHour classHour, WeekDay weekDay,
             String groupName) {
         this.classroomName = classroomName;
-        this.subjectName = subjectName;
+        this.subjectTitle = subjectTitle;
         this.classHour = classHour;
         this.weekDay = weekDay;
         this.groupName = groupName;
@@ -31,12 +31,12 @@ public class LessonCreateUpdateDto {
         this.classroomName = classroomName;
     }
 
-    public String getSubjectName() {
-        return subjectName;
+    public String getSubjectTitle() {
+        return subjectTitle;
     }
 
-    public void setSubjectName(String subjectName) {
-        this.subjectName = subjectName;
+    public void setSubjectTitle(String subjectTitle) {
+        this.subjectTitle = subjectTitle;
     }
 
     public ClassHour getClassHour() {

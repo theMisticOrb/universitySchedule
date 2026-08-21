@@ -32,7 +32,6 @@ public class UserService {
     private AcademicDepartmentRepository departmentRepositoty;
     private ActivationUserService activationUserService;
 
-
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, GroupRepository groupRepositoty,
             AcademicDepartmentRepository departmentRepositoty, ActivationUserService activationUserService) {
         this.userRepository = userRepository;
@@ -73,24 +72,24 @@ public class UserService {
     public void createUsers(List<UserCreateUpdateDto> usersList) {
         List<AppUser> users = usersList.stream().map(this::buildUser).collect(Collectors.toList());
         userRepository.saveAllAndFlush(users);
-        users.forEach(activationUserService::sendResetEmailIfTempPassword); 
+        users.forEach(activationUserService::sendResetEmailIfTempPassword);
 
     }
 
     public AppUser buildUser(UserCreateUpdateDto dto) {
-        
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new IllegalArgumentException("User with that email: " + dto.getEmail() + " alredy exists.");
+        }
         Set<UserRole> roles = dto.getRoles();
 
         if (roles.contains(UserRole.STUDENT) && roles.contains(UserRole.TEACHER)) {
-            throw new IllegalArgumentException(
-                    "User cannot be both student and teacher");
+            throw new IllegalArgumentException("User cannot be both student and teacher");
         }
 
         if (roles.contains(UserRole.ADMIN) && !roles.contains(UserRole.TEACHER)) {
-            throw new IllegalArgumentException(
-                    "Admin must also have teacher role");
+            throw new IllegalArgumentException("Admin must also have teacher role");
         }
-        
+
         AppUser user;
 
         if (roles.contains(UserRole.STUDENT)) {

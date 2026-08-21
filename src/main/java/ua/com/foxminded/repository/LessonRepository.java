@@ -20,6 +20,10 @@ public interface LessonRepository extends JpaRepository<Lesson, Integer> {
 
     List<Lesson> findByTeacher_Id(Integer teacherId);
 
+    List<Lesson> findByGroup_Name(String groupName);
+
+    List<Lesson> findByWeekDayAndClassHour(WeekDay weekDay, ClassHour classHour);
+
     boolean existsBySubject_TitleAndClassroom_Name(String subjectTitle, String classroomName);
 
     boolean existsByClassroom_NameAndWeekDayAndClassHour(String classroomName, WeekDay weekDay, ClassHour classHour);

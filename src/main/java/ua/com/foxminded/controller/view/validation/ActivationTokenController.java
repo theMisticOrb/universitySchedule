@@ -32,21 +32,22 @@ public class ActivationTokenController {
             activationService.validateToken(tokenValue);
             model.addAttribute(TOKEN, tokenValue); 
             model.addAttribute("request", new ActivationRequestDto());
-            return "activation"; 
+            return "auth/activation"; 
         } catch (TokenExpiredException ex) {
-            model.addAttribute("error", "Ссылка устарела. Запросите новую.");
-            return "activation-error"; 
+            model.addAttribute("error", "Link are not valid anymore");
+            return "auth/activation-error"; 
         }
     }
 
     @PostMapping
-    public String submit(@RequestParam String tokenValue, @Valid @ModelAttribute ActivationRequestDto request,
+    public String submit(@RequestParam("tokenValue") String tokenValue, @Valid @ModelAttribute("request") ActivationRequestDto request,
             BindingResult bindingResult, 
             Model model) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute(TOKEN, tokenValue);
-            return "activation"; 
+            model.addAttribute("request", request);
+            return "auth/activation"; 
         }
 
         try {
@@ -55,7 +56,8 @@ public class ActivationTokenController {
         } catch (RuntimeException ex) {
             model.addAttribute("error", ex.getMessage());
             model.addAttribute(TOKEN, tokenValue);
-            return "activation";
+            model.addAttribute("request", request);
+            return "auth/activation";
         }
     }
 }

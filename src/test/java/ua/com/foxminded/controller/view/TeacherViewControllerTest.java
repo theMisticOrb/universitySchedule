@@ -19,12 +19,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import ua.com.foxminded.controller.view.teacher.TeacherController;
 import ua.com.foxminded.dto.user.TeacherResponseDto;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.mapper.TeacherMapper;
 import ua.com.foxminded.service.TeacherService;
 
-@WebMvcTest(TeacherViewController.class)
+@WebMvcTest(TeacherController.class)//удалила предыдущий колнтроллер перенсла методы. надо переделать 
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(SpringExtension.class)
 class TeacherViewControllerTest {
@@ -47,7 +48,7 @@ class TeacherViewControllerTest {
         when(service.findAll()).thenReturn(teachers);
         when(mapper.toResponseDto(any(Teacher.class))).thenReturn(dto);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/teachers")).andExpect(MockMvcResultMatchers.status().isOk())
+        mockMvc.perform(MockMvcRequestBuilders.get("/teacher")).andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("teacher/list"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("teachers"));
 

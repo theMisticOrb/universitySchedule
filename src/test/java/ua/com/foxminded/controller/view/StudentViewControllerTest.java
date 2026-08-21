@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import ua.com.foxminded.controller.view.student.StudentViewController;
 import ua.com.foxminded.dto.user.StudentResponseDto;
 import ua.com.foxminded.entity.Student;
 import ua.com.foxminded.mapper.StudentMapper;

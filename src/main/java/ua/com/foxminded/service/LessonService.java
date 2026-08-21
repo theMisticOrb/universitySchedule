@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
@@ -19,6 +20,7 @@ import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Lesson;
 import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
+import ua.com.foxminded.enums.ClassHour;
 import ua.com.foxminded.enums.WeekDay;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
@@ -37,9 +39,11 @@ public class LessonService {
     private GroupService groupService;
     private LessonMapper lessonMapper;
 
-    public LessonService(LessonRepository lessonRepository, ClassroomService classroomService,
-            SubjectService subjectService, GroupService groupService, LessonMapper lessonMapper) {
+    public LessonService(LessonRepository lessonRepository, TeacherRepository teacherRepository,
+            ClassroomService classroomService, SubjectService subjectService, GroupService groupService,
+            LessonMapper lessonMapper) {
         this.lessonRepository = lessonRepository;
+        this.teacherRepository = teacherRepository;
         this.classroomService = classroomService;
         this.subjectService = subjectService;
         this.groupService = groupService;
@@ -58,8 +62,13 @@ public class LessonService {
             throw new IllegalArgumentException("You already have a class at that time");
         }
 
+        if (lessonRepository.existsByClassroom_NameAndWeekDayAndClassHour(dto.getClassroomName(), dto.getWeekDay(),
+                dto.getClassHour())) {
+            throw new IllegalArgumentException("The classroom is already occupied at that time");
+        }
+
         Classroom classroom = classroomService.findByName(dto.getClassroomName());
-        Subject subject = subjectService.findByTitle(dto.getSubjectName());
+        Subject subject = subjectService.findByTitle(dto.getSubjectTitle());
         Group group = groupService.findByName(dto.getGroupName());
         Teacher teacher = teacherRepository.findById(teacherId)
                 .orElseThrow(() -> new IllegalArgumentException("Teacher not found!"));
@@ -67,7 +76,7 @@ public class LessonService {
         Lesson lesson = lessonMapper.toEntity(dto, classroom, subject, group, teacher);
 
         try {
-            return lessonRepository.save(lesson);
+            return lessonRepository.saveAndFlush(lesson);
         } catch (DataIntegrityViolationException e) {
             throw new DuplicateEntityException("Lesson with subject: " + subject.getTitle()
                     + " alredy exists in classroom: " + classroom.getName() + " on this day and hour!");
@@ -93,8 +102,8 @@ public class LessonService {
             Classroom classroom = classroomService.findByName(updated.getClassroomName());
             UpdateUtil.setIfNotNull(classroom, lesson::setClassroom);
         }
-        if (updated.getSubjectName() != null) {
-            Subject subject = subjectService.findByTitle(updated.getSubjectName());
+        if (updated.getSubjectTitle() != null) {
+            Subject subject = subjectService.findByTitle(updated.getSubjectTitle());
             UpdateUtil.setIfNotNull(subject, lesson::setSubject);
         }
         if (updated.getGroupName() != null) {
@@ -120,5 +129,20 @@ public class LessonService {
                         .sorted(Comparator.comparing(l -> l.getClassHour().getStart())).collect(Collectors.toList()),
                         (a, b) -> a, LinkedHashMap::new));
 
+    }
+
+    public Map<WeekDay, List<Lesson>> getWeeklyScheduleForGroup(String groupName) {
+
+        List<Lesson> lessons = lessonRepository.findByGroup_Name(groupName);
+
+        return Arrays.stream(WeekDay.values())
+                .collect(Collectors.toMap(day -> day, day -> lessons.stream().filter(l -> l.getWeekDay() == day)
+                        .sorted(Comparator.comparing(l -> l.getClassHour().getStart())).collect(Collectors.toList()),
+                        (a, b) -> a, LinkedHashMap::new));
+    }
+
+    public Set<Integer> findOccupiedClassroomIds(WeekDay weekDay, ClassHour classHour) {
+        return lessonRepository.findByWeekDayAndClassHour(weekDay, classHour).stream()
+                .map(lesson -> lesson.getClassroom().getId()).collect(Collectors.toSet());
     }
 }

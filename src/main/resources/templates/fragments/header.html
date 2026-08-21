@@ -16,9 +16,9 @@
         <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/dashboard}" th:text="#{fragments.header.adminpanel}">
         </a>
         <a sec:authorize="hasAnyRole('TEACHER', 'ADMIN')" th:href="@{/teacher/dashboard}"
-            th:text="#{fragments.header.cabinet}">
+            th:text="#{fragments.header.cabinet.teacher}">
         </a>
-        <a sec:authorize="hasRole('STUDENT')" th:href="@{/student/dashboard}" th:text="#{fragments.header.cabinet}">
+        <a sec:authorize="hasRole('STUDENT')" th:href="@{/student/dashboard}" th:text="#{fragments.header.cabinet.student}">
         </a>
         <form th:action="@{/logout}" method="post">
             <button type="submit" th:text="#{fragments.header.button.logout}"></button>

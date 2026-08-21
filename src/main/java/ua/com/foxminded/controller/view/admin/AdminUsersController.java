@@ -74,6 +74,7 @@ public class AdminUsersController {
     @ResponseBody
     public ResponseEntity<Map<String, String>> saveBatch(@RequestBody UserCreateUpdateListDto userListRequest) {
         try {
+            
             userService.createUsers(userListRequest.getUsers());
             Map<String, String> success = new HashMap<>();
             success.put("redirect", "/admin/users");

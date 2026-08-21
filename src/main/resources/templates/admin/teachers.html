@@ -16,23 +16,50 @@
             <th th:text="#{admin.teachers.table.name}"></th>
             <th th:text="#{admin.teachers.table.department}"></th>
             <th th:text="#{admin.teachers.table.change}"></th>
+            <th th:text="#{admin.teachers.table.subjects}"></th>
+
+
         </tr>
         <tr th:each="teacher : ${teachers}">
+
             <td th:text="${teacher.firstName + ' ' + teacher.lastName}"></td>
             <td th:text="${teacher.department?.title}"></td>
             <td>
                 <form th:action="@{/admin/teachers/{id}/department(id=${teacher.id})}" method="post">
                     <select name="departmentId">
-                        <option th:each="department : ${departments}" th:value="${department.id}" th:text="${department.title}"
-                            th:selected="${department.id == teacher.department?.id}">
+                        <option th:each="department : ${departments}" th:value="${department.id}"
+                            th:text="${department.title}" th:selected="${department.id == teacher.department?.id}">
                         </option>
                     </select>
+
                     <button type="submit" th:text="#{admin.teachers.button.setdepartment}"></button>
                 </form>
+            </td>
+
+            <td>
+                <ul>
+                    <li th:each="subject : ${teacher.subjects}" th:text="${subject.title}"></li>
+                </ul>
+                <a th:href="@{/admin/teachers/{id}/subjects(id=${teacher.id})}"
+                    th:text="#{admin.teachers.button.setsubjects}">Set subjects</a>
             </td>
         </tr>
     </table>
 
+    <script th:inline="javascript">
+
+        function filterSubjects(input, selectId) {
+            const filter = input.value.toLowerCase();
+            const select = document.getElementById(selectId);
+            const options = select.getElementsByTagName('option');
+
+            for (let i = 0; i < options.length; i++) {
+                const text = options[i].textContent.toLowerCase();
+                options[i].style.display = text.includes(filter) ? '' : 'none';
+            }
+        }
+
+    </script>
 </body>
 
 </html>

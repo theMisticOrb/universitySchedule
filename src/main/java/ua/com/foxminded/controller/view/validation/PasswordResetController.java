@@ -58,7 +58,7 @@ public class PasswordResetController {
             return "auth/reset-password";
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
-            return "activation-error";
+            return "auth/activation-error";
         }
     }
 
@@ -68,6 +68,7 @@ public class PasswordResetController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("token", tokenValue);
+            model.addAttribute("request", request);
             return "auth/reset-password";
         }
 
@@ -77,6 +78,7 @@ public class PasswordResetController {
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("token", tokenValue);
+            model.addAttribute("request", request);
             return "auth/reset-password";
         }
     }

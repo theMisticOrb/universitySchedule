@@ -118,7 +118,7 @@ class LessonControllerTest {
         Lesson lesson = createLesson();
         LessonResponseDto responseDto = createResponseDto();
         LessonCreateUpdateDto requestDto = new LessonCreateUpdateDto();
-        requestDto.setSubjectName("Math");
+        requestDto.setSubjectTitle("Math");
 
         when(service.addOne(any(LessonCreateUpdateDto.class), eq(1))).thenReturn(lesson);
         when(lessonMapper.toResponseDto(lesson)).thenReturn(responseDto);
@@ -142,7 +142,7 @@ class LessonControllerTest {
         Lesson lesson = createLesson();
         LessonResponseDto responseDto = createResponseDto();
         LessonCreateUpdateDto requestDto = new LessonCreateUpdateDto();
-        requestDto.setSubjectName("Math");
+        requestDto.setSubjectTitle("Math");
 
         when(service.update(any(LessonCreateUpdateDto.class), eq(1))).thenReturn(lesson);
         when(lessonMapper.toResponseDto(lesson)).thenReturn(responseDto);

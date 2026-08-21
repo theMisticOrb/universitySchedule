@@ -15,19 +15,19 @@
         <input type="text" id="title" th:placeholder="#{admin.add.placeholder.depName}" />
         <input type="text" id="code" th:placeholder="#{admin.add.placeholder.depCode}" />
         <select id="facultyCode">
-            <option value="" th:text="#{admin.add.department.selectFaculty}">— Select a faculty —</option>
+            <option value="" th:text="#{admin.add.department.selectFaculty}">-- Select a faculty --</option>
             <option th:each="faculty : ${faculties}" th:value="${faculty.code}"
                 th:text="${faculty.title + ' (' + faculty.code + ')'}">
             </option>
         </select>
         <div id="form-error" style="color:red; display:none;"></div>
-        <button type="button" onclick="addToList()" th:text="#{admin.add.department.toList}">+ Add to list</button>
+        <button type="button" onclick="addToList()" th:text="#{admin.add.toList}">+ Add to list</button>
     </div>
 
     <div id="preview" style="display:none;">
-        <h3 th:text="#{admin.add.department.preview}">The following will be added:</h3>
+        <h3 th:text="#{admin.add.preview}">The following will be added:</h3>
         <ul id="item-list"></ul>
-        <button type="button" onclick="saveAll()" th:text="#{admin.add.department.saveAll}">Save All</button>
+        <button type="button" onclick="saveAll()" th:text="#{admin.add.saveAll}">Save All</button>
         <div id="save-error" style="color:red; display:none;"></div>
     </div>
 
