@@ -35,7 +35,7 @@ public class StudentViewController {
     public String listStudents(Model model) {
         model.addAttribute("students",
                 service.findAll().stream().map(mapper::toResponseDto).collect(Collectors.toList()));
-        return "/list";
+        return "student/list";
     }
 
     @GetMapping("/dashboard")

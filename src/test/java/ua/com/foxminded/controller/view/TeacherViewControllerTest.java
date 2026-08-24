@@ -22,10 +22,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.com.foxminded.controller.view.teacher.TeacherController;
 import ua.com.foxminded.dto.user.TeacherResponseDto;
 import ua.com.foxminded.entity.Teacher;
+import ua.com.foxminded.mapper.LessonMapper;
 import ua.com.foxminded.mapper.TeacherMapper;
+import ua.com.foxminded.repository.ClassroomRepository;
+import ua.com.foxminded.repository.GroupRepository;
+import ua.com.foxminded.repository.SubjectRepository;
+import ua.com.foxminded.service.LessonService;
 import ua.com.foxminded.service.TeacherService;
 
-@WebMvcTest(TeacherController.class)//удалила предыдущий колнтроллер перенсла методы. надо переделать 
+@WebMvcTest(TeacherController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(SpringExtension.class)
 class TeacherViewControllerTest {
@@ -37,7 +42,22 @@ class TeacherViewControllerTest {
     private TeacherService service;
 
     @MockBean
+    private LessonService lessonService;
+
+    @MockBean
     private TeacherMapper mapper;
+
+    @MockBean
+    private LessonMapper lessonMapper;
+    
+    @MockBean
+    private SubjectRepository subjectRepository;
+    
+    @MockBean
+    private ClassroomRepository classroomRepository;
+    
+    @MockBean
+    private GroupRepository groupRepository;
 
     @Test
     void listDepartments_shouldReturnDepartmentListPage_whenCalled() throws Exception {

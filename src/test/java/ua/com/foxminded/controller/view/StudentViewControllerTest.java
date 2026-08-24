@@ -23,6 +23,7 @@ import ua.com.foxminded.controller.view.student.StudentViewController;
 import ua.com.foxminded.dto.user.StudentResponseDto;
 import ua.com.foxminded.entity.Student;
 import ua.com.foxminded.mapper.StudentMapper;
+import ua.com.foxminded.service.LessonService;
 import ua.com.foxminded.service.StudentService;
 
 @WebMvcTest(StudentViewController.class)
@@ -35,6 +36,9 @@ class StudentViewControllerTest {
 
     @MockBean
     private StudentService service;
+    
+    @MockBean
+    private LessonService lessonService;
 
     @MockBean
     private StudentMapper mapper;
@@ -48,7 +52,7 @@ class StudentViewControllerTest {
         when(service.findAll()).thenReturn(students);
         when(mapper.toResponseDto(any(Student.class))).thenReturn(dto);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/students")).andExpect(MockMvcResultMatchers.status().isOk())
+        mockMvc.perform(MockMvcRequestBuilders.get("/student")).andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("student/list"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("students"));
 

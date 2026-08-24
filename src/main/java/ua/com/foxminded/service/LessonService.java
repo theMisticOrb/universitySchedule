@@ -32,12 +32,13 @@ import ua.com.foxminded.repository.TeacherRepository;
 @Transactional
 public class LessonService {
 
-    private LessonRepository lessonRepository;
-    private TeacherRepository teacherRepository;
-    private ClassroomService classroomService;
-    private SubjectService subjectService;
-    private GroupService groupService;
-    private LessonMapper lessonMapper;
+    private final LessonRepository lessonRepository;
+    private final TeacherRepository teacherRepository;
+    private final ClassroomService classroomService;
+    private final SubjectService subjectService;
+    private final GroupService groupService;
+    private final LessonMapper lessonMapper;
+
 
     public LessonService(LessonRepository lessonRepository, TeacherRepository teacherRepository,
             ClassroomService classroomService, SubjectService subjectService, GroupService groupService,

@@ -18,7 +18,7 @@
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <org.mybatis.version>3.4.5</org.mybatis.version>
-        <org.testcontainers.version>1.20.6</org.testcontainers.version>
+        <org.testcontainers.version>1.21.3</org.testcontainers.version>
         <com.github.javafaker.version>1.0.2</com.github.javafaker.version>
 
     </properties>
@@ -54,10 +54,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-    <groupId>org.springframework.security</groupId>
-    <artifactId>spring-security-test</artifactId>
-    <scope>test</scope>
-</dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
