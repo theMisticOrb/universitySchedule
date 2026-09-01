@@ -2,29 +2,22 @@ package ua.com.foxminded.dto.user;
 
 public class StudentCreateUpdateDto extends UserCreateUpdateDto {
 
-    private Integer groupId;
     private String groupName;
 
     public StudentCreateUpdateDto() {
     }
 
-    public StudentCreateUpdateDto(Integer groupId, String groupName) {
-        this.groupId = groupId;
+    public StudentCreateUpdateDto( String groupName) {
         this.groupName = groupName;
     }
 
-    public Integer getGroupId() {
-        return groupId;
-    }
 
-    public void setGroupId(Integer groupId) {
-        this.groupId = groupId;
-    }
-
+    @Override
     public String getGroupName() {
         return groupName;
     }
 
+    @Override
     public void setGroupName(String groupName) {
         this.groupName = groupName;
     }

@@ -1,0 +1,1 @@
+ALTER TABLE classrooms ADD CONSTRAINT uq_classroom_name UNIQUE (classroom_name);

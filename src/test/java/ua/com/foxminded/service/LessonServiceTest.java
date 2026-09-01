@@ -5,10 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
@@ -16,12 +15,7 @@ import javax.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-import ua.com.foxminded.MainApp;
 import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Classroom;
@@ -31,187 +25,212 @@ import ua.com.foxminded.entity.Lesson;
 import ua.com.foxminded.entity.Specialization;
 import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
-import ua.com.foxminded.entity.YearOfUniv;
 import ua.com.foxminded.enums.ClassHour;
-import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.enums.WeekDay;
-import ua.com.foxminded.repository.AcademicDepartmentRepository;
-import ua.com.foxminded.repository.ClassroomRepository;
-import ua.com.foxminded.repository.FacultyRepository;
-import ua.com.foxminded.repository.GroupRepository;
-import ua.com.foxminded.repository.SpecializationRepository;
-import ua.com.foxminded.repository.SubjectRepository;
-import ua.com.foxminded.repository.TeacherRepository;
+import ua.com.foxminded.service.suppport.dto.LessonDtoTestBuilder;
 
-@Testcontainers
-@Transactional
-@SpringBootTest(classes = { MainApp.class })
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class LessonServiceTest {
+class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, LessonCreateUpdateDto, Integer> {
 
     @Autowired
     private LessonService service;
 
-    @Autowired
-    private ClassroomRepository clasroomRepository;
-    @Autowired
-    private SubjectRepository subjectRepository;
-    @Autowired
-    private TeacherRepository teacherRepository;
-    @Autowired
-    private FacultyRepository facultyRepository;
-    @Autowired
-    private SpecializationRepository specializationRepository;
-    @Autowired
-    private GroupRepository groupRepository;
-    @Autowired
-    private AcademicDepartmentRepository departmentRepository;
-
-    private LessonCreateUpdateDto lesson = new LessonCreateUpdateDto();
-    private Teacher teacher = new Teacher();
-    private AcademicDepartment computerScience = new AcademicDepartment();
+    private AcademicDepartment department;
+    private Teacher teacher;
 
     @BeforeEach
     void setUp() {
-        Classroom classrom = new Classroom();
-        classrom.setName("2-A");
-        Classroom secondAClassroom = clasroomRepository.save(classrom);
+        Faculty faculty = testDataFactory.persistFaculty();
+        department = testDataFactory.persistDepartment(faculty);
+        teacher = testDataFactory.persistTeacher(department);
+    }
 
-        Faculty faculty = new Faculty();
-        faculty.setTitle("Engineering");
-        Faculty engineeringFaculty = facultyRepository.save(faculty);
+    @Override
+    protected ReadUpdateDeleteService<Lesson, LessonCreateUpdateDto, Integer> getService() {
+        return service;
+    }
 
-        computerScience.setTitle("Computer Science");
-        computerScience.setFaculty(engineeringFaculty);
-        AcademicDepartment csDepartment = departmentRepository.save(computerScience);
+    @Override
+    protected Lesson persistValidEntity() {
+        LessonCreateUpdateDto dto = buildValidDto();
+        return service.addOne(dto, teacher.getId());
+    }
 
-        Specialization specialization = new Specialization();
-        specialization.setCode("CS");
-        specialization.setDepartment(computerScience);
-        specialization.setTitle("IT");
-        Specialization savedSpecialization = specializationRepository.save(specialization);
+    @Override
+    protected Integer getId(Lesson entity) {
+        return entity.getId();
+    }
 
-        Set<UserRole> roles = new HashSet<>();
-        roles.add(UserRole.TEACHER);
-        
-        teacher.setFirstName("Don");
-        teacher.setMiddleName("Bon");
-        teacher.setLastName("Jon");
-        teacher.setDepartment(csDepartment);
-        teacher.setEmail("Jon@ua.com");
-        teacher.setPassword("Jon1234");
-        teacher.setRoles(roles);
-        teacher.setId(1);
-        Teacher jonTeacher = teacherRepository.save(teacher);
+    @Override
+    protected Integer nonExistentId() {
+        return 999;
+    }
 
-        List<Teacher> teachers = new ArrayList<>();
-        teachers.add(jonTeacher);
-       
-        
-        Subject subject = new Subject();
-        subject.setTitle("Math");
-        subject.setTeachers(teachers);
-        subject.setDepartment(computerScience);
-        Subject math = subjectRepository.save(subject);
+    private LessonCreateUpdateDto buildValidDto() {
+        Classroom classroom = testDataFactory.persistClassroom();
+        Subject subject = testDataFactory.persistSubject(department, Collections.singletonList(teacher));
+        Specialization specialization = testDataFactory.persistSpecialization(department);
+        Group group = testDataFactory.persistGroup(specialization);
 
-        Group group = new Group();
-        group.setSpecialization(savedSpecialization);
-        group.setName("1K");
-        group.setStartDate(LocalDate.now());
-        group.setYearOfUniv(new YearOfUniv(2, 6));
-        Group savedGroup = groupRepository.save(group);
-
-        lesson.setClassroomName(secondAClassroom.getName());
-        lesson.setSubjectTitle(math.getTitle());
-        lesson.setWeekDay(WeekDay.FRIDAY);
-        lesson.setClassHour(ClassHour.FIRST_CLASS);
-        lesson.setGroupName(savedGroup.getName());
+        return LessonDtoTestBuilder.aLesson().withClassroomName(classroom.getName())
+                .withSubjectTitle(subject.getTitle()).withGroupName(group.getName()).build();
     }
 
     @Test
     void addOne_shouldSaveNewEntity_whenCalled() {
-
-        Lesson firstLesson = service.addOne(lesson, 1);
-
-        assertNotNull(firstLesson.getId());
+        assertNotNull(persistValidEntity().getId());
     }
 
     @Test
-    void findById_shouldFindEntityById_whenCalledIfEntityExists() {
+    void addOne_shouldThrowException_whenGroupAlreadyHasLessonAtThatTime() {
+        Classroom classroomA = testDataFactory.persistClassroom();
+        Classroom classroomB = testDataFactory.persistClassroom();
+        Subject subject = testDataFactory.persistSubject(department, Collections.singletonList(teacher));
+        Specialization specialization = testDataFactory.persistSpecialization(department);
+        Group group = testDataFactory.persistGroup(specialization);
 
-        Lesson saved = service.addOne(lesson, 1);
-        Lesson found = service.findById(saved.getId());
+        LessonCreateUpdateDto first = LessonDtoTestBuilder.aLesson().withClassroomName(classroomA.getName())
+                .withSubjectTitle(subject.getTitle()).withGroupName(group.getName()).withWeekDay(WeekDay.MONDAY)
+                .withClassHour(ClassHour.FIRST_CLASS).build();
+        service.addOne(first, teacher.getId());
 
-        assertNotNull(found);
-        assertEquals(saved.getId(), found.getId());
+        Teacher anotherTeacher = testDataFactory.persistTeacher(department);
+        LessonCreateUpdateDto conflicting = LessonDtoTestBuilder.aLesson().withClassroomName(classroomB.getName())
+                .withSubjectTitle(subject.getTitle()).withGroupName(group.getName()).withWeekDay(WeekDay.MONDAY)
+                .withClassHour(ClassHour.FIRST_CLASS).build();
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> service.addOne(conflicting, anotherTeacher.getId()));
+
+        assertEquals("The group already has a class at that time", ex.getMessage());
     }
 
     @Test
-    void findById_shouldThrowException_whenCalledifEntityDoesNotExist() {
-        int nonexistentId = 34;
+    void addOne_shouldThrowException_whenTeacherAlreadyHasLessonAtThatTime() {
+        Classroom classroomA = testDataFactory.persistClassroom();
+        Classroom classroomB = testDataFactory.persistClassroom();
+        Subject subject = testDataFactory.persistSubject(department, Collections.singletonList(teacher));
+        Specialization specializationA = testDataFactory.persistSpecialization(department);
+        Specialization specializationB = testDataFactory.persistSpecialization(department);
+        Group groupA = testDataFactory.persistGroup(specializationA);
+        Group groupB = testDataFactory.persistGroup(specializationB);
+
+        LessonCreateUpdateDto first = LessonDtoTestBuilder.aLesson().withClassroomName(classroomA.getName())
+                .withSubjectTitle(subject.getTitle()).withGroupName(groupA.getName()).withWeekDay(WeekDay.TUESDAY)
+                .withClassHour(ClassHour.FIRST_CLASS).build();
+        service.addOne(first, teacher.getId());
+
+        LessonCreateUpdateDto conflicting = LessonDtoTestBuilder.aLesson().withClassroomName(classroomB.getName())
+
+                .withSubjectTitle(subject.getTitle()).withGroupName(groupB.getName()).withWeekDay(WeekDay.TUESDAY)
+                .withClassHour(ClassHour.FIRST_CLASS).build();
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> service.addOne(conflicting, teacher.getId()));
+
+        assertEquals("You already have a class at that time", ex.getMessage());
+    }
+
+    @Test
+    void addOne_shouldThrowException_whenClassroomAlreadyOccupiedAtThatTime() {
+        Classroom classroom = testDataFactory.persistClassroom();
+        Subject subject = testDataFactory.persistSubject(department, Collections.singletonList(teacher));
+        Specialization specializationA = testDataFactory.persistSpecialization(department);
+        Specialization specializationB = testDataFactory.persistSpecialization(department);
+        Group groupA = testDataFactory.persistGroup(specializationA);
+        Group groupB = testDataFactory.persistGroup(specializationB);
+
+        LessonCreateUpdateDto first = LessonDtoTestBuilder.aLesson().withClassroomName(classroom.getName())
+                .withSubjectTitle(subject.getTitle()).withGroupName(groupA.getName()).withWeekDay(WeekDay.WEDNESDAY)
+                .withClassHour(ClassHour.FIRST_CLASS).build();
+        service.addOne(first, teacher.getId());
+
+        Teacher anotherTeacher = testDataFactory.persistTeacher(department);
+        LessonCreateUpdateDto conflicting = LessonDtoTestBuilder.aLesson().withClassroomName(classroom.getName())
+                .withSubjectTitle(subject.getTitle()).withGroupName(groupB.getName()).withWeekDay(WeekDay.WEDNESDAY)
+                .withClassHour(ClassHour.FIRST_CLASS).build();
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> service.addOne(conflicting, anotherTeacher.getId()));
+
+        assertEquals("The classroom is already occupied at that time", ex.getMessage());
+    }
+
+    @Test
+    void findById_shouldThrowException_withCorrectMessage() {
+        Integer nonexistentId = nonExistentId();
+
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.findById(nonexistentId));
+
         assertEquals("Lesson not found: " + nonexistentId, ex.getMessage());
     }
 
     @Test
-    void findAll_shouldGetListOfAllEntities_whenCalledIfNotEmpty() {
+    void findBySubjectTitleAndWeekDay_shouldReturnMatchingLessons() {
+        LessonCreateUpdateDto dto = buildValidDto();
+        Lesson saved = service.addOne(dto, teacher.getId());
 
-        List<Lesson> allGroups = service.findAll();
-        assertNotNull(allGroups);
-
-    }
-
-    @Test
-    void findByTitle_shouldReturnLessonBySubjectName_whenExists() {
-        Lesson saved = service.addOne(lesson, 1);
-
-        List<Lesson> result = service.findBySubjectTitleAndWeekDay("Math", WeekDay.FRIDAY);
+        List<Lesson> result = service.findBySubjectTitleAndWeekDay(dto.getSubjectTitle(), dto.getWeekDay());
 
         assertNotNull(result);
-        assertTrue(result.contains(saved));
+        assertTrue(result.stream().anyMatch(lesson -> lesson.getId().equals(saved.getId())));
     }
 
     @Test
-    void update_shouldUpdateEntity_whenCalled() {
-        Lesson firstLesson = service.addOne(lesson, 1);
-        List<Teacher> teachers = new ArrayList<>();
-        teachers.add(teacher);
-       
-        Subject subject = new Subject();
-        subject.setTitle("History");
-        subject.setTeachers(teachers);
-        subject.setDepartment(computerScience);
-        Subject history = subjectRepository.save(subject);
+    void update_shouldChangeSubject_whenSubjectTitleProvided() {
+        Lesson saved = persistValidEntity();
+        Subject newSubject = testDataFactory.persistSubject(department, Collections.singletonList(teacher));
+        LessonCreateUpdateDto updateDto = new LessonCreateUpdateDto();
+        updateDto.setSubjectTitle(newSubject.getTitle());
 
-        LessonCreateUpdateDto firstLessonUpdated = new LessonCreateUpdateDto();
-        firstLessonUpdated.setSubjectTitle(history.getTitle());
-        Lesson result = service.update(firstLessonUpdated, firstLesson.getId());
+        Lesson result = service.fullUpdate(updateDto, saved.getId());
 
-        assertEquals(firstLesson.getId(), result.getId());
-        assertEquals(history.getId(), result.getSubject().getId());
-        assertEquals(history.getTitle(), result.getSubject().getTitle());
-
+        assertEquals(saved.getId(), result.getId());
+        assertEquals(newSubject.getId(), result.getSubject().getId());
     }
 
     @Test
-    void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
+    void update_shouldNotOverwriteFields_whenFieldIsNull() {
+        Lesson saved = persistValidEntity();
+        String originalSubjectTitle = saved.getSubject().getTitle();
 
-        Lesson firstLesson = service.addOne(lesson, 1);
+        LessonCreateUpdateDto updateDto = new LessonCreateUpdateDto();
+        updateDto.setSubjectTitle(null);
 
-        LessonCreateUpdateDto firstLessonUpdated = new LessonCreateUpdateDto();
-        firstLessonUpdated.setSubjectTitle(null);
-        Lesson result = service.update(firstLessonUpdated, firstLesson.getId());
+        Lesson result = service.fullUpdate(updateDto, saved.getId());
 
-        assertEquals("Math", result.getSubject().getTitle());
+        assertEquals(originalSubjectTitle, result.getSubject().getTitle());
     }
 
     @Test
-    void delete_shouldDeleteEntityById_whenEntityExists() {
-        Lesson firstLesson = service.addOne(lesson, 1);
-        int id = firstLesson.getId();
+    void getWeeklyScheduleForTeacher_shouldGroupLessonsByWeekDay() {
+        LessonCreateUpdateDto dto = buildValidDto();
+        service.addOne(dto, teacher.getId());
 
-        assertNotNull(service.findById(id));
-        service.deleteById(id);
-        assertThrows(EntityNotFoundException.class, () -> service.findById(id));
+        Map<WeekDay, List<Lesson>> schedule = service.getWeeklyScheduleForTeacher(teacher.getId());
+
+        assertNotNull(schedule);
+        assertEquals(WeekDay.values().length, schedule.size());
+        assertTrue(schedule.get(dto.getWeekDay()).size() >= 1);
+    }
+
+    @Test
+    void getWeeklyScheduleForGroup_shouldGroupLessonsByWeekDay() {
+        LessonCreateUpdateDto dto = buildValidDto();
+        service.addOne(dto, teacher.getId());
+
+        Map<WeekDay, List<Lesson>> schedule = service.getWeeklyScheduleForGroup(dto.getGroupName());
+
+        assertNotNull(schedule);
+        assertTrue(schedule.get(dto.getWeekDay()).size() >= 1);
+    }
+
+    @Test
+    void findOccupiedClassroomIds_shouldReturnClassroomIdsForGivenSlot() {
+        LessonCreateUpdateDto dto = buildValidDto();
+        Lesson saved = service.addOne(dto, teacher.getId());
+
+        Set<Integer> occupiedIds = service.findOccupiedClassroomIds(dto.getWeekDay(), dto.getClassHour());
+
+        assertTrue(occupiedIds.contains(saved.getClassroom().getId()));
     }
 }

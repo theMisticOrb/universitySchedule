@@ -26,11 +26,11 @@ import ua.com.foxminded.repository.UserRepository;
 @Transactional
 public class UserService {
 
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
-    private GroupRepository groupRepositoty;
-    private AcademicDepartmentRepository departmentRepositoty;
-    private ActivationUserService activationUserService;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final GroupRepository groupRepositoty;
+    private final AcademicDepartmentRepository departmentRepositoty;
+    private final ActivationUserService activationUserService;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, GroupRepository groupRepositoty,
             AcademicDepartmentRepository departmentRepositoty, ActivationUserService activationUserService) {

@@ -63,7 +63,7 @@ public class TeacherRestController {
 
     @PutMapping("/{id}")
     public TeacherResponseDto update(@RequestBody TeacherCreateUpdateDto dto, @PathVariable Integer id) {
-        return mapper.toResponseDto(service.update(dto, id));
+        return mapper.toResponseDto(service.fullUpdate(dto, id));
     }
 
 }

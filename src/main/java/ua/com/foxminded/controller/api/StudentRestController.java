@@ -63,6 +63,6 @@ public class StudentRestController {
 
     @PutMapping("/{id}")
     public StudentResponseDto update(@RequestBody StudentCreateUpdateDto dto, @PathVariable Integer id) {
-        return  mapper.toResponseDto(service.update(dto, id));
+        return  mapper.toResponseDto(service.fullUpdate(dto, id));
     }
 }

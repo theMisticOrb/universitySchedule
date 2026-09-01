@@ -22,7 +22,7 @@ public class Classroom {
     @Column(name = "classroom_id")
     private Integer id;
 
-    @Column(name = "classroom_name")
+    @Column(name = "classroom_name", unique = true)
     private String name;
     
     @OneToMany(mappedBy = "classroom")

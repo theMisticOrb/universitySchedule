@@ -149,7 +149,7 @@ class FacultyControllerTest {
         FacultyCreateUpdateDto requestDto = new FacultyCreateUpdateDto();
         requestDto.setTitle("IT");
 
-        when(service.update(any(FacultyCreateUpdateDto.class), eq(1))).thenReturn(faculty);
+        when(service.fullUpdate(any(FacultyCreateUpdateDto.class), eq(1))).thenReturn(faculty);
         when(facultyMapper.toResponseDto(faculty)).thenReturn(responseDto);
 
         mvc.perform(put("/api/v1/faculties/1").contentType(MediaType.APPLICATION_JSON)

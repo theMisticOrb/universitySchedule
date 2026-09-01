@@ -61,7 +61,7 @@ public class GroupRestController {
 
     @PutMapping("/{id}")
     public GroupResponseDto update(@RequestBody GroupCreateUpdateDto dto, @PathVariable Integer id) {
-        return mapper.toResponseDto(service.update(dto, id));
+        return mapper.toResponseDto(service.fullUpdate(dto, id));
     }
 
 }

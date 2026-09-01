@@ -169,14 +169,14 @@ class SubjectControllerTest {
         requestDto.setTeacherEmails(teacherEmails);
         requestDto.setTitle("Computer Science");
 
-        when(service.update(any(SubjectCreateUpdateDto.class), eq(1))).thenReturn(subject);
+        when(service.fullUpdate(any(SubjectCreateUpdateDto.class), eq(1))).thenReturn(subject);
         when(specializationMapper.toResponseDto(subject)).thenReturn(responseDto);
 
         mvc.perform(put("/api/v1/subjects/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
 
-        verify(service).update(any(SubjectCreateUpdateDto.class), eq(1));
+        verify(service).fullUpdate(any(SubjectCreateUpdateDto.class), eq(1));
         verify(specializationMapper).toResponseDto(subject);
 
     }

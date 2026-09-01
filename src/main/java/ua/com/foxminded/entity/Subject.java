@@ -70,7 +70,6 @@ public class Subject {
         this.title = title;
     }
 
-
     public List<Teacher> getTeachers() {
         return teachers;
     }

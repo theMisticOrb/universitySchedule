@@ -155,14 +155,14 @@ class SpecializationControllerTest {
         requestDto.setFacultyCode("CS");
         requestDto.setTitle("Computer Science");
 
-        when(service.update(any(SpecializationCreateUpdateDto.class), eq(1))).thenReturn(specialization);
+        when(service.fullUpdate(any(SpecializationCreateUpdateDto.class), eq(1))).thenReturn(specialization);
         when(specializationMapper.toResponseDto(specialization)).thenReturn(responseDto);
 
         mvc.perform(put("/api/v1/specializations/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
 
-        verify(service).update(any(SpecializationCreateUpdateDto.class), eq(1));
+        verify(service).fullUpdate(any(SpecializationCreateUpdateDto.class), eq(1));
         verify(specializationMapper).toResponseDto(specialization);
 
     }

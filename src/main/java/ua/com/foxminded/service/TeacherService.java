@@ -24,14 +24,14 @@ import ua.com.foxminded.repository.TeacherRepository;
 
 @Service
 @Transactional
-public class TeacherService {
+public class TeacherService implements FullCrudService<Teacher, TeacherCreateUpdateDto, Integer> {
 
-    private TeacherRepository teacherRepository;
-    private AcademicDepartmentService departmentService;
-    private TeacherMapper teacherMapper;
-    private SubjectMapper subjectMapper;
-    private SubjectRepository subjectRepository;
-    private PasswordEncoder passwordEncoder;
+    private final TeacherRepository teacherRepository;
+    private final AcademicDepartmentService departmentService;
+    private final TeacherMapper teacherMapper;
+    private final SubjectMapper subjectMapper;
+    private final SubjectRepository subjectRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public TeacherService(TeacherRepository teacherRepository, AcademicDepartmentService departmentService,
             TeacherMapper teacherMapper, SubjectMapper subjectMapper, SubjectRepository subjectRepository,
@@ -45,6 +45,7 @@ public class TeacherService {
     }
 
 //    for generating test data
+    @Override
     public Teacher addOne(TeacherCreateUpdateDto dto) {
         Teacher teacher = setTeacherValues(dto);
         return teacherRepository.save(teacher);
@@ -60,6 +61,7 @@ public class TeacherService {
         return teacherRepository.saveAll(teachers);
     }
 
+    @Override
     public Teacher findById(Integer id) {
         return teacherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Teacher not found: " + id));
@@ -81,14 +83,16 @@ public class TeacherService {
         return teacherRepository.findAll();
     }
 
-    public Teacher update(TeacherCreateUpdateDto updated, Integer id) {
+    @Override
+    public Teacher fullUpdate(TeacherCreateUpdateDto updated, Integer id) {
         Teacher teacher = findById(id);
 
         if (updated.getDepartmentCode() != null) {
             AcademicDepartment department = departmentService.findByCode(updated.getDepartmentCode());
             UpdateUtil.setIfNotNull(department, teacher::setDepartment);
-            UpdateUtil.updateListIfNotNull(updated.getSubjects(),
-                    dto -> subjectMapper.toEntity(dto, Arrays.asList(teacher), department));
+
+            UpdateUtil.replaceList(teacher.getSubjects(), updated.getSubjects(),
+                    dto -> subjectMapper.toEntity(dto, Arrays.asList(teacher), department), subjectRepository);
         }
         UpdateUtil.setIfNotNull(updated.getFirstName(), teacher::setFirstName);
         UpdateUtil.setIfNotNull(updated.getMiddleName(), teacher::setMiddleName);
@@ -96,6 +100,7 @@ public class TeacherService {
         return teacher;
     }
 
+    @Override
     public void deleteById(Integer id) {
         teacherRepository.deleteById(id);
     }
@@ -125,20 +130,17 @@ public class TeacherService {
     public void assignSubjects(Integer teacherId, List<String> subjectTitles) {
         Teacher teacher = findById(teacherId);
         List<Subject> newSubjects = subjectTitles.stream()
-            .map(title -> subjectRepository.findByTitle(title)
-                .orElseThrow(() -> new EntityNotFoundException("Subject not found: " + title)))
-            .filter(subject -> !teacher.getSubjects().contains(subject)) 
-            .collect(Collectors.toList());
+                .map(title -> subjectRepository.findByTitle(title)
+                        .orElseThrow(() -> new EntityNotFoundException("Subject not found: " + title)))
+                .filter(subject -> !teacher.getSubjects().contains(subject)).collect(Collectors.toList());
         teacher.getSubjects().addAll(newSubjects);
-        teacherRepository.save(teacher);
     }
-    
+
     public void removeSubjectFromTeacher(Integer teacherId, String subjectTitle) {
         Teacher teacher = findById(teacherId);
         Subject subject = subjectRepository.findByTitle(subjectTitle)
-            .orElseThrow(() -> new EntityNotFoundException("Subject not found: " + subjectTitle));
+                .orElseThrow(() -> new EntityNotFoundException("Subject not found: " + subjectTitle));
         teacher.getSubjects().remove(subject);
-        teacherRepository.save(teacher);
     }
 
 }

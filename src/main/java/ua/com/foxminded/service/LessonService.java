@@ -30,7 +30,7 @@ import ua.com.foxminded.repository.TeacherRepository;
 
 @Service
 @Transactional
-public class LessonService {
+public class LessonService implements ReadUpdateDeleteService<Lesson, LessonCreateUpdateDto, Integer> {
 
     private final LessonRepository lessonRepository;
     private final TeacherRepository teacherRepository;
@@ -38,7 +38,6 @@ public class LessonService {
     private final SubjectService subjectService;
     private final GroupService groupService;
     private final LessonMapper lessonMapper;
-
 
     public LessonService(LessonRepository lessonRepository, TeacherRepository teacherRepository,
             ClassroomService classroomService, SubjectService subjectService, GroupService groupService,
@@ -84,6 +83,7 @@ public class LessonService {
         }
     }
 
+    @Override
     public Lesson findById(Integer id) {
         return lessonRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Lesson not found: " + id));
     }
@@ -96,7 +96,8 @@ public class LessonService {
         return lessonRepository.findAll();
     }
 
-    public Lesson update(LessonCreateUpdateDto updated, Integer id) {
+    @Override
+    public Lesson fullUpdate(LessonCreateUpdateDto updated, Integer id) {
         Lesson lesson = findById(id);
 
         if (updated.getClassroomName() != null) {
@@ -114,10 +115,10 @@ public class LessonService {
 
         UpdateUtil.setIfNotNull(updated.getClassHour(), lesson::setClassHour);
         UpdateUtil.setIfNotNull(updated.getWeekDay(), lesson::setWeekDay);
-        UpdateUtil.setIfNotNull(updated.getWeekDay(), lesson::setWeekDay);
         return lesson;
     }
 
+    @Override
     public void deleteById(Integer id) {
         lessonRepository.deleteById(id);
     }
@@ -146,4 +147,5 @@ public class LessonService {
         return lessonRepository.findByWeekDayAndClassHour(weekDay, classHour).stream()
                 .map(lesson -> lesson.getClassroom().getId()).collect(Collectors.toSet());
     }
+
 }

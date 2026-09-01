@@ -16,26 +16,30 @@ import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.GroupMapper;
 import ua.com.foxminded.mapper.SpecializationMapper;
+import ua.com.foxminded.repository.GroupRepository;
 import ua.com.foxminded.repository.SpecializationRepository;
 
 @Service
 @Transactional
-public class SpecializationService {
+public class SpecializationService implements FullCrudService<Specialization, SpecializationCreateUpdateDto, Integer> {
 
-    private SpecializationRepository specializationRepository;
-    private AcademicDepartmentService departmentService;
-    private GroupMapper groupMapper;
-    private SpecializationMapper specializationMapper;
+    private final SpecializationRepository specializationRepository;
+    private final GroupRepository groupRepository;
+    private final AcademicDepartmentService departmentService;
+    private final GroupMapper groupMapper;
+    private final SpecializationMapper specializationMapper;
 
     public SpecializationService(SpecializationRepository specializationRepository,
             AcademicDepartmentService departmentService, GroupMapper groupMapper,
-            SpecializationMapper specializationMapper) {
+            SpecializationMapper specializationMapper, GroupRepository groupRepository) {
         this.specializationRepository = specializationRepository;
+        this.groupRepository = groupRepository;
         this.departmentService = departmentService;
         this.groupMapper = groupMapper;
         this.specializationMapper = specializationMapper;
     }
 
+    @Override
     public Specialization addOne(SpecializationCreateUpdateDto dto) {
 
         AcademicDepartment department = departmentService.findByCode(dto.getDepartmentCode());
@@ -51,6 +55,7 @@ public class SpecializationService {
 
     }
 
+    @Override
     public Specialization findById(Integer id) {
         return specializationRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Specialization not found by id: " + id));
@@ -66,11 +71,13 @@ public class SpecializationService {
                 .orElseThrow(() -> new EntityNotFoundException("Specialization not found by code: " + code));
     }
 
+    @Override
     public List<Specialization> findAll() {
         return specializationRepository.findAll();
     }
 
-    public Specialization update(SpecializationCreateUpdateDto updated, Integer id) {
+    @Override
+    public Specialization fullUpdate(SpecializationCreateUpdateDto updated, Integer id) {
 
         Specialization specialization = findById(id);
 
@@ -79,12 +86,14 @@ public class SpecializationService {
             UpdateUtil.setIfNotNull(department, specialization::setDepartment);
         }
 
-        UpdateUtil.updateListIfNotNull(updated.getGroups(), dto -> groupMapper.toEntity(dto, specialization));
+        UpdateUtil.replaceList(specialization.getGroups(), updated.getGroups(),
+                dto -> groupMapper.toEntity(dto, specialization), groupRepository);
         UpdateUtil.setIfNotNull(updated.getTitle(), specialization::setTitle);
         UpdateUtil.setIfNotNull(updated.getCode(), specialization::setCode);
         return specialization;
     }
 
+    @Override
     public void deleteById(Integer id) {
         specializationRepository.deleteById(id);
     }

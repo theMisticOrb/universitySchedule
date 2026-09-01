@@ -1,11 +1,12 @@
 package ua.com.foxminded.data;
 
-import org.junit.jupiter.api.Order;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import ua.com.foxminded.data.structure.DataStructureGenerator;
+
 
 @Component
 @Profile("dev")

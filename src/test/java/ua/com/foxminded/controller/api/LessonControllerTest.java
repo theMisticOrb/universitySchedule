@@ -144,7 +144,7 @@ class LessonControllerTest {
         LessonCreateUpdateDto requestDto = new LessonCreateUpdateDto();
         requestDto.setSubjectTitle("Math");
 
-        when(service.update(any(LessonCreateUpdateDto.class), eq(1))).thenReturn(lesson);
+        when(service.fullUpdate(any(LessonCreateUpdateDto.class), eq(1))).thenReturn(lesson);
         when(lessonMapper.toResponseDto(lesson)).thenReturn(responseDto);
 
         mvc.perform(put("/api/v1/lessons/1").contentType(MediaType.APPLICATION_JSON)

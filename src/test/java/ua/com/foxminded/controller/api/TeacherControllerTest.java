@@ -166,13 +166,13 @@ class TeacherControllerTest {
         requestDto.setMiddleName("Bobovitch");
         requestDto.setLastName("Bobinski");
 
-        when(service.update(any(TeacherCreateUpdateDto.class), eq(1))).thenReturn(entity);
+        when(service.fullUpdate(any(TeacherCreateUpdateDto.class), eq(1))).thenReturn(entity);
         when(studentMapper.toResponseDto(entity)).thenReturn(responseDto);
 
         mvc.perform(put("/api/v1/teachers/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk());
 
-        verify(service).update(any(TeacherCreateUpdateDto.class), eq(1));
+        verify(service).fullUpdate(any(TeacherCreateUpdateDto.class), eq(1));
         verify(studentMapper).toResponseDto(entity);
 
     }

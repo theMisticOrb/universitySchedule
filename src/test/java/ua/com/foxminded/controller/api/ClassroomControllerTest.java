@@ -150,7 +150,7 @@ class ClassroomControllerTest {
         ClassroomCreateUpdateDto requestDto = new ClassroomCreateUpdateDto();
         requestDto.setName("2A");
 
-        when(service.update(any(ClassroomCreateUpdateDto.class), eq(1))).thenReturn(classroom);
+        when(service.fullUpdate(any(ClassroomCreateUpdateDto.class), eq(1))).thenReturn(classroom);
         when(classroomMapper.toResponseDto(classroom)).thenReturn(responseDto);
 
         mvc.perform(put("/api/v1/classrooms/1").contentType(MediaType.APPLICATION_JSON)

@@ -24,14 +24,14 @@ import ua.com.foxminded.repository.SubjectRepository;
 
 @Service
 @Transactional
-public class SubjectService {
+public class SubjectService implements FullCrudService<Subject, SubjectCreateUpdateDto, Integer> {
 
-    private SubjectRepository subjectRepository;
-    private TeacherService teacherService;
-    private AcademicDepartmentService departmentService;
-    private SpecializationService specializationService;
-    private SubjectMapper subjectMapper;
-    private GroupMapper groupMapper;
+    private final SubjectRepository subjectRepository;
+    private final TeacherService teacherService;
+    private final AcademicDepartmentService departmentService;
+    private final SpecializationService specializationService;
+    private final SubjectMapper subjectMapper;
+    private final GroupMapper groupMapper;
 
     public SubjectService(SubjectRepository subjectRepository, TeacherService teacherService,
             AcademicDepartmentService departmentService, SpecializationService specializationService,
@@ -44,6 +44,7 @@ public class SubjectService {
         this.groupMapper = groupMapper;
     }
 
+    @Override
     public Subject addOne(SubjectCreateUpdateDto dto) {
 
         List<Teacher> teachers = dto.getTeacherEmails().stream().map(teacherService::findByEmail)
@@ -60,6 +61,7 @@ public class SubjectService {
         }
     }
 
+    @Override
     public Subject findById(Integer id) {
         return subjectRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Subject not found: " + id));
@@ -74,7 +76,8 @@ public class SubjectService {
         return subjectRepository.findAll();
     }
 
-    public Subject update(SubjectCreateUpdateDto updated, Integer id) {
+    @Override
+    public Subject fullUpdate(SubjectCreateUpdateDto updated, Integer id) {
 
         Subject subject = findById(id);
 
@@ -98,6 +101,7 @@ public class SubjectService {
         return subject;
     }
 
+    @Override
     public void deleteById(Integer id) {
         subjectRepository.deleteById(id);
     }
