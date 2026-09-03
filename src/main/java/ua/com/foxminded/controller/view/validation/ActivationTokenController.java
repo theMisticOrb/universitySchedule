@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import ua.com.foxminded.dto.user.ActivationRequestDto;
-import ua.com.foxminded.exception.TokenExpiredException;
 import ua.com.foxminded.service.ActivationUserService;
 
 @Controller
@@ -30,34 +29,34 @@ public class ActivationTokenController {
     public String showForm(@RequestParam String tokenValue, Model model) {
         try {
             activationService.validateToken(tokenValue);
-            model.addAttribute(TOKEN, tokenValue); 
+            model.addAttribute(TOKEN, tokenValue);
             model.addAttribute("request", new ActivationRequestDto());
-            return "auth/activation"; 
-        } catch (TokenExpiredException ex) {
-            model.addAttribute("error", "Link are not valid anymore");
-            return "auth/activation-error"; 
+            return "auth/activation";
+        } catch (RuntimeException ex) {
+            model.addAttribute("error", ex.getMessage());
+            model.addAttribute(TOKEN, tokenValue);
+            return "auth/activation-error";
         }
     }
 
     @PostMapping
-    public String submit(@RequestParam("tokenValue") String tokenValue, @Valid @ModelAttribute("request") ActivationRequestDto request,
-            BindingResult bindingResult, 
-            Model model) {
+    public String submit(@RequestParam("tokenValue") String tokenValue,
+            @Valid @ModelAttribute("request") ActivationRequestDto request, BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute(TOKEN, tokenValue);
             model.addAttribute("request", request);
-            return "auth/activation"; 
+            return "auth/activation";
         }
 
         try {
             activationService.activateUser(tokenValue, request);
-            return "redirect:/login?activated=true"; 
+            return "redirect:/login?activated=true";
         } catch (RuntimeException ex) {
             model.addAttribute("error", ex.getMessage());
             model.addAttribute(TOKEN, tokenValue);
             model.addAttribute("request", request);
-            return "auth/activation";
+            return "auth/activation-error";
         }
     }
 }

@@ -7,6 +7,9 @@ public class GroupCreateUpdateListDto {
 
     private List<GroupCreateUpdateDto> list = new ArrayList<>();
 
+    public GroupCreateUpdateListDto() {
+    }
+
     public GroupCreateUpdateListDto(List<GroupCreateUpdateDto> list) {
         this.list = list;
     }

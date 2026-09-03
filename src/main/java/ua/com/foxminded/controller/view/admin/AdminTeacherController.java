@@ -1,8 +1,9 @@
 package ua.com.foxminded.controller.view.admin;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ua.com.foxminded.dto.subject.AssignSubjectDto;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.service.AcademicDepartmentService;
 import ua.com.foxminded.service.SubjectService;
@@ -61,10 +63,9 @@ public class AdminTeacherController {
     @PostMapping("/{id}/subjects/batch")
     @ResponseBody
     public ResponseEntity<Map<String, String>> assignSubjectsBatch(@PathVariable Integer id,
-            @RequestBody Map<String, List<String>> body) {
+            @Valid @RequestBody AssignSubjectDto request) {
         try {
-            List<String> subjectTitles = body.get("subjectTitles");
-            teacherService.assignSubjects(id, subjectTitles);
+            teacherService.assignSubjects(id, request.getSubjectTitles());
             Map<String, String> success = new HashMap<>();
             success.put("redirect", "/admin/teachers");
             return ResponseEntity.ok(success);

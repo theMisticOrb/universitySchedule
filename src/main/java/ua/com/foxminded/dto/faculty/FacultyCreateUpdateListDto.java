@@ -7,6 +7,9 @@ public class FacultyCreateUpdateListDto {
 
     private List<FacultyCreateUpdateDto> list = new ArrayList<>();
 
+    public FacultyCreateUpdateListDto() {
+    }
+
     public FacultyCreateUpdateListDto(List<FacultyCreateUpdateDto> list) {
         this.list = list;
     }
@@ -18,7 +21,5 @@ public class FacultyCreateUpdateListDto {
     public void setList(List<FacultyCreateUpdateDto> list) {
         this.list = list;
     }
-    
-    
-    
+
 }

@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpecializationCreateUndateListDto {
-    
+
     private List<SpecializationCreateUpdateDto> list = new ArrayList<>();
+
+    public SpecializationCreateUndateListDto() {
+    }
 
     public SpecializationCreateUndateListDto(List<SpecializationCreateUpdateDto> list) {
         this.list = list;
