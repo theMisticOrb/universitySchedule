@@ -71,7 +71,7 @@ class FacultyServiceTest extends AbstractFullCrudServiceTest<Faculty, FacultyCre
 
     @Test
     void findByCode_shouldReturnFaculty_whenExists() {
-        FacultyCreateUpdateDto dto = FacultyDtoTestBuilder.aFaculty().build();
+        FacultyCreateUpdateDto dto = createValidDto();
         service.addOne(dto);
 
         Faculty result = service.findByCode(dto.getCode());

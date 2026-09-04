@@ -79,7 +79,7 @@
             fetch('/admin/specializations/batch', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json', [csrfHeader]: csrfToken},
-                body: JSON.stringify({items})
+                body: JSON.stringify({list: items})
             })
                 .then(res => res.json())
                 .then(data => {

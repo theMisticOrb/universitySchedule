@@ -21,12 +21,12 @@
             </option>
         </select>
 
-        <input list="teachers-list" id="teacherFullName" placeholder="#{admin.add.subject.teacherInput}" />
-        <datalist id="teachers-list">
-            <option th:each="teacher : ${teachers}"
-                th:value="${teacher.lastName + ' ' + teacher.firstName + ' ' + teacher.middleName}">
+        <select id="teacherId">
+            <option value="" th:text="#{admin.add.subject.selectTeacher}">— Select a Teacher —</option>
+            <option th:each="teacher : ${teachers}" th:value="${teacher.id}"
+                th:text="${teacher.lastName + ' ' + teacher.firstName + ' ' + teacher.middleName}">
             </option>
-        </datalist>
+        </select>
 
         <div id="form-error" style="color:red; display:none;"></div>
         <button type="button" onclick="addToList()" th:text="#{admin.add.toList}">+ Add to list</button>
@@ -48,18 +48,20 @@
 
             const title = document.getElementById('title').value.trim();
             const departmentCode = document.getElementById('departmentCode').value;
-            const teacherFullName = document.getElementById('teacherFullName').value.trim();
+            const teacherSelect = document.getElementById('teacherId');
+            const teacherId = teacherSelect.value;
+            const teacherLabel = teacherSelect.options[teacherSelect.selectedIndex].text;
 
-            if (!title || !departmentCode || !teacherFullName) {
+            if (!title || !departmentCode || !teacherId) {
                 errorDiv.textContent = '[[#{admin.add.script.fieldsError}]]';
                 errorDiv.style.display = 'block';
                 return;
             }
 
-            items.push({title, departmentCode, teacherFullName});
+            items.push({title, departmentCode, teacherId: Number(teacherId)});
 
             const li = document.createElement('li');
-            li.textContent = `${title} — [[#{admin.add.group.script.dep}]]: ${departmentCode}, [[#{admin.add.group.script.teacher}]]: ${teacherFullName}`;
+            li.textContent = `${title} — [[#{admin.add.group.script.dep}]]: ${departmentCode}, [[#{admin.add.group.script.teacher}]]: ${teacherLabel}`;
             const removeBtn = document.createElement('button');
             removeBtn.textContent = '✕';
             removeBtn.onclick = () => {
@@ -74,7 +76,7 @@
 
             document.getElementById('title').value = '';
             document.getElementById('departmentCode').value = '';
-            document.getElementById('teacherFullName').value = '';
+            document.getElementById('teacherId').value = '';
             document.getElementById('title').focus();
         }
 
@@ -86,7 +88,7 @@
             fetch('/admin/subjects/batch', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json', [csrfHeader]: csrfToken},
-                body: JSON.stringify({items})
+                body: JSON.stringify({list: items})
             })
                 .then(res => res.json())
                 .then(data => {
