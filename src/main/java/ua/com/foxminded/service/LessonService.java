@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,26 +53,28 @@ public class LessonService implements ReadUpdateDeleteService<Lesson, LessonCrea
 
     public Lesson addOne(LessonCreateUpdateDto dto, Integer teacherId) {
 
+        Teacher teacher = teacherRepository.findById(teacherId)
+                .orElseThrow(() -> new IllegalArgumentException("Teacher not found!"));
+        Subject subject = subjectService.findByTitle(dto.getSubjectTitle());
+
+        if (!teacherRepository.existsByIdAndSubjects_Title(teacherId, subject.getTitle())) {
+            throw new AccessDeniedException("You don't teach this subject.");
+        }
         if (lessonRepository.existsByGroup_NameAndWeekDayAndClassHour(dto.getGroupName(), dto.getWeekDay(),
                 dto.getClassHour())) {
             throw new IllegalArgumentException("The group already has a class at that time");
         }
-
         if (lessonRepository.existsByTeacher_IdAndWeekDayAndClassHour(teacherId, dto.getWeekDay(),
                 dto.getClassHour())) {
             throw new IllegalArgumentException("You already have a class at that time");
         }
-
         if (lessonRepository.existsByClassroom_NameAndWeekDayAndClassHour(dto.getClassroomName(), dto.getWeekDay(),
                 dto.getClassHour())) {
             throw new IllegalArgumentException("The classroom is already occupied at that time");
         }
 
         Classroom classroom = classroomService.findByName(dto.getClassroomName());
-        Subject subject = subjectService.findByTitle(dto.getSubjectTitle());
         Group group = groupService.findByName(dto.getGroupName());
-        Teacher teacher = teacherRepository.findById(teacherId)
-                .orElseThrow(() -> new IllegalArgumentException("Teacher not found!"));
 
         Lesson lesson = lessonMapper.toEntity(dto, classroom, subject, group, teacher);
 

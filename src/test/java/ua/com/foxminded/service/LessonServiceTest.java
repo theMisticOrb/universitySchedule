@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import javax.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 
 import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
@@ -85,6 +87,8 @@ class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, Less
         Classroom classroomA = testDataFactory.persistClassroom();
         Classroom classroomB = testDataFactory.persistClassroom();
         Subject subject = testDataFactory.persistSubject(department, Collections.singletonList(teacher));
+        List<Subject> subjects = new ArrayList<>();
+        subjects.add(subject);
         Specialization specialization = testDataFactory.persistSpecialization(department);
         Group group = testDataFactory.persistGroup(specialization);
 
@@ -94,6 +98,8 @@ class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, Less
         service.addOne(first, teacher.getId());
 
         Teacher anotherTeacher = testDataFactory.persistTeacher(department);
+        anotherTeacher.setSubjects(subjects);
+
         LessonCreateUpdateDto conflicting = LessonDtoTestBuilder.aLesson().withClassroomName(classroomB.getName())
                 .withSubjectTitle(subject.getTitle()).withGroupName(group.getName()).withWeekDay(WeekDay.MONDAY)
                 .withClassHour(ClassHour.FIRST_CLASS).build();
@@ -102,6 +108,23 @@ class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, Less
                 () -> service.addOne(conflicting, anotherTeacher.getId()));
 
         assertEquals("The group already has a class at that time", ex.getMessage());
+    }
+
+    @Test
+    void addOne_shouldThrowException_whenTeacherDontTeachSubject() {
+        Classroom classroomB = testDataFactory.persistClassroom();
+        Subject subject = testDataFactory.persistSubject(department, Collections.emptyList());
+        Specialization specialization = testDataFactory.persistSpecialization(department);
+        Group group = testDataFactory.persistGroup(specialization);
+
+        LessonCreateUpdateDto first = LessonDtoTestBuilder.aLesson().withClassroomName(classroomB.getName())
+                .withSubjectTitle(subject.getTitle()).withGroupName(group.getName()).withWeekDay(WeekDay.FRIDAY)
+                .withClassHour(ClassHour.FIFTH_CLASS).build();
+
+        AccessDeniedException ex = assertThrows(AccessDeniedException.class,
+                () -> service.addOne(first, teacher.getId()));
+
+        assertEquals("You don't teach this subject.", ex.getMessage());
     }
 
     @Test
@@ -134,6 +157,8 @@ class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, Less
     void addOne_shouldThrowException_whenClassroomAlreadyOccupiedAtThatTime() {
         Classroom classroom = testDataFactory.persistClassroom();
         Subject subject = testDataFactory.persistSubject(department, Collections.singletonList(teacher));
+        List<Subject> subjects = new ArrayList<>();
+        subjects.add(subject);
         Specialization specializationA = testDataFactory.persistSpecialization(department);
         Specialization specializationB = testDataFactory.persistSpecialization(department);
         Group groupA = testDataFactory.persistGroup(specializationA);
@@ -145,6 +170,7 @@ class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, Less
         service.addOne(first, teacher.getId());
 
         Teacher anotherTeacher = testDataFactory.persistTeacher(department);
+        anotherTeacher.setSubjects(subjects);
         LessonCreateUpdateDto conflicting = LessonDtoTestBuilder.aLesson().withClassroomName(classroom.getName())
                 .withSubjectTitle(subject.getTitle()).withGroupName(groupB.getName()).withWeekDay(WeekDay.WEDNESDAY)
                 .withClassHour(ClassHour.FIRST_CLASS).build();
