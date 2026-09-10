@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import ua.com.foxminded.config.SecurityConfig;
+import ua.com.foxminded.config.WebRoutes;
 import ua.com.foxminded.dto.user.ActivationRequestDto;
 import ua.com.foxminded.exception.TokenAlreadyUsedException;
 import ua.com.foxminded.exception.TokenExpiredException;
@@ -29,7 +30,7 @@ import ua.com.foxminded.exception.TokenNotFoundException;
 import ua.com.foxminded.service.ActivationUserService;
 
 @WebMvcTest(controllers = ActivationTokenController.class, excludeAutoConfiguration = ThymeleafAutoConfiguration.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, WebRoutes.class})
 class ActivationTokenControllerTest {
 
     private static final String TOKEN_VALUE = "token-123";
@@ -42,7 +43,7 @@ class ActivationTokenControllerTest {
 
     @Test
     void showForm_shouldReturnActivationView_whenTokenIsValid_andAnonymous() throws Exception {
-        mockMvc.perform(get("/activation/validate").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
+        mockMvc.perform(get("/activation").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
                 .andExpect(view().name("auth/activation")).andExpect(model().attribute("token", TOKEN_VALUE))
                 .andExpect(model().attributeExists("request"));
 
@@ -53,7 +54,7 @@ class ActivationTokenControllerTest {
     void showForm_shouldReturnErrorView_whenTokenExpired() throws Exception {
         doThrow(new TokenExpiredException()).when(activationService).validateToken(TOKEN_VALUE);
 
-        mockMvc.perform(get("/activation/validate").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
+        mockMvc.perform(get("/activation").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
                 .andExpect(view().name("auth/activation-error"))
                 .andExpect(model().attribute("error", "Token has been expired."));
     }
@@ -62,7 +63,7 @@ class ActivationTokenControllerTest {
     void showForm_shouldReturnBadRequest_whenTokenNotFound() throws Exception {
         doThrow(new TokenNotFoundException()).when(activationService).validateToken(TOKEN_VALUE);
 
-        mockMvc.perform(get("/activation/validate").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
+        mockMvc.perform(get("/activation").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
                 .andExpect(view().name("auth/activation-error")).andExpect(model().attribute("token", TOKEN_VALUE))
                 .andExpect(model().attributeExists("error"));
 
@@ -73,7 +74,7 @@ class ActivationTokenControllerTest {
     void showForm_shouldReturnBadRequest_whenTokenAlreadyUsed() throws Exception {
         doThrow(new TokenAlreadyUsedException()).when(activationService).validateToken(TOKEN_VALUE);
 
-        mockMvc.perform(get("/activation/validate").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
+        mockMvc.perform(get("/activation").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
                 .andExpect(view().name("auth/activation-error")).andExpect(model().attribute("token", TOKEN_VALUE))
                 .andExpect(model().attributeExists("error"));
 
@@ -82,7 +83,7 @@ class ActivationTokenControllerTest {
 
     @Test
     void submit_shouldReRenderFormWithoutCallingService_whenValidationFails() throws Exception {
-        mockMvc.perform(post("/activation").with(csrf()).param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
+        mockMvc.perform(post("/activation/validate").with(csrf()).param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
                 .andExpect(view().name("auth/activation")).andExpect(model().attribute("token", TOKEN_VALUE));
 
         verify(activationService, org.mockito.Mockito.never()).activateUser(any(), any());
@@ -91,7 +92,7 @@ class ActivationTokenControllerTest {
     @Test
     void submit_shouldRedirectToLogin_whenActivationSucceeds() throws Exception {
         mockMvc.perform(
-                post("/activation").with(csrf()).param("tokenValue", TOKEN_VALUE).param("email", "user@example.com")
+                post("/activation/validate").with(csrf()).param("tokenValue", TOKEN_VALUE).param("email", "user@example.com")
                         .param("password", "SecurePass123").param("confirmPassword", "SecurePass123"))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/login?activated=true"));
 
@@ -104,7 +105,7 @@ class ActivationTokenControllerTest {
                 any(ActivationRequestDto.class));
 
         mockMvc.perform(
-                post("/activation").with(csrf()).param("tokenValue", TOKEN_VALUE).param("email", "user@example.com")
+                post("/activation/validate").with(csrf()).param("tokenValue", TOKEN_VALUE).param("email", "user@example.com")
                         .param("password", "SecurePass123").param("confirmPassword", "SecurePass123"))
                 .andExpect(status().isOk()).andExpect(view().name("auth/activation-error"))
                 .andExpect(model().attributeExists("error")).andExpect(model().attribute("token", TOKEN_VALUE));

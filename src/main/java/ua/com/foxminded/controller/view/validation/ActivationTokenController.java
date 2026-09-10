@@ -40,7 +40,7 @@ public class ActivationTokenController {
         }
     }
 
-    @PostMapping
+    @PostMapping("/validate")
     public String submit(@RequestParam("tokenValue") String tokenValue,
             @Valid @ModelAttribute("request") ActivationRequestDto request, BindingResult bindingResult, Model model) {
 

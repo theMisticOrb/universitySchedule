@@ -15,8 +15,8 @@ public class SecurityConfig {
         
         http.authorizeHttpRequests(auth -> auth.mvcMatchers("/css/**", "/js/**").permitAll()
                 .mvcMatchers("/login").permitAll()
-                .mvcMatchers(WebRoutes.ACTIVATION_PATH).permitAll()
-                .mvcMatchers(WebRoutes.PASSWORD_RESET_PATH).permitAll()
+                .mvcMatchers("/activation/**").permitAll()
+                .mvcMatchers("/forgot-password/**").permitAll()
                 .mvcMatchers("/admin/**").hasRole("ADMIN")
                 .mvcMatchers("/teacher/**").hasAnyRole("TEACHER", "ADMIN")
                 .mvcMatchers("/student/**").hasAnyRole("STUDENT", "ADMIN").anyRequest().authenticated())

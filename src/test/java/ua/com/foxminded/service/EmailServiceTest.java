@@ -20,6 +20,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import ua.com.foxminded.config.WebRoutes;
 
 @ExtendWith(MockitoExtension.class)
 class EmailServiceTest {
@@ -76,7 +79,10 @@ class EmailServiceTest {
         ArgumentCaptor<Object[]> argsCaptor = ArgumentCaptor.forClass(Object[].class);
         verify(messageSource).getMessage(eq("email.activation.text"), argsCaptor.capture(), any(Locale.class));
  
-        String expectedLink = FRONTEND_URL + "/activation/validate?tokenValue=" + TOKEN;
+        
+        UriComponentsBuilder.fromHttpUrl(FRONTEND_URL);
+        String expectedLink = UriComponentsBuilder.fromPath(WebRoutes.ACTIVATION_PATH + "/validate")
+                .queryParam("tokenValue", TOKEN).toUriString();
         assertThat(argsCaptor.getValue()).containsExactly(expectedLink);
     }
 
@@ -110,7 +116,9 @@ class EmailServiceTest {
         ArgumentCaptor<Object[]> argsCaptor = ArgumentCaptor.forClass(Object[].class);
         verify(messageSource).getMessage(eq("email.reset.text"), argsCaptor.capture(), any(Locale.class));
  
-        String expectedLink = FRONTEND_URL + "/reset-password?tokenValue=" + TOKEN;
+        UriComponentsBuilder.fromHttpUrl(FRONTEND_URL);
+        String expectedLink = UriComponentsBuilder.fromPath(WebRoutes.PASSWORD_RESET_PATH + "/reset-password")
+                .queryParam("tokenValue", TOKEN).toUriString();
         assertThat(argsCaptor.getValue()).containsExactly(expectedLink);
     }
 

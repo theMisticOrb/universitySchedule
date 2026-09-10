@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import ua.com.foxminded.config.SecurityConfig;
+import ua.com.foxminded.config.WebRoutes;
 import ua.com.foxminded.exception.TokenExpiredException;
 import ua.com.foxminded.service.ActivationUserService;
 
@@ -81,7 +82,7 @@ class PasswordResetControllerTest {
 
     @Test
     void showResetForm_shouldReturnViewWithTokenAndEmptyRequest_whenTokenValid() throws Exception {
-        mockMvc.perform(get("/forgot-password/reset").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
+        mockMvc.perform(get(WebRoutes.PASSWORD_RESET_PATH + "/reset").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
                 .andExpect(view().name("auth/reset-password")).andExpect(model().attribute("token", TOKEN_VALUE))
                 .andExpect(model().attributeExists("request"));
 
@@ -130,7 +131,7 @@ class PasswordResetControllerTest {
 
     @Test
     void processReset_shouldReturnForbidden_whenCsrfTokenMissing() throws Exception {
-        mockMvc.perform(post("/forgot-password/reset").param("tokenValue", TOKEN_VALUE).param("password", PASSWORD)
+        mockMvc.perform(post("/forgot-password").param("tokenValue", TOKEN_VALUE).param("password", PASSWORD)
                 .param("confirmPassword", PASSWORD)).andExpect(status().isForbidden());
     }
 
