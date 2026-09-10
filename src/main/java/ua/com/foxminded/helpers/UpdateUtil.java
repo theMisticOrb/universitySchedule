@@ -28,11 +28,9 @@ public final class UpdateUtil {
         }
 
         List<E> newEntities = updatedDtoList.stream().map(mapper).collect(Collectors.toList());
-        repository.deleteAll(currentList);
-        List<E> saved = repository.saveAll(newEntities);
 
         currentList.clear();
-        currentList.addAll(saved);
+        currentList.addAll(newEntities);
 
     }
 

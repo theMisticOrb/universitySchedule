@@ -21,12 +21,14 @@ import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.GroupMapper;
 import ua.com.foxminded.mapper.SubjectMapper;
 import ua.com.foxminded.repository.SubjectRepository;
+import ua.com.foxminded.repository.TeacherRepository;
 
 @Service
 @Transactional
 public class SubjectService implements FullCrudService<Subject, SubjectCreateUpdateDto, Integer> {
 
     private final SubjectRepository subjectRepository;
+    private final TeacherRepository teacherRepository;
     private final TeacherService teacherService;
     private final AcademicDepartmentService departmentService;
     private final SpecializationService specializationService;
@@ -35,8 +37,9 @@ public class SubjectService implements FullCrudService<Subject, SubjectCreateUpd
 
     public SubjectService(SubjectRepository subjectRepository, TeacherService teacherService,
             AcademicDepartmentService departmentService, SpecializationService specializationService,
-            SubjectMapper subjectMapper, GroupMapper groupMapper) {
+            SubjectMapper subjectMapper, GroupMapper groupMapper, TeacherRepository teacherRepository) {
         this.subjectRepository = subjectRepository;
+        this.teacherRepository = teacherRepository;
         this.teacherService = teacherService;
         this.departmentService = departmentService;
         this.specializationService = specializationService;
@@ -54,7 +57,9 @@ public class SubjectService implements FullCrudService<Subject, SubjectCreateUpd
         Subject subject = subjectMapper.toEntity(dto, teachers, department);
 
         try {
-            return subjectRepository.save(subject);
+            Subject savedSubject = subjectRepository.saveAndFlush(subject);
+            teacherRepository.saveAllAndFlush(teachers);
+            return savedSubject;
         } catch (DataIntegrityViolationException e) {
             throw new DuplicateEntityException("Subject with name: " + dto.getTitle() + " alredy exists!");
 

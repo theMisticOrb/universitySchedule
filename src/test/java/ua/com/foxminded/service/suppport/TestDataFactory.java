@@ -105,8 +105,12 @@ public class TestDataFactory {
         Subject subject = new Subject();
         subject.setTitle(title);
         subject.setDepartment(department);
-        subject.setTeachers(teachers);
-        return subjectRepository.save(subject);
+        subjectRepository.save(subject);
+
+        teachers.forEach(teacher -> teacher.getSubjects().add(subject));
+        teacherRepository.saveAll(teachers);
+
+        return subject;
     }
 
     public Group persistGroup(Specialization specialization) {

@@ -12,12 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import ua.com.foxminded.config.WebRoutes;
 import ua.com.foxminded.dto.email.PasswordResetDto;
 import ua.com.foxminded.dto.email.PasswordResetRequestDto;
 import ua.com.foxminded.service.ActivationUserService;
 
 @Controller
-@RequestMapping("/forgot-password")
+@RequestMapping(WebRoutes.PASSWORD_RESET_PATH)
 public class PasswordResetController {
 
     private final ActivationUserService activationUserService;

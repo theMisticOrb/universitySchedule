@@ -25,6 +25,8 @@ public class SubjectMapper {
         entity.setTeachers(teachers);
         entity.setTitle(dto.getTitle());
         entity.setDepartment(department);
+        teachers.forEach(teacher -> teacher.getSubjects().add(entity));
+
         return entity;
 
     }

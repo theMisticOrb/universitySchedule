@@ -11,11 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import ua.com.foxminded.config.WebRoutes;
 import ua.com.foxminded.dto.user.ActivationRequestDto;
 import ua.com.foxminded.service.ActivationUserService;
 
 @Controller
-@RequestMapping("/activation")
+@RequestMapping(WebRoutes.ACTIVATION_PATH)
 public class ActivationTokenController {
 
     private final ActivationUserService activationService;
@@ -25,7 +26,7 @@ public class ActivationTokenController {
         this.activationService = activationService;
     }
 
-    @GetMapping("/validate")
+    @GetMapping
     public String showForm(@RequestParam String tokenValue, Model model) {
         try {
             activationService.validateToken(tokenValue);

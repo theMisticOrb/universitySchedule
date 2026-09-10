@@ -1,5 +1,6 @@
 package ua.com.foxminded.mapper;
 
+import java.util.HashSet;
 import java.util.Objects;
 
 import org.springframework.stereotype.Component;
@@ -22,7 +23,7 @@ public class TeacherMapper {
         entity.setMiddleName(dto.getMiddleName());
         entity.setLastName(dto.getLastName());
         entity.setDepartment(department);
-        entity.setRoles(dto.getRoles());
+        entity.setRoles(new HashSet<>(dto.getRoles()));
         entity.setEmail(dto.getEmail());
         return entity;
     }

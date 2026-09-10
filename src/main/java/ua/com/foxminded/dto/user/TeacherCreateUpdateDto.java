@@ -2,17 +2,15 @@ package ua.com.foxminded.dto.user;
 
 import java.util.List;
 
-import ua.com.foxminded.dto.subject.SubjectCreateUpdateDto;
-
 public class TeacherCreateUpdateDto extends UserCreateUpdateDto {
 
     private String departmentCode;
-    private List<SubjectCreateUpdateDto> subjects;
+    private List<String> subjects;
 
     public TeacherCreateUpdateDto() {
     }
 
-    public TeacherCreateUpdateDto(String departmentCode, List<SubjectCreateUpdateDto> subjects) {
+    public TeacherCreateUpdateDto(String departmentCode, List<String> subjects) {
         this.departmentCode = departmentCode;
         this.subjects = subjects;
     }
@@ -27,11 +25,11 @@ public class TeacherCreateUpdateDto extends UserCreateUpdateDto {
         this.departmentCode = departmentCode;
     }
 
-    public List<SubjectCreateUpdateDto> getSubjects() {
+    public List<String> getSubjects() {
         return subjects;
     }
 
-    public void setSubjects(List<SubjectCreateUpdateDto> subjects) {
+    public void setSubjects(List<String> subjects) {
         this.subjects = subjects;
     }
 

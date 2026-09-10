@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import ua.com.foxminded.dto.subject.SubjectCreateUpdateDto;
 import ua.com.foxminded.dto.user.TeacherCreateUpdateDto;
 import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.service.suppport.TestDataFactory;
@@ -20,7 +18,7 @@ public class TeacherDtoTestBuilder {
     private String password = "Password123!";
     private Set<UserRole> roles = Collections.singleton(UserRole.TEACHER);
     private String departmentCode; 
-    private List<SubjectCreateUpdateDto> subjects = new ArrayList<>();
+    private List<String> subjects = new ArrayList<>();
 
     public static TeacherDtoTestBuilder aTeacher() {
         return new TeacherDtoTestBuilder();
@@ -62,11 +60,7 @@ public class TeacherDtoTestBuilder {
     }
 
     public TeacherDtoTestBuilder withSubjectTitles(List<String> subjectTitles) {
-        this.subjects = subjectTitles.stream().map(title -> {
-            SubjectCreateUpdateDto subjectDto = new SubjectCreateUpdateDto();
-            subjectDto.setTitle(title);
-            return subjectDto;
-        }).collect(Collectors.toList());
+        this.subjects = new ArrayList<>(subjectTitles);
         return this;
     }
 

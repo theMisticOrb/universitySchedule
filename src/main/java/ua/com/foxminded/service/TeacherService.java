@@ -17,7 +17,6 @@ import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.enums.UserRole;
 import ua.com.foxminded.helpers.UpdateUtil;
-import ua.com.foxminded.mapper.SubjectMapper;
 import ua.com.foxminded.mapper.TeacherMapper;
 import ua.com.foxminded.repository.SubjectRepository;
 import ua.com.foxminded.repository.TeacherRepository;
@@ -29,17 +28,14 @@ public class TeacherService implements FullCrudService<Teacher, TeacherCreateUpd
     private final TeacherRepository teacherRepository;
     private final AcademicDepartmentService departmentService;
     private final TeacherMapper teacherMapper;
-    private final SubjectMapper subjectMapper;
     private final SubjectRepository subjectRepository;
     private final PasswordEncoder passwordEncoder;
 
     public TeacherService(TeacherRepository teacherRepository, AcademicDepartmentService departmentService,
-            TeacherMapper teacherMapper, SubjectMapper subjectMapper, SubjectRepository subjectRepository,
-            PasswordEncoder passwordEncoder) {
+            TeacherMapper teacherMapper, SubjectRepository subjectRepository, PasswordEncoder passwordEncoder) {
         this.teacherRepository = teacherRepository;
         this.departmentService = departmentService;
         this.teacherMapper = teacherMapper;
-        this.subjectMapper = subjectMapper;
         this.subjectRepository = subjectRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -90,9 +86,16 @@ public class TeacherService implements FullCrudService<Teacher, TeacherCreateUpd
         if (updated.getDepartmentCode() != null) {
             AcademicDepartment department = departmentService.findByCode(updated.getDepartmentCode());
             UpdateUtil.setIfNotNull(department, teacher::setDepartment);
+        }
 
-            UpdateUtil.replaceList(teacher.getSubjects(), updated.getSubjects(),
-                    dto -> subjectMapper.toEntity(dto, Arrays.asList(teacher), department), subjectRepository);
+        if (updated.getSubjects() != null) {
+            List<Subject> newSubjects = updated.getSubjects().stream()
+                    .map(title -> subjectRepository.findByTitle(title)
+                            .orElseThrow(() -> new EntityNotFoundException("Subject not found: " + title)))
+                    .collect(Collectors.toList());
+
+            teacher.getSubjects().clear();
+            teacher.getSubjects().addAll(newSubjects);
         }
         UpdateUtil.setIfNotNull(updated.getFirstName(), teacher::setFirstName);
         UpdateUtil.setIfNotNull(updated.getMiddleName(), teacher::setMiddleName);

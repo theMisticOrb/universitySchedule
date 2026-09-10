@@ -7,6 +7,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import ua.com.foxminded.config.WebRoutes;
 
 @Service
 public class EmailService {
@@ -22,7 +25,9 @@ public class EmailService {
     }
 
     public void sendActivationEmail(String toEmail, String token) {
-        String activationLink = frontendUrl + "/activation/validate?tokenValue=" + token;
+        UriComponentsBuilder.fromHttpUrl(frontendUrl);
+        String activationLink = UriComponentsBuilder.fromPath(WebRoutes.PASSWORD_RESET_PATH)
+                .queryParam("tokenValue", token).toUriString();
 
         String subject = messageSource.getMessage("email.activation.subject", null, Locale.getDefault());
         String text = messageSource.getMessage("email.activation.text", new Object[] { activationLink },
@@ -36,7 +41,9 @@ public class EmailService {
     }
 
     public void sendPasswordResetEmail(String toEmail, String token) {
-        String resetLink = frontendUrl + "/reset-password?tokenValue=" + token;
+        UriComponentsBuilder.fromHttpUrl(frontendUrl);
+        String resetLink = UriComponentsBuilder.fromPath(WebRoutes.PASSWORD_RESET_PATH).queryParam("tokenValue", token)
+                .toUriString();
 
         String subject = messageSource.getMessage("email.reset.subject", null, Locale.getDefault());
         String text = messageSource.getMessage("email.reset.text", new Object[] { resetLink }, Locale.getDefault());

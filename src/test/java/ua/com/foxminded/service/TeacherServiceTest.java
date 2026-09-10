@@ -21,12 +21,16 @@ import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.enums.UserRole;
+import ua.com.foxminded.repository.SubjectRepository;
 import ua.com.foxminded.service.suppport.dto.TeacherDtoTestBuilder;
 
 class TeacherServiceTest extends AbstractFullCrudServiceTest<Teacher, TeacherCreateUpdateDto, Integer> {
 
     @Autowired
     private TeacherService service;
+    
+    @Autowired
+    private SubjectRepository subjectRepository;
 
     @Override
     protected FullCrudService<Teacher, TeacherCreateUpdateDto, Integer> getService() {
@@ -142,6 +146,71 @@ class TeacherServiceTest extends AbstractFullCrudServiceTest<Teacher, TeacherCre
         assertEquals("Jhon", result.getFirstName());
     }
 
+    @Test
+    void update_shouldReplaceTeacherSubjects_withoutDeletingSubjectRowsFromDatabase() {
+        AcademicDepartment department = persistValidDepartment();
+        Teacher saved = service.addOne(
+                TeacherDtoTestBuilder.aTeacher().withDepartmentCode(department.getCode()).build());
+ 
+        Subject oldSubject = testDataFactory.persistSubject(department, Collections.singletonList(saved));
+        Subject newSubject = testDataFactory.persistSubject(department, Collections.emptyList());
+ 
+        long subjectCountBeforeUpdate = subjectRepository.count();
+ 
+        TeacherCreateUpdateDto updateDto = new TeacherCreateUpdateDto();
+        updateDto.setSubjects(Arrays.asList(newSubject.getTitle()));
+ 
+        Teacher result = service.fullUpdate(updateDto, saved.getId());
+ 
+        assertTrue(result.getSubjects().contains(newSubject));
+        assertFalse(result.getSubjects().contains(oldSubject));
+ 
+        assertTrue(subjectRepository.findById(oldSubject.getId()).isPresent());
+        assertEquals(subjectCountBeforeUpdate, subjectRepository.count());
+    }
+ 
+    @Test
+    void update_shouldNotAffectOtherTeachersAssignedToSameSubject() {
+        AcademicDepartment department = persistValidDepartment();
+        Teacher teacherX = service.addOne(
+                TeacherDtoTestBuilder.aTeacher().withDepartmentCode(department.getCode()).withFirstName("X").build());
+        Teacher teacherY = service.addOne(
+                TeacherDtoTestBuilder.aTeacher().withDepartmentCode(department.getCode()).withFirstName("Y").build());
+ 
+        Subject sharedSubject = testDataFactory.persistSubject(department, Arrays.asList(teacherX, teacherY));
+ 
+        TeacherCreateUpdateDto updateDto = new TeacherCreateUpdateDto();
+        updateDto.setSubjects(Collections.emptyList());
+ 
+        service.fullUpdate(updateDto, teacherX.getId());
+ 
+        Teacher resultX = service.findById(teacherX.getId());
+        Teacher resultY = service.findById(teacherY.getId());
+ 
+        assertFalse(resultX.getSubjects().contains(sharedSubject));
+        // teacherY не должен пострадать от обновления teacherX.
+        assertTrue(resultY.getSubjects().contains(sharedSubject));
+    }
+ 
+    @Test
+    void update_shouldReplaceSubjects_evenWhenDepartmentCodeNotProvided() {
+        AcademicDepartment department = persistValidDepartment();
+        Teacher saved = service.addOne(
+                TeacherDtoTestBuilder.aTeacher().withDepartmentCode(department.getCode()).build());
+ 
+        Subject newSubject = testDataFactory.persistSubject(department, Collections.emptyList());
+ 
+        TeacherCreateUpdateDto updateDto = new TeacherCreateUpdateDto();
+        updateDto.setDepartmentCode(null);
+        updateDto.setSubjects(Arrays.asList(newSubject.getTitle()));
+ 
+        Teacher result = service.fullUpdate(updateDto, saved.getId());
+ 
+        assertTrue(result.getSubjects().contains(newSubject));
+        assertEquals(department.getId(), result.getDepartment().getId());
+    }
+ 
+    
     @Test
     void changeTeacherDepartment_shouldUpdateDepartment_whenCalled() {
         Teacher saved = getService().addOne(createValidDto());
