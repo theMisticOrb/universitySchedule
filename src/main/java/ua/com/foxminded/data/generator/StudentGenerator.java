@@ -55,6 +55,7 @@ public class StudentGenerator {
             student.setRoles(roles);
             student.setEmail(email);
             student.setPassword(password);
+            student.setGroupName(group.getName());
 
             students.add(student);
 
