@@ -110,13 +110,23 @@
 
         var hourOptions = document.querySelectorAll('select[name="classHour"] option');
 
-        var html = '<table border="1" cellpadding="5" style="border-collapse: collapse;">';
+        var table = document.createElement('table');
+        table.border = '1';
+        table.cellPadding = '5';
+        table.style.borderCollapse = 'collapse';
 
-        html += '<tr><th>' + MSG_HOUR_HEADER + '</th>';
+        var headerRow = document.createElement('tr');
+        var hourHeaderCell = document.createElement('th');
+
+        hourHeaderCell.textContent = MSG_HOUR_HEADER;
+        headerRow.appendChild(hourHeaderCell);
+
         for (var d = 0; d < dayLabels.length; d++) {
-            html += '<th>' + dayLabels[d] + '</th>';
+            var dayHeaderCell = document.createElement('th');
+            dayHeaderCell.textContent = dayLabels[d];
+            headerRow.appendChild(dayHeaderCell);
         }
-        html += '</tr>';
+        table.appendChild(headerRow);
 
         for (var h = 0; h < hourOptions.length; h++) {
             var hourValue = hourOptions[h].value;
@@ -126,9 +136,10 @@
             }
 
             var hourLabel = hourOptions[h].textContent;
-
-            html += '<tr>';
-            html += '<td>' + hourLabel + '</td>';
+            var row = document.createElement('tr');
+            var hourCell = document.createElement('td');
+            hourCell.textContent = hourLabel;
+            row.appendChild(hourCell);
 
             for (var d2 = 0; d2 < dayKeys.length; d2++) {
                 var dayKey = dayKeys[d2];
@@ -142,19 +153,31 @@
                     }
                 }
 
+                var cell = document.createElement('td');
+
                 if (lessonFound !== null) {
-                    html += '<td style="background: #ffe0e0;">' + lessonFound.subjectTitle + '<br>' + lessonFound.classroomName + '</td>';
+                    cell.style.background = '#ffe0e0';
+
+                    var subjectText = document.createTextNode(lessonFound.subjectTitle);
+                    var br = document.createElement('br');
+                    var classroomText = document.createTextNode(lessonFound.classroomName);
+
+                    cell.appendChild(subjectText);
+                    cell.appendChild(br);
+                    cell.appendChild(classroomText);
                 } else {
-                    html += '<td style="background: #e6ffe6;">' + MSG_FREE + '</td>';
+                    cell.style.background = '#e6ffe6';
+                    cell.textContent = MSG_FREE;
                 }
+
+                row.appendChild(cell);
             }
 
-            html += '</tr>';
+            table.appendChild(row);
         }
-
-        html += '</table>';
-
-        document.getElementById('groupSchedule').innerHTML = html;
+        var container = document.getElementById('groupSchedule');
+        container.innerHTML = '';
+        container.appendChild(table);
     }
 
     document.getElementById('weekDaySelect').onchange = updateFreeClassrooms;
@@ -174,17 +197,28 @@
                 return response.json();
             })
             .then(function (freeNames) {
-                var html = '<option value="">--' + MSG_SELECT_CLASSROOM + '--</option>';
-
-                for (var i = 0; i < freeNames.length; i++) {
-                    html += '<option value="' + freeNames[i] + '">' + freeNames[i] + '</option>';
-                }
+                classroomSelect.innerHTML = '';
 
                 if (freeNames.length === 0) {
-                    html = '<option value="">' + MSG_ALL_TAKEN + '</option>';
+                    var noneOption = document.createElement('option');
+                    noneOption.value = '';
+                    noneOption.textContent = MSG_ALL_TAKEN;
+                    classroomSelect.appendChild(noneOption);
+                    return;
                 }
 
-                classroomSelect.innerHTML = html;
+                var placeholderOption = document.createElement('option');
+                placeholderOption.value = '';
+                placeholderOption.textContent = '--' + MSG_SELECT_CLASSROOM + '--';
+                classroomSelect.appendChild(placeholderOption);
+
+                for (var i = 0; i < freeNames.length; i++) {
+                    var option = document.createElement('option');
+
+                    option.value = freeNames[i];
+                    option.textContent = freeNames[i];
+                    classroomSelect.appendChild(option);
+                }
             });
     }
 </script>
