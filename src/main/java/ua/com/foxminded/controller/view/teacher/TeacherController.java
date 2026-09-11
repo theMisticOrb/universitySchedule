@@ -86,8 +86,8 @@ public class TeacherController {
 
     @GetMapping("/schedule/group")
     @ResponseBody
-    public Map<String, List<LessonResponseDto>> getGroupSchedule(@RequestParam String name) {
-        Map<WeekDay, List<Lesson>> schedule = lessonService.getWeeklyScheduleForGroup(name);
+    public Map<String, List<LessonResponseDto>> getGroupSchedule(@RequestParam Integer id) {
+        Map<WeekDay, List<Lesson>> schedule = lessonService.getWeeklyScheduleForGroup(id);
 
         Map<String, List<LessonResponseDto>> result = new LinkedHashMap<>();
         schedule.forEach((day, lessons) -> result.put(day.name(),

@@ -62,7 +62,7 @@ class LessonControllerTest {
     private LessonResponseDto createResponseDto() {
         LessonResponseDto dto = new LessonResponseDto();
         dto.setId(1);
-        dto.setSubjectTitle("Math");
+        dto.setSubjectId(1);
         dto.setWeekDay(WeekDay.FRIDAY);
         return dto;
     }
@@ -79,12 +79,12 @@ class LessonControllerTest {
         when(service.findAll()).thenReturn(lessons);
         when(lessonMapper.toResponseDto(any(Lesson.class))).thenReturn(responseDto);
 
-        mvc.perform(get("/api/v1/lessons").param("subjectTitle", "Math")).andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(1)).andExpect(jsonPath("$[0].subjectTitle").value("Math"));
+        mvc.perform(get("/api/v1/lessons").param("subjectId", "1")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(1)).andExpect(jsonPath("$[0].subjectId").value("1"));
     }
 
     @Test
-    void findByTitleAndWeekDay_shouldReturn200_whenCalled() throws Exception {
+    void findBySubjectIdAndWeekDay_shouldReturn200_whenCalled() throws Exception {
 
         Lesson lesson = createLesson();
         LessonResponseDto responseDto = createResponseDto();
@@ -92,11 +92,11 @@ class LessonControllerTest {
         List<Lesson> lessons = new ArrayList<>();
         lessons.add(lesson);
 
-        when(service.findBySubjectTitleAndWeekDay("Math", WeekDay.FRIDAY)).thenReturn(lessons);
+        when(service.findBySubjectIdAndWeekDay(1, WeekDay.FRIDAY)).thenReturn(lessons);
         when(lessonMapper.toResponseDto(any(Lesson.class))).thenReturn(responseDto);
 
-        mvc.perform(get("/api/v1/lessons").param("subjectTitle", "Math").param("weekDay", "FRIDAY"))
-                .andExpect(status().isOk()).andExpect(jsonPath("$[0].subjectTitle").value("Math"));
+        mvc.perform(get("/api/v1/lessons").param("subjectId", "1").param("weekDay", "FRIDAY"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$[0].subjectId").value("1"));
     }
 
     @Test
@@ -109,7 +109,7 @@ class LessonControllerTest {
         when(lessonMapper.toResponseDto(lesson)).thenReturn(responseDto);
 
         mvc.perform(get("/api/v1/lessons/1")).andExpect(status().isOk())
-                .andExpect(jsonPath("$.subjectTitle").value(lesson.getSubject().getTitle()));
+                .andExpect(jsonPath("$.subjectId").value(lesson.getSubject().getId()));
     }
 
     @Test
@@ -118,14 +118,14 @@ class LessonControllerTest {
         Lesson lesson = createLesson();
         LessonResponseDto responseDto = createResponseDto();
         LessonCreateUpdateDto requestDto = new LessonCreateUpdateDto();
-        requestDto.setSubjectTitle("Math");
+        requestDto.setSubjectId(1);
 
         when(service.addOne(any(LessonCreateUpdateDto.class), eq(1))).thenReturn(lesson);
         when(lessonMapper.toResponseDto(lesson)).thenReturn(responseDto);
 
         mvc.perform(post("/api/v1/lessons/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
-                .andExpect(jsonPath("$.subjectTitle").value(lesson.getSubject().getTitle()));
+                .andExpect(jsonPath("$.subjectId").value(lesson.getSubject().getId()));
     }
 
     @Test
@@ -142,14 +142,14 @@ class LessonControllerTest {
         Lesson lesson = createLesson();
         LessonResponseDto responseDto = createResponseDto();
         LessonCreateUpdateDto requestDto = new LessonCreateUpdateDto();
-        requestDto.setSubjectTitle("Math");
+        requestDto.setSubjectId(1);
 
         when(service.fullUpdate(any(LessonCreateUpdateDto.class), eq(1))).thenReturn(lesson);
         when(lessonMapper.toResponseDto(lesson)).thenReturn(responseDto);
 
         mvc.perform(put("/api/v1/lessons/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
-                .andExpect(jsonPath("$.subjectTitle").value(lesson.getSubject().getTitle()));
+                .andExpect(jsonPath("$.subjectId").value(lesson.getSubject().getId()));
 
     }
 }

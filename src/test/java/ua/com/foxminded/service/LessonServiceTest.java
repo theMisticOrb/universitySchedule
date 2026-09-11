@@ -74,7 +74,7 @@ class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, Less
         Group group = testDataFactory.persistGroup(specialization);
 
         return LessonDtoTestBuilder.aLesson().withClassroomName(classroom.getName())
-                .withSubjectTitle(subject.getTitle()).withGroupName(group.getName()).build();
+                .withSubjectId(subject.getId()).withGroupId(group.getId()).build();
     }
 
     @Test
@@ -93,7 +93,7 @@ class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, Less
         Group group = testDataFactory.persistGroup(specialization);
 
         LessonCreateUpdateDto first = LessonDtoTestBuilder.aLesson().withClassroomName(classroomA.getName())
-                .withSubjectTitle(subject.getTitle()).withGroupName(group.getName()).withWeekDay(WeekDay.MONDAY)
+                .withSubjectId(subject.getId()).withGroupId(group.getId()).withWeekDay(WeekDay.MONDAY)
                 .withClassHour(ClassHour.FIRST_CLASS).build();
         service.addOne(first, teacher.getId());
 
@@ -101,7 +101,7 @@ class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, Less
         anotherTeacher.setSubjects(subjects);
 
         LessonCreateUpdateDto conflicting = LessonDtoTestBuilder.aLesson().withClassroomName(classroomB.getName())
-                .withSubjectTitle(subject.getTitle()).withGroupName(group.getName()).withWeekDay(WeekDay.MONDAY)
+                .withSubjectId(subject.getId()).withGroupId(group.getId()).withWeekDay(WeekDay.MONDAY)
                 .withClassHour(ClassHour.FIRST_CLASS).build();
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
@@ -118,7 +118,7 @@ class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, Less
         Group group = testDataFactory.persistGroup(specialization);
 
         LessonCreateUpdateDto first = LessonDtoTestBuilder.aLesson().withClassroomName(classroomB.getName())
-                .withSubjectTitle(subject.getTitle()).withGroupName(group.getName()).withWeekDay(WeekDay.FRIDAY)
+                .withSubjectId(subject.getId()).withGroupId(group.getId()).withWeekDay(WeekDay.FRIDAY)
                 .withClassHour(ClassHour.FIFTH_CLASS).build();
 
         AccessDeniedException ex = assertThrows(AccessDeniedException.class,
@@ -138,13 +138,13 @@ class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, Less
         Group groupB = testDataFactory.persistGroup(specializationB);
 
         LessonCreateUpdateDto first = LessonDtoTestBuilder.aLesson().withClassroomName(classroomA.getName())
-                .withSubjectTitle(subject.getTitle()).withGroupName(groupA.getName()).withWeekDay(WeekDay.TUESDAY)
+                .withSubjectId(subject.getId()).withGroupId(groupA.getId()).withWeekDay(WeekDay.TUESDAY)
                 .withClassHour(ClassHour.FIRST_CLASS).build();
         service.addOne(first, teacher.getId());
 
         LessonCreateUpdateDto conflicting = LessonDtoTestBuilder.aLesson().withClassroomName(classroomB.getName())
 
-                .withSubjectTitle(subject.getTitle()).withGroupName(groupB.getName()).withWeekDay(WeekDay.TUESDAY)
+                .withSubjectId(subject.getId()).withGroupId(groupB.getId()).withWeekDay(WeekDay.TUESDAY)
                 .withClassHour(ClassHour.FIRST_CLASS).build();
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
@@ -165,14 +165,14 @@ class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, Less
         Group groupB = testDataFactory.persistGroup(specializationB);
 
         LessonCreateUpdateDto first = LessonDtoTestBuilder.aLesson().withClassroomName(classroom.getName())
-                .withSubjectTitle(subject.getTitle()).withGroupName(groupA.getName()).withWeekDay(WeekDay.WEDNESDAY)
+                .withSubjectId(subject.getId()).withGroupId(groupA.getId()).withWeekDay(WeekDay.WEDNESDAY)
                 .withClassHour(ClassHour.FIRST_CLASS).build();
         service.addOne(first, teacher.getId());
 
         Teacher anotherTeacher = testDataFactory.persistTeacher(department);
         anotherTeacher.setSubjects(subjects);
         LessonCreateUpdateDto conflicting = LessonDtoTestBuilder.aLesson().withClassroomName(classroom.getName())
-                .withSubjectTitle(subject.getTitle()).withGroupName(groupB.getName()).withWeekDay(WeekDay.WEDNESDAY)
+                .withSubjectId(subject.getId()).withGroupId(groupB.getId()).withWeekDay(WeekDay.WEDNESDAY)
                 .withClassHour(ClassHour.FIRST_CLASS).build();
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
@@ -195,7 +195,7 @@ class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, Less
         LessonCreateUpdateDto dto = buildValidDto();
         Lesson saved = service.addOne(dto, teacher.getId());
 
-        List<Lesson> result = service.findBySubjectTitleAndWeekDay(dto.getSubjectTitle(), dto.getWeekDay());
+        List<Lesson> result = service.findBySubjectIdAndWeekDay(dto.getSubjectId(), dto.getWeekDay());
 
         assertNotNull(result);
         assertTrue(result.stream().anyMatch(lesson -> lesson.getId().equals(saved.getId())));
@@ -206,7 +206,7 @@ class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, Less
         Lesson saved = persistValidEntity();
         Subject newSubject = testDataFactory.persistSubject(department, Collections.singletonList(teacher));
         LessonCreateUpdateDto updateDto = new LessonCreateUpdateDto();
-        updateDto.setSubjectTitle(newSubject.getTitle());
+        updateDto.setSubjectId(newSubject.getId());
 
         Lesson result = service.fullUpdate(updateDto, saved.getId());
 
@@ -220,7 +220,7 @@ class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, Less
         String originalSubjectTitle = saved.getSubject().getTitle();
 
         LessonCreateUpdateDto updateDto = new LessonCreateUpdateDto();
-        updateDto.setSubjectTitle(null);
+        updateDto.setClassroomName(null);
 
         Lesson result = service.fullUpdate(updateDto, saved.getId());
 
@@ -244,7 +244,7 @@ class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, Less
         LessonCreateUpdateDto dto = buildValidDto();
         service.addOne(dto, teacher.getId());
 
-        Map<WeekDay, List<Lesson>> schedule = service.getWeeklyScheduleForGroup(dto.getGroupName());
+        Map<WeekDay, List<Lesson>> schedule = service.getWeeklyScheduleForGroup(dto.getGroupId());
 
         assertNotNull(schedule);
         assertTrue(schedule.get(dto.getWeekDay()).size() >= 1);

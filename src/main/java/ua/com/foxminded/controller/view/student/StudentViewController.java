@@ -57,9 +57,9 @@ public class StudentViewController {
             return "student/schedule-st";
         }
         
-        String studentGroup = user.getGroup().getName();
+        Integer studentGroupId = user.getGroup().getId();
 
-        model.addAttribute("schedule", lessonService.getWeeklyScheduleForGroup(studentGroup));
+        model.addAttribute("schedule", lessonService.getWeeklyScheduleForGroup(studentGroupId));
         model.addAttribute("weekDays", WeekDay.values());
         model.addAttribute("classHours", ClassHour.values());
 

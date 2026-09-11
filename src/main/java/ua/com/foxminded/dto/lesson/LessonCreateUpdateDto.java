@@ -6,21 +6,21 @@ import ua.com.foxminded.enums.WeekDay;
 public class LessonCreateUpdateDto {
 
     private String classroomName;
-    private String subjectTitle;
+    private Integer subjectId;
     private ClassHour classHour;
     private WeekDay weekDay;
-    private String groupName;
+    private Integer groupId;
 
     public LessonCreateUpdateDto() {
     }
 
-    public LessonCreateUpdateDto(String classroomName, String subjectTitle, ClassHour classHour, WeekDay weekDay,
-            String groupName) {
+    public LessonCreateUpdateDto(String classroomName, Integer subjectId, ClassHour classHour, WeekDay weekDay,
+            Integer groupId) {
         this.classroomName = classroomName;
-        this.subjectTitle = subjectTitle;
+        this.subjectId = subjectId;
         this.classHour = classHour;
         this.weekDay = weekDay;
-        this.groupName = groupName;
+        this.groupId = groupId;
     }
 
     public String getClassroomName() {
@@ -31,12 +31,20 @@ public class LessonCreateUpdateDto {
         this.classroomName = classroomName;
     }
 
-    public String getSubjectTitle() {
-        return subjectTitle;
+    public Integer getSubjectId() {
+        return subjectId;
     }
 
-    public void setSubjectTitle(String subjectTitle) {
-        this.subjectTitle = subjectTitle;
+    public void setSubjectId(Integer subjectId) {
+        this.subjectId = subjectId;
+    }
+
+    public Integer getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
     }
 
     public ClassHour getClassHour() {
@@ -53,14 +61,6 @@ public class LessonCreateUpdateDto {
 
     public void setWeekDay(WeekDay weekDay) {
         this.weekDay = weekDay;
-    }
-
-    public String getGroupName() {
-        return groupName;
-    }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
     }
 
 }

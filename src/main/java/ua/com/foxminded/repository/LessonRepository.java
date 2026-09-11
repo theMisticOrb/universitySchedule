@@ -14,22 +14,22 @@ import ua.com.foxminded.enums.WeekDay;
 @Transactional
 public interface LessonRepository extends JpaRepository<Lesson, Integer> {
 
-    List<Lesson> findBySubject_TitleAndWeekDay(String title, WeekDay weekDay);
+    List<Lesson> findBySubject_IdAndWeekDay(Integer subjectId, WeekDay weekDay);
 
     List<Lesson> findByTeacher_IdAndWeekDay(Integer teacherId, WeekDay weekDay);
 
     List<Lesson> findByTeacher_Id(Integer teacherId);
 
-    List<Lesson> findByGroup_Name(String groupName);
+    List<Lesson> findByGroup_Id(Integer groupId);
 
     List<Lesson> findByWeekDayAndClassHour(WeekDay weekDay, ClassHour classHour);
 
-    boolean existsBySubject_TitleAndClassroom_Name(String subjectTitle, String classroomName);
+    boolean existsBySubject_IdAndClassroom_Name(Integer subjectId, String classroomName);
 
     boolean existsByClassroom_NameAndWeekDayAndClassHour(String classroomName, WeekDay weekDay, ClassHour classHour);
 
-    boolean existsByGroup_NameAndWeekDayAndClassHour(String groupName, WeekDay weekDay, ClassHour classHour);
+    boolean existsByGroup_IdAndWeekDayAndClassHour(Integer groupId, WeekDay weekDay, ClassHour classHour);
 
-    boolean existsByTeacher_IdAndWeekDayAndClassHour(Integer teacherid, WeekDay weekDay, ClassHour classHour);
+    boolean existsByTeacher_IdAndWeekDayAndClassHour(Integer teacherId, WeekDay weekDay, ClassHour classHour);
 
 }

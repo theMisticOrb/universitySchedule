@@ -55,12 +55,12 @@ public class LessonService implements ReadUpdateDeleteService<Lesson, LessonCrea
 
         Teacher teacher = teacherRepository.findById(teacherId)
                 .orElseThrow(() -> new IllegalArgumentException("Teacher not found!"));
-        Subject subject = subjectService.findByTitle(dto.getSubjectTitle());
+        Subject subject = subjectService.findById(dto.getSubjectId());
 
         if (!teacherRepository.existsByIdAndSubjects_Title(teacherId, subject.getTitle())) {
             throw new AccessDeniedException("You don't teach this subject.");
         }
-        if (lessonRepository.existsByGroup_NameAndWeekDayAndClassHour(dto.getGroupName(), dto.getWeekDay(),
+        if (lessonRepository.existsByGroup_IdAndWeekDayAndClassHour(dto.getGroupId(), dto.getWeekDay(),
                 dto.getClassHour())) {
             throw new IllegalArgumentException("The group already has a class at that time");
         }
@@ -74,7 +74,7 @@ public class LessonService implements ReadUpdateDeleteService<Lesson, LessonCrea
         }
 
         Classroom classroom = classroomService.findByName(dto.getClassroomName());
-        Group group = groupService.findByName(dto.getGroupName());
+        Group group = groupService.findById(dto.getGroupId());
 
         Lesson lesson = lessonMapper.toEntity(dto, classroom, subject, group, teacher);
 
@@ -91,8 +91,8 @@ public class LessonService implements ReadUpdateDeleteService<Lesson, LessonCrea
         return lessonRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Lesson not found: " + id));
     }
 
-    public List<Lesson> findBySubjectTitleAndWeekDay(String subjectTitle, WeekDay weekDay) {
-        return lessonRepository.findBySubject_TitleAndWeekDay(subjectTitle, weekDay);
+    public List<Lesson> findBySubjectIdAndWeekDay(Integer subjectId, WeekDay weekDay) {
+        return lessonRepository.findBySubject_IdAndWeekDay(subjectId, weekDay);
     }
 
     public List<Lesson> findAll() {
@@ -107,12 +107,12 @@ public class LessonService implements ReadUpdateDeleteService<Lesson, LessonCrea
             Classroom classroom = classroomService.findByName(updated.getClassroomName());
             UpdateUtil.setIfNotNull(classroom, lesson::setClassroom);
         }
-        if (updated.getSubjectTitle() != null) {
-            Subject subject = subjectService.findByTitle(updated.getSubjectTitle());
+        if (updated.getSubjectId() != null) {
+            Subject subject = subjectService.findById(updated.getSubjectId());
             UpdateUtil.setIfNotNull(subject, lesson::setSubject);
         }
-        if (updated.getGroupName() != null) {
-            Group group = groupService.findByName(updated.getGroupName());
+        if (updated.getGroupId() != null) {
+            Group group = groupService.findById(updated.getGroupId());
             UpdateUtil.setIfNotNull(group, lesson::setGroup);
         }
 
@@ -136,9 +136,9 @@ public class LessonService implements ReadUpdateDeleteService<Lesson, LessonCrea
 
     }
 
-    public Map<WeekDay, List<Lesson>> getWeeklyScheduleForGroup(String groupName) {
+    public Map<WeekDay, List<Lesson>> getWeeklyScheduleForGroup(Integer groupId) {
 
-        List<Lesson> lessons = lessonRepository.findByGroup_Name(groupName);
+        List<Lesson> lessons = lessonRepository.findByGroup_Id(groupId);
 
         return Arrays.stream(WeekDay.values())
                 .collect(Collectors.toMap(day -> day, day -> lessons.stream().filter(l -> l.getWeekDay() == day)

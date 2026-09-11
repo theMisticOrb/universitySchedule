@@ -37,7 +37,7 @@ public class LessonMapper {
 
         LessonResponseDto dto = new LessonResponseDto();
         dto.setId(entity.getId());
-        dto.setSubjectTitle(entity.getSubject().getTitle());
+        dto.setSubjectId(entity.getSubject().getId());
         dto.setClassHour(entity.getClassHour());
         dto.setClassroomName(entity.getClassroom().getName());
         dto.setWeekDay(entity.getWeekDay());

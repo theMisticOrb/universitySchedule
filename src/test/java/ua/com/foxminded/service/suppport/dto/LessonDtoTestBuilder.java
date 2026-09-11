@@ -6,9 +6,9 @@ import ua.com.foxminded.enums.WeekDay;
 
 public class LessonDtoTestBuilder {
 
-    private String classroomName; // FK — обязателен
-    private String subjectTitle; // FK — обязателен
-    private String groupName; // FK — обязателен
+    private String classroomName; 
+    private Integer subjectId; 
+    private Integer groupId; 
     private WeekDay weekDay = WeekDay.MONDAY;
     private ClassHour classHour = ClassHour.FIRST_CLASS;
 
@@ -21,13 +21,13 @@ public class LessonDtoTestBuilder {
         return this;
     }
 
-    public LessonDtoTestBuilder withSubjectTitle(String subjectTitle) {
-        this.subjectTitle = subjectTitle;
+    public LessonDtoTestBuilder withSubjectId(Integer subjectId) {
+        this.subjectId = subjectId;
         return this;
     }
 
-    public LessonDtoTestBuilder withGroupName(String groupName) {
-        this.groupName = groupName;
+    public LessonDtoTestBuilder withGroupId(Integer groupId) {
+        this.groupId = groupId;
         return this;
     }
 
@@ -42,14 +42,14 @@ public class LessonDtoTestBuilder {
     }
 
     public LessonCreateUpdateDto build() {
-        if (classroomName == null || subjectTitle == null || groupName == null) {
+        if (classroomName == null || subjectId == null || groupId == null) {
             throw new IllegalStateException(
                     "classroomName, subjectTitle and groupName are required — set them before build()");
         }
         LessonCreateUpdateDto dto = new LessonCreateUpdateDto();
         dto.setClassroomName(classroomName);
-        dto.setSubjectTitle(subjectTitle);
-        dto.setGroupName(groupName);
+        dto.setSubjectId(subjectId);
+        dto.setGroupId(groupId);
         dto.setWeekDay(weekDay);
         dto.setClassHour(classHour);
         return dto;

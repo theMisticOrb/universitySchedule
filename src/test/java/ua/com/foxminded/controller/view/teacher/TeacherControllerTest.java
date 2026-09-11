@@ -149,13 +149,13 @@ class TeacherControllerTest {
         Map<WeekDay, List<Lesson>> schedule = new LinkedHashMap<>();
         schedule.put(WeekDay.MONDAY, Collections.singletonList(lesson));
 
-        when(lessonService.getWeeklyScheduleForGroup("GR-1")).thenReturn(schedule);
+        when(lessonService.getWeeklyScheduleForGroup(1)).thenReturn(schedule);
         when(lessonMapper.toResponseDto(lesson)).thenReturn(lessonDto);
 
-        mockMvc.perform(get("/teacher/schedule/group").param("name", "GR-1")).andExpect(status().isOk())
+        mockMvc.perform(get("/teacher/schedule/group").param("id", "1")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.MONDAY").isArray()).andExpect(jsonPath("$.MONDAY.length()").value(1));
 
-        verify(lessonService, times(1)).getWeeklyScheduleForGroup("GR-1");
+        verify(lessonService, times(1)).getWeeklyScheduleForGroup(1);
     }
 
     @Test

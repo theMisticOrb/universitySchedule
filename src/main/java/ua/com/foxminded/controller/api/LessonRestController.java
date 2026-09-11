@@ -38,10 +38,10 @@ public class LessonRestController {
         return service.findAll().stream().map(mapper::toResponseDto).collect(Collectors.toList());
     }
 
-    @GetMapping(params = { "subjectTitle", "weekDay" })
-    public List<LessonResponseDto> findBySubjectTitleAndWeekDay(@RequestParam String subjectTitle,
+    @GetMapping(params = { "subjectId", "weekDay" })
+    public List<LessonResponseDto> findBySubjectTitleAndWeekDay(@RequestParam Integer subjectId,
             @RequestParam WeekDay weekDay) {
-        return service.findBySubjectTitleAndWeekDay(subjectTitle, weekDay).stream().map(mapper::toResponseDto)
+        return service.findBySubjectIdAndWeekDay(subjectId, weekDay).stream().map(mapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 

@@ -116,14 +116,14 @@ class StudentViewControllerTest {
                 .andExpect(model().attribute("classHours", ClassHour.values()))
                 .andExpect(model().attributeDoesNotExist("schedule"));
 
-        verify(lessonService, never()).getWeeklyScheduleForGroup(org.mockito.ArgumentMatchers.anyString());
+        verify(lessonService, never()).getWeeklyScheduleForGroup(org.mockito.ArgumentMatchers.anyInt());
     }
 
     @Test
     void schedule_shouldReturnGroupSchedule_whenStudentHasGroup() throws Exception {
         initStudentAuthentication();
         Group group = mock(Group.class);
-        when(group.getName()).thenReturn("GR-1");
+        when(group.getId()).thenReturn(1);
         when(studentPrincipal.getGroup()).thenReturn(group);
 
         mockMvc.perform(get("/student/schedule").with(authentication(studentAuthentication))).andExpect(status().isOk())
@@ -132,7 +132,7 @@ class StudentViewControllerTest {
                 .andExpect(model().attribute("classHours", ClassHour.values()))
                 .andExpect(model().attributeDoesNotExist("error"));
 
-        verify(lessonService, times(1)).getWeeklyScheduleForGroup("GR-1");
+        verify(lessonService, times(1)).getWeeklyScheduleForGroup(1);
     }
 
 }
