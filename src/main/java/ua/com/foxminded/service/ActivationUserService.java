@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import ua.com.foxminded.dto.user.ActivationRequestDto;
+import ua.com.foxminded.dto.user.RegistrationCompletionDto;
 import ua.com.foxminded.entity.ActivationToken;
 import ua.com.foxminded.entity.AppUser;
 import ua.com.foxminded.exception.TokenAlreadyUsedException;
@@ -80,10 +81,10 @@ public class ActivationUserService {
 
         return token;
     }
-    
+
     public void requestPasswordReset(String email) {
         AppUser user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new EntityNotFoundException("User not found!"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found!"));
         String token = activationTokenService.createToken(user);
         emailService.sendPasswordResetEmail(user.getEmail(), token);
     }
@@ -98,6 +99,21 @@ public class ActivationUserService {
         userRepository.save(user);
         token.setUsedAt(LocalDateTime.now());
         tokenRepository.save(token);
+    }
+
+    public void completeRegistration(Integer userId, RegistrationCompletionDto request) {
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new IllegalArgumentException("Passwords are not matching.");
+        }
+
+        AppUser user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found!"));
+
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRegistrationCompleted(true);
+
+        userRepository.save(user);
     }
 
 }

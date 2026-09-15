@@ -40,7 +40,6 @@ import ua.com.foxminded.config.SecurityConfig;
 import ua.com.foxminded.dto.lesson.LessonResponseDto;
 import ua.com.foxminded.dto.user.TeacherResponseDto;
 import ua.com.foxminded.entity.Classroom;
-import ua.com.foxminded.entity.Lesson;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.enums.ClassHour;
 import ua.com.foxminded.enums.WeekDay;
@@ -143,14 +142,12 @@ class TeacherControllerTest {
     @Test
     @WithMockUser(roles = "TEACHER")
     void getGroupSchedule_shouldReturnMappedScheduleGroupedByDay() throws Exception {
-        Lesson lesson = new Lesson();
         LessonResponseDto lessonDto = new LessonResponseDto();
 
-        Map<WeekDay, List<Lesson>> schedule = new LinkedHashMap<>();
-        schedule.put(WeekDay.MONDAY, Collections.singletonList(lesson));
+        Map<WeekDay, List<LessonResponseDto>> schedule = new LinkedHashMap<>();
+        schedule.put(WeekDay.MONDAY, Collections.singletonList(lessonDto));
 
         when(lessonService.getWeeklyScheduleForGroup(1)).thenReturn(schedule);
-        when(lessonMapper.toResponseDto(lesson)).thenReturn(lessonDto);
 
         mockMvc.perform(get("/teacher/schedule/group").param("id", "1")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.MONDAY").isArray()).andExpect(jsonPath("$.MONDAY.length()").value(1));

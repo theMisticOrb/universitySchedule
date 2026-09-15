@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
+import ua.com.foxminded.dto.lesson.LessonResponseDto;
 import ua.com.foxminded.entity.Classroom;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Lesson;
@@ -91,7 +92,7 @@ public class LessonService implements ReadUpdateDeleteService<Lesson, LessonCrea
         return lessonRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Lesson not found: " + id));
     }
 
-    public List<Lesson> findBySubjectIdAndWeekDay(Integer subjectId, WeekDay weekDay) {
+    public List<LessonResponseDto> findBySubjectIdAndWeekDay(Integer subjectId, WeekDay weekDay) {
         return lessonRepository.findBySubject_IdAndWeekDay(subjectId, weekDay);
     }
 
@@ -126,8 +127,8 @@ public class LessonService implements ReadUpdateDeleteService<Lesson, LessonCrea
         lessonRepository.deleteById(id);
     }
 
-    public Map<WeekDay, List<Lesson>> getWeeklyScheduleForTeacher(Integer teacherId) {
-        List<Lesson> lessons = lessonRepository.findByTeacher_Id(teacherId);
+    public Map<WeekDay, List<LessonResponseDto>> getWeeklyScheduleForTeacher(Integer teacherId) {
+        List<LessonResponseDto> lessons = lessonRepository.findByTeacher_Id(teacherId);
 
         return Arrays.stream(WeekDay.values())
                 .collect(Collectors.toMap(day -> day, day -> lessons.stream().filter(l -> l.getWeekDay() == day)
@@ -136,9 +137,9 @@ public class LessonService implements ReadUpdateDeleteService<Lesson, LessonCrea
 
     }
 
-    public Map<WeekDay, List<Lesson>> getWeeklyScheduleForGroup(Integer groupId) {
+    public Map<WeekDay, List<LessonResponseDto>> getWeeklyScheduleForGroup(Integer groupId) {
 
-        List<Lesson> lessons = lessonRepository.findByGroup_Id(groupId);
+        List<LessonResponseDto> lessons = lessonRepository.findByGroup_Id(groupId);
 
         return Arrays.stream(WeekDay.values())
                 .collect(Collectors.toMap(day -> day, day -> lessons.stream().filter(l -> l.getWeekDay() == day)
@@ -147,8 +148,7 @@ public class LessonService implements ReadUpdateDeleteService<Lesson, LessonCrea
     }
 
     public Set<Integer> findOccupiedClassroomIds(WeekDay weekDay, ClassHour classHour) {
-        return lessonRepository.findByWeekDayAndClassHour(weekDay, classHour).stream()
-                .map(lesson -> lesson.getClassroom().getId()).collect(Collectors.toSet());
+        return lessonRepository.findOccupiedClassroomIds(weekDay, classHour);
     }
 
 }

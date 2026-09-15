@@ -1,10 +1,37 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title th:text="#{auth.login.head.title}"></title>
+    <title th:text="#{auth.complete.title}">Complete your registration</title>
 </head>
 
 <body>
-    <p>Завершите регистрацию</p>
+    <h2 th:text="#{auth.complete.title}">Complete your registration</h2>
+    <p th:text="#{auth.complete.message}">Please set your email and a new password to finish setting up your account.</p>
+
+    <div th:if="${error}" style="color:red;" th:text="${error}"></div>
+
+    <form th:action="@{/complete_registration}" th:object="${request}" method="post">
+        <div>
+            <label th:text="#{auth.login.email}">Email</label>
+            <input type="email" th:field="*{email}" />
+            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color:red;"></span>
+        </div>
+
+        <div>
+            <label th:text="#{auth.reset.password}">New password</label>
+            <input type="password" th:field="*{password}" />
+            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color:red;"></span>
+        </div>
+
+        <div>
+            <label th:text="#{auth.reset.confirmPassword}">Confirm password</label>
+            <input type="password" th:field="*{confirmPassword}" />
+            <span th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" style="color:red;"></span>
+        </div>
+
+        <button type="submit" th:text="#{auth.complete.button}">Save</button>
+    </form>
 </body>
+
+</html>

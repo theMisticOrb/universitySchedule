@@ -86,11 +86,10 @@ class LessonControllerTest {
     @Test
     void findBySubjectIdAndWeekDay_shouldReturn200_whenCalled() throws Exception {
 
-        Lesson lesson = createLesson();
         LessonResponseDto responseDto = createResponseDto();
 
-        List<Lesson> lessons = new ArrayList<>();
-        lessons.add(lesson);
+        List<LessonResponseDto> lessons = new ArrayList<>();
+        lessons.add(responseDto);
 
         when(service.findBySubjectIdAndWeekDay(1, WeekDay.FRIDAY)).thenReturn(lessons);
         when(lessonMapper.toResponseDto(any(Lesson.class))).thenReturn(responseDto);

@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 
 import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
+import ua.com.foxminded.dto.lesson.LessonResponseDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Classroom;
 import ua.com.foxminded.entity.Faculty;
@@ -195,7 +196,7 @@ class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, Less
         LessonCreateUpdateDto dto = buildValidDto();
         Lesson saved = service.addOne(dto, teacher.getId());
 
-        List<Lesson> result = service.findBySubjectIdAndWeekDay(dto.getSubjectId(), dto.getWeekDay());
+        List<LessonResponseDto> result = service.findBySubjectIdAndWeekDay(dto.getSubjectId(), dto.getWeekDay());
 
         assertNotNull(result);
         assertTrue(result.stream().anyMatch(lesson -> lesson.getId().equals(saved.getId())));
@@ -232,7 +233,7 @@ class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, Less
         LessonCreateUpdateDto dto = buildValidDto();
         service.addOne(dto, teacher.getId());
 
-        Map<WeekDay, List<Lesson>> schedule = service.getWeeklyScheduleForTeacher(teacher.getId());
+        Map<WeekDay, List<LessonResponseDto>> schedule = service.getWeeklyScheduleForTeacher(teacher.getId());
 
         assertNotNull(schedule);
         assertEquals(WeekDay.values().length, schedule.size());
@@ -244,7 +245,7 @@ class LessonServiceTest extends AbstractReadUpdateDeleteServiceTest<Lesson, Less
         LessonCreateUpdateDto dto = buildValidDto();
         service.addOne(dto, teacher.getId());
 
-        Map<WeekDay, List<Lesson>> schedule = service.getWeeklyScheduleForGroup(dto.getGroupId());
+        Map<WeekDay, List<LessonResponseDto>> schedule = service.getWeeklyScheduleForGroup(dto.getGroupId());
 
         assertNotNull(schedule);
         assertTrue(schedule.get(dto.getWeekDay()).size() >= 1);

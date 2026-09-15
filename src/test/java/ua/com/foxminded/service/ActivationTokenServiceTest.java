@@ -80,7 +80,6 @@ class ActivationTokenServiceTest {
         verify(tokenRepo).save(tokenCaptor.capture());
 
         assertThat(returnedToken).isEqualTo(tokenCaptor.getValue().getToken());
-        // не должно бросить исключение — значит это валидный UUID
         assertThat(UUID.fromString(returnedToken)).isNotNull();
     }
 

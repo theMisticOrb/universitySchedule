@@ -20,11 +20,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
 import ua.com.foxminded.dto.lesson.LessonResponseDto;
 import ua.com.foxminded.entity.Classroom;
-import ua.com.foxminded.entity.Lesson;
 import ua.com.foxminded.entity.Teacher;
 import ua.com.foxminded.enums.ClassHour;
 import ua.com.foxminded.enums.WeekDay;
-import ua.com.foxminded.mapper.LessonMapper;
 import ua.com.foxminded.mapper.TeacherMapper;
 import ua.com.foxminded.repository.ClassroomRepository;
 import ua.com.foxminded.repository.GroupRepository;
@@ -43,18 +41,16 @@ public class TeacherController {
     private final GroupRepository groupRepository;
     private final TeacherService service;
     private final TeacherMapper mapper;
-    private final LessonMapper lessonMapper;
 
     public TeacherController(LessonService lessonService, SubjectRepository subjectRepository,
             ClassroomRepository classroomRepository, GroupRepository groupRepository, TeacherService service,
-            TeacherMapper mapper, LessonMapper lessonMapper) {
+            TeacherMapper mapper) {
         this.lessonService = lessonService;
         this.subjectRepository = subjectRepository;
         this.classroomRepository = classroomRepository;
         this.groupRepository = groupRepository;
         this.service = service;
         this.mapper = mapper;
-        this.lessonMapper = lessonMapper;
     }
 
     @GetMapping
@@ -87,11 +83,11 @@ public class TeacherController {
     @GetMapping("/schedule/group")
     @ResponseBody
     public Map<String, List<LessonResponseDto>> getGroupSchedule(@RequestParam Integer id) {
-        Map<WeekDay, List<Lesson>> schedule = lessonService.getWeeklyScheduleForGroup(id);
+        Map<WeekDay, List<LessonResponseDto>> schedule = lessonService.getWeeklyScheduleForGroup(id);
 
         Map<String, List<LessonResponseDto>> result = new LinkedHashMap<>();
         schedule.forEach((day, lessons) -> result.put(day.name(),
-                lessons.stream().map(lessonMapper::toResponseDto).collect(Collectors.toList())));
+                lessons.stream().collect(Collectors.toList())));
         return result;
     }
 
