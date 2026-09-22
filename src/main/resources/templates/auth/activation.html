@@ -15,14 +15,14 @@
 
         <div>
             <label th:text="#{admin.activation.email}">Email</label>
-            <input type="email" th:field="*{email}" />
+            <input type="email" th:field="*{email}" required/>
             <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color:red;">
             </span>
         </div>
 
         <div>
             <label th:text="#{admin.activation.password}">Password</label>
-            <input type="password" th:field="*{password}" />
+            <input type="password" th:field="*{password}" minlength="8" required/>
             <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color:red;">
             </span>
         </div>

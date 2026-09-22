@@ -129,7 +129,7 @@ public class GroupService implements FullCrudService<Group, GroupCreateUpdateDto
 
         if (updated.getSubjects() != null) {
             Set<Subject> subjects = updated.getSubjects().stream().map(dto -> {
-                List<Teacher> teacher = dto.getTeacherEmails().stream().map(teacherService::findByEmail)
+                List<Teacher> teacher = dto.getTeacherIds().stream().map(teacherService::findById)
                         .collect(Collectors.toList());
                 AcademicDepartment department = departmentService.findByCode(dto.getDepartmentCode());
                 return subjectMapper.toEntity(dto, teacher, department);

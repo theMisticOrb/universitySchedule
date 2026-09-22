@@ -50,7 +50,7 @@ public class SubjectService implements FullCrudService<Subject, SubjectCreateUpd
     @Override
     public Subject addOne(SubjectCreateUpdateDto dto) {
 
-        List<Teacher> teachers = dto.getTeacherEmails().stream().map(teacherService::findByEmail)
+        List<Teacher> teachers = dto.getTeacherIds().stream().map(teacherService::findById)
                 .collect(Collectors.toList());
         AcademicDepartment department = departmentService.findByCode(dto.getDepartmentCode());
 
@@ -86,8 +86,8 @@ public class SubjectService implements FullCrudService<Subject, SubjectCreateUpd
 
         Subject subject = findById(id);
 
-        if (updated.getTeacherEmails() != null) {
-            List<Teacher> teachers = updated.getTeacherEmails().stream().map(teacherService::findByEmail)
+        if (updated.getTeacherIds() != null) {
+            List<Teacher> teachers = updated.getTeacherIds().stream().map(teacherService::findById)
                     .collect(Collectors.toList());
             UpdateUtil.setIfNotNull(teachers, subject::setTeachers);
 

@@ -58,7 +58,7 @@
                 return;
             }
 
-            items.push({title, departmentCode, teacherId: Number(teacherId)});
+            items.push({title, departmentCode, teacherId: [Number(teacherId)]});
 
             const li = document.createElement('li');
             li.textContent = `${title} — [[#{admin.add.group.script.dep}]]: ${departmentCode}, [[#{admin.add.group.script.teacher}]]: ${teacherLabel}`;

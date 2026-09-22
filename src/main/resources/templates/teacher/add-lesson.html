@@ -14,7 +14,7 @@
     <form th:action="@{/teacher/schedule/add}" method="post">
         <div>
 
-            <select id="groupSelect" name="groupName">
+            <select id="groupSelect" name="groupId">
                 <option value="" th:text="#{teacher.add.lesson.select.group}">-- Select group --</option>
                 <option th:each="group : ${groups}" th:value="${group.id}" th:text="${group.name}">
                 </option>
@@ -26,7 +26,7 @@
 
 
         <div>
-            <select name="subjectSelect">
+            <select id="subjectSelect" name="subjectId">
                 <option value="" th:text="#{teacher.add.lesson.select.subject}">-- Select a subject --</option>
                 <option th:each="subject : ${subjects}" th:value="${subject.id}" th:text="${subject.title}">
                 </option>
@@ -80,14 +80,14 @@
     /*]]>*/
 
     document.getElementById('groupSelect').onchange = function () {
-        var groupName = this.value;
+        var groupId = this.value;
 
-        if (groupName === '') {
+        if (groupId === '') {
             document.getElementById('groupSchedule');
             return;
         }
 
-        fetch('/teacher/schedule/group?name=' + encodeURIComponent(groupName))
+        fetch('/teacher/schedule/group?id=' + encodeURIComponent(groupId))
             .then(function (response) {
                 return response.json();
             })

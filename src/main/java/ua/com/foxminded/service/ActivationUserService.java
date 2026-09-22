@@ -47,7 +47,14 @@ public class ActivationUserService {
         AppUser user = token.getUser();
 
         user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        try {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        } finally {
+            request.setPassword(null);
+            request.setConfirmPassword(null);
+        }
+
         user.setRegistrationCompleted(true);
 
         userRepository.save(user);
@@ -110,7 +117,14 @@ public class ActivationUserService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found!"));
 
         user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        
+        try {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        } finally {
+            request.setPassword(null);
+            request.setConfirmPassword(null);
+        }
+
         user.setRegistrationCompleted(true);
 
         userRepository.save(user);

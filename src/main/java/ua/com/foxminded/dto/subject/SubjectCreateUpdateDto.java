@@ -8,8 +8,7 @@ import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
 public class SubjectCreateUpdateDto {
 
     private String title;
-    private List<String> teacherFullNames;
-    private List<String> teacherEmails;
+    private List<Integer> teacherIds;
     private String departmentCode;
     private List<GroupCreateUpdateDto> groups;
     private List<LessonCreateUpdateDto> lessons;
@@ -17,11 +16,10 @@ public class SubjectCreateUpdateDto {
     public SubjectCreateUpdateDto() {
     }
 
-    public SubjectCreateUpdateDto(String title, List<String> teacherFullNames, List<String> teacherEmails,
-            String departmentCode, List<GroupCreateUpdateDto> groups, List<LessonCreateUpdateDto> lessons) {
+    public SubjectCreateUpdateDto(String title, List<Integer> teacherIds, String departmentCode,
+            List<GroupCreateUpdateDto> groups, List<LessonCreateUpdateDto> lessons) {
         this.title = title;
-        this.teacherFullNames = teacherFullNames;
-        this.teacherEmails = teacherEmails;
+        this.teacherIds = teacherIds;
         this.departmentCode = departmentCode;
         this.groups = groups;
         this.lessons = lessons;
@@ -35,12 +33,12 @@ public class SubjectCreateUpdateDto {
         this.title = title;
     }
 
-    public List<String> getTeacherFullNames() {
-        return teacherFullNames;
+    public List<Integer> getTeacherIds() {
+        return teacherIds;
     }
 
-    public void setTeacherFullNames(List<String> teacherFullName) {
-        this.teacherFullNames = teacherFullName;
+    public void setTeacherIds(List<Integer> teacherIds) {
+        this.teacherIds = teacherIds;
     }
 
     public String getDepartmentCode() {
@@ -65,14 +63,6 @@ public class SubjectCreateUpdateDto {
 
     public void setLessons(List<LessonCreateUpdateDto> lessons) {
         this.lessons = lessons;
-    }
-
-    public List<String> getTeacherEmails() {
-        return teacherEmails;
-    }
-
-    public void setTeacherEmails(List<String> teacherEmail) {
-        this.teacherEmails = teacherEmail;
     }
 
 }

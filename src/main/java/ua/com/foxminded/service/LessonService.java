@@ -55,10 +55,10 @@ public class LessonService implements ReadUpdateDeleteService<Lesson, LessonCrea
     public Lesson addOne(LessonCreateUpdateDto dto, Integer teacherId) {
 
         Teacher teacher = teacherRepository.findById(teacherId)
-                .orElseThrow(() -> new IllegalArgumentException("Teacher not found!"));
+                .orElseThrow(() -> new IllegalArgumentException("Teacher not found."));
         Subject subject = subjectService.findById(dto.getSubjectId());
 
-        if (!teacherRepository.existsByIdAndSubjects_Title(teacherId, subject.getTitle())) {
+        if (!teacherRepository.existsByIdAndSubjects_Id(teacherId, subject.getId())) {
             throw new AccessDeniedException("You don't teach this subject.");
         }
         if (lessonRepository.existsByGroup_IdAndWeekDayAndClassHour(dto.getGroupId(), dto.getWeekDay(),

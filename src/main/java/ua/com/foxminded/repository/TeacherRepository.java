@@ -21,5 +21,5 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
     boolean existsByLastNameAndFirstNameAndMiddleNameAndDepartment_Id(String lastName, String firstName,
             String middleName, Integer departmentId);
 
-    boolean existsByIdAndSubjects_Title(Integer teacherId, String subjectTitle);
+    boolean existsByIdAndSubjects_Id(Integer teacherId, Integer subjectId);
 }

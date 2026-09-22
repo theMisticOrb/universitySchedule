@@ -39,7 +39,7 @@ class SubjectServiceTest extends AbstractFullCrudServiceTest<Subject, SubjectCre
         Teacher teacher = testDataFactory.persistTeacher(department);
 
         return SubjectDtoTestBuilder.aSubject().withDepartmentCode(department.getCode())
-                .withTeacherEmails(Collections.singletonList(teacher.getEmail())).build();
+                .withTeacherIds(Collections.singletonList(teacher.getId())).build();
     }
 
     @Override
@@ -93,13 +93,13 @@ class SubjectServiceTest extends AbstractFullCrudServiceTest<Subject, SubjectCre
         Teacher teacher = testDataFactory.persistTeacher(department);
 
         SubjectCreateUpdateDto dto = SubjectDtoTestBuilder.aSubject().withTitle("Math")
-                .withDepartmentCode(department.getCode())
-                .withTeacherEmails(Collections.singletonList(teacher.getEmail())).build();
+                .withDepartmentCode(department.getCode()).withTeacherIds(Collections.singletonList(teacher.getId()))
+                .build();
         service.addOne(dto);
 
         SubjectCreateUpdateDto duplicateDto = SubjectDtoTestBuilder.aSubject().withTitle("Math")
-                .withDepartmentCode(department.getCode())
-                .withTeacherEmails(Collections.singletonList(teacher.getEmail())).build();
+                .withDepartmentCode(department.getCode()).withTeacherIds(Collections.singletonList(teacher.getId()))
+                .build();
 
         DuplicateEntityException ex = assertThrows(DuplicateEntityException.class, () -> service.addOne(duplicateDto));
 
@@ -112,12 +112,12 @@ class SubjectServiceTest extends AbstractFullCrudServiceTest<Subject, SubjectCre
         Teacher originalTeacher = testDataFactory.persistTeacher(department);
 
         SubjectCreateUpdateDto dto = SubjectDtoTestBuilder.aSubject().withDepartmentCode(department.getCode())
-                .withTeacherEmails(Collections.singletonList(originalTeacher.getEmail())).build();
+                .withTeacherIds(Collections.singletonList(originalTeacher.getId())).build();
         Subject saved = service.addOne(dto);
 
         Teacher newTeacher = testDataFactory.persistTeacher(department);
         SubjectCreateUpdateDto updateDto = new SubjectCreateUpdateDto();
-        updateDto.setTeacherEmails(Collections.singletonList(newTeacher.getEmail()));
+        updateDto.setTeacherIds(Collections.singletonList(newTeacher.getId()));
 
         Subject result = service.fullUpdate(updateDto, saved.getId());
 
@@ -146,11 +146,11 @@ class SubjectServiceTest extends AbstractFullCrudServiceTest<Subject, SubjectCre
         Teacher teacher = testDataFactory.persistTeacher(department);
 
         SubjectCreateUpdateDto first = SubjectDtoTestBuilder.aSubject().withTitle("Math")
-                .withDepartmentCode(department.getCode())
-                .withTeacherEmails(Collections.singletonList(teacher.getEmail())).build();
+                .withDepartmentCode(department.getCode()).withTeacherIds(Collections.singletonList(teacher.getId()))
+                .build();
         SubjectCreateUpdateDto second = SubjectDtoTestBuilder.aSubject().withTitle("History")
-                .withDepartmentCode(department.getCode())
-                .withTeacherEmails(Collections.singletonList(teacher.getEmail())).build();
+                .withDepartmentCode(department.getCode()).withTeacherIds(Collections.singletonList(teacher.getId()))
+                .build();
 
         service.createSubjects(Arrays.asList(first, second));
 

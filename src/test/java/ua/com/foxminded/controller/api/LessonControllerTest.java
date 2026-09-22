@@ -94,7 +94,7 @@ class LessonControllerTest {
         when(service.findBySubjectIdAndWeekDay(1, WeekDay.FRIDAY)).thenReturn(lessons);
         when(lessonMapper.toResponseDto(any(Lesson.class))).thenReturn(responseDto);
 
-        mvc.perform(get("/api/v1/lessons").param("subjectId", "1").param("weekDay", "FRIDAY"))
+        mvc.perform(get("/api/v1/lessons/filter").param("subjectId", "1").param("weekDay", "FRIDAY"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$[0].subjectId").value("1"));
     }
 

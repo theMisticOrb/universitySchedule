@@ -136,9 +136,9 @@ class SubjectControllerTest {
 
         SubjectCreateUpdateDto requestDto = new SubjectCreateUpdateDto();
 
-        List<String> teacherEmails = new ArrayList<>();
-        teacherEmails.add("teacher@gmail.com");
-        requestDto.setTeacherEmails(teacherEmails);
+        List<Integer> teacherIds = new ArrayList<>();
+        teacherIds.add(1);
+        requestDto.setTeacherIds(teacherIds);
         requestDto.setTitle("Computer Science");
 
         when(service.addOne(any(SubjectCreateUpdateDto.class))).thenReturn(subject);
@@ -164,9 +164,9 @@ class SubjectControllerTest {
         SubjectResponseDto responseDto = createResponseDto();
 
         SubjectCreateUpdateDto requestDto = new SubjectCreateUpdateDto();
-        List<String> teacherEmails = new ArrayList<>();
-        teacherEmails.add("teacher@gmail.com");
-        requestDto.setTeacherEmails(teacherEmails);
+        List<Integer> teacherIds = new ArrayList<>();
+        teacherIds.add(1);
+        requestDto.setTeacherIds(teacherIds);
         requestDto.setTitle("Computer Science");
 
         when(service.fullUpdate(any(SubjectCreateUpdateDto.class), eq(1))).thenReturn(subject);

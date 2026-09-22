@@ -10,7 +10,7 @@ public class SubjectDtoTestBuilder {
 
     private String title = TestDataFactory.uniqueName("Subject");
     private String departmentCode;
-    private List<String> teacherEmails = new ArrayList<>();
+    private List<Integer> teacherIds = new ArrayList<>();
 
     public static SubjectDtoTestBuilder aSubject() {
         return new SubjectDtoTestBuilder();
@@ -26,8 +26,8 @@ public class SubjectDtoTestBuilder {
         return this;
     }
 
-    public SubjectDtoTestBuilder withTeacherEmails(List<String> teacherEmails) {
-        this.teacherEmails = teacherEmails;
+    public SubjectDtoTestBuilder withTeacherIds(List<Integer> teacherIds) {
+        this.teacherIds = teacherIds;
         return this;
     }
 
@@ -38,7 +38,7 @@ public class SubjectDtoTestBuilder {
         SubjectCreateUpdateDto dto = new SubjectCreateUpdateDto();
         dto.setTitle(title);
         dto.setDepartmentCode(departmentCode);
-        dto.setTeacherEmails(teacherEmails);
+        dto.setTeacherIds(teacherIds);
         return dto;
     }
 }

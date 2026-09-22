@@ -33,7 +33,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import ua.com.foxminded.config.SecurityConfig;
@@ -88,6 +87,7 @@ class TeacherControllerTest {
     private void initTeacherAuthentication() {
         teacherPrincipal = mock(Teacher.class);
         when(teacherPrincipal.getId()).thenReturn(TEACHER_ID);
+        when(teacherPrincipal.isRegistrationCompleted()).thenReturn(true);
 
         CustomUserDetails userDetails = new CustomUserDetails(teacherPrincipal);
         teacherAuthentication = new UsernamePasswordAuthenticationToken(userDetails, null,
@@ -95,14 +95,14 @@ class TeacherControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "TEACHER")
     void listTeachers_shouldReturnViewWithMappedTeachers_whenAuthenticated() throws Exception {
+        initTeacherAuthentication();
         Teacher teacher = new Teacher();
         TeacherResponseDto dto = new TeacherResponseDto();
         when(service.findAll()).thenReturn(Collections.singletonList(teacher));
         when(mapper.toResponseDto(teacher)).thenReturn(dto);
 
-        mockMvc.perform(get("/teacher")).andExpect(status().isOk()).andExpect(view().name("teacher/list"))
+        mockMvc.perform(get("/teacher").with(authentication(teacherAuthentication))).andExpect(status().isOk()).andExpect(view().name("teacher/list"))
                 .andExpect(model().attributeExists("teachers"));
 
         verify(service, times(1)).findAll();
@@ -140,8 +140,8 @@ class TeacherControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "TEACHER")
     void getGroupSchedule_shouldReturnMappedScheduleGroupedByDay() throws Exception {
+        initTeacherAuthentication();
         LessonResponseDto lessonDto = new LessonResponseDto();
 
         Map<WeekDay, List<LessonResponseDto>> schedule = new LinkedHashMap<>();
@@ -149,7 +149,7 @@ class TeacherControllerTest {
 
         when(lessonService.getWeeklyScheduleForGroup(1)).thenReturn(schedule);
 
-        mockMvc.perform(get("/teacher/schedule/group").param("id", "1")).andExpect(status().isOk())
+        mockMvc.perform(get("/teacher/schedule/group").with(authentication(teacherAuthentication)).param("id", "1")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.MONDAY").isArray()).andExpect(jsonPath("$.MONDAY.length()").value(1));
 
         verify(lessonService, times(1)).getWeeklyScheduleForGroup(1);
@@ -199,8 +199,8 @@ class TeacherControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "TEACHER")
     void getFreeClassrooms_shouldReturnOnlyNamesOfUnoccupiedClassrooms() throws Exception {
+        initTeacherAuthentication();
         Classroom occupied = new Classroom();
         occupied.setId(1);
         occupied.setName("Room 101");
@@ -213,7 +213,7 @@ class TeacherControllerTest {
                 .thenReturn(Collections.singleton(1));
         when(classroomRepository.findAll()).thenReturn(java.util.Arrays.asList(occupied, free));
 
-        mockMvc.perform(get("/teacher/schedule/classrooms/free").param("weekDay", "MONDAY").param("classHour", "FIRST_CLASS"))
+        mockMvc.perform(get("/teacher/schedule/classrooms/free").with(authentication(teacherAuthentication)).param("weekDay", "MONDAY").param("classHour", "FIRST_CLASS"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0]").value("Room 102"));
         

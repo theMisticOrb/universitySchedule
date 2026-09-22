@@ -59,21 +59,22 @@ class StudentViewControllerTest {
 
     private void initStudentAuthentication() {
         studentPrincipal = mock(Student.class);
-
+        when(studentPrincipal.isRegistrationCompleted()).thenReturn(true);
+        
         CustomUserDetails userDetails = new CustomUserDetails(studentPrincipal);
         studentAuthentication = new UsernamePasswordAuthenticationToken(userDetails, null,
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_STUDENT")));
     }
 
     @Test
-    @WithMockUser(roles = "STUDENT")
     void listStudents_shouldReturnViewWithMappedStudents_whenAuthenticated() throws Exception {
+        initStudentAuthentication();
         Student student = new Student();
         StudentResponseDto dto = new StudentResponseDto();
         when(service.findAll()).thenReturn(Collections.singletonList(student));
         when(mapper.toResponseDto(student)).thenReturn(dto);
 
-        mockMvc.perform(get("/student")).andExpect(status().isOk()).andExpect(view().name("student/list"))
+        mockMvc.perform(get("/student").with(authentication(studentAuthentication))).andExpect(status().isOk()).andExpect(view().name("student/list"))
                 .andExpect(model().attributeExists("students"));
 
         verify(service, times(1)).findAll();

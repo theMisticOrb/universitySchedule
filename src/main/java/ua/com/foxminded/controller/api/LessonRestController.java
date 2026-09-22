@@ -38,7 +38,7 @@ public class LessonRestController {
         return service.findAll().stream().map(mapper::toResponseDto).collect(Collectors.toList());
     }
 
-    @GetMapping(params = { "subjectId", "weekDay" })
+    @GetMapping("/filter")
     public List<LessonResponseDto> findBySubjectTitleAndWeekDay(@RequestParam Integer subjectId,
             @RequestParam WeekDay weekDay) {
         return service.findBySubjectIdAndWeekDay(subjectId, weekDay).stream()
