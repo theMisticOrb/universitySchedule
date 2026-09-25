@@ -1,5 +1,6 @@
 package ua.com.foxminded.controller.view.teacher;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -36,6 +38,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 
 import ua.com.foxminded.config.SecurityConfig;
+import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
 import ua.com.foxminded.dto.lesson.LessonResponseDto;
 import ua.com.foxminded.dto.user.TeacherResponseDto;
 import ua.com.foxminded.entity.Classroom;
@@ -102,8 +105,8 @@ class TeacherControllerTest {
         when(service.findAll()).thenReturn(Collections.singletonList(teacher));
         when(mapper.toResponseDto(teacher)).thenReturn(dto);
 
-        mockMvc.perform(get("/teacher").with(authentication(teacherAuthentication))).andExpect(status().isOk()).andExpect(view().name("teacher/list"))
-                .andExpect(model().attributeExists("teachers"));
+        mockMvc.perform(get("/teacher").with(authentication(teacherAuthentication))).andExpect(status().isOk())
+                .andExpect(view().name("teacher/list")).andExpect(model().attributeExists("teachers"));
 
         verify(service, times(1)).findAll();
         verify(mapper, times(1)).toResponseDto(teacher);
@@ -149,8 +152,9 @@ class TeacherControllerTest {
 
         when(lessonService.getWeeklyScheduleForGroup(1)).thenReturn(schedule);
 
-        mockMvc.perform(get("/teacher/schedule/group").with(authentication(teacherAuthentication)).param("id", "1")).andExpect(status().isOk())
-                .andExpect(jsonPath("$.MONDAY").isArray()).andExpect(jsonPath("$.MONDAY.length()").value(1));
+        mockMvc.perform(get("/teacher/schedule/group").with(authentication(teacherAuthentication)).param("id", "1"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.MONDAY").isArray())
+                .andExpect(jsonPath("$.MONDAY.length()").value(1));
 
         verify(lessonService, times(1)).getWeeklyScheduleForGroup(1);
     }
@@ -177,6 +181,26 @@ class TeacherControllerTest {
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/teacher/schedule"));
 
         verify(lessonService, times(1)).addOne(any(), eq(TEACHER_ID));
+    }
+
+    @Test
+    void addLesson_shouldBindFormFieldsToCorrectDtoProperties_whenSubmitted() throws Exception {
+        initTeacherAuthentication();
+
+        mockMvc.perform(post("/teacher/schedule/add").with(authentication(teacherAuthentication)).with(csrf())
+                .param("groupId", "5").param("subjectId", "3").param("weekDay", "MONDAY")
+                .param("classHour", "FIRST_CLASS").param("classroomName", "Room 101"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/teacher/schedule"));
+
+        ArgumentCaptor<LessonCreateUpdateDto> dtoCaptor = ArgumentCaptor.forClass(LessonCreateUpdateDto.class);
+        verify(lessonService, times(1)).addOne(dtoCaptor.capture(), eq(TEACHER_ID));
+
+        LessonCreateUpdateDto capturedDto = dtoCaptor.getValue();
+        assertEquals(5, capturedDto.getGroupId());
+        assertEquals(3, capturedDto.getSubjectId());
+        assertEquals(WeekDay.MONDAY, capturedDto.getWeekDay());
+        assertEquals(ClassHour.FIRST_CLASS, capturedDto.getClassHour());
+        assertEquals("Room 101", capturedDto.getClassroomName());
     }
 
     @Test
@@ -213,10 +237,10 @@ class TeacherControllerTest {
                 .thenReturn(Collections.singleton(1));
         when(classroomRepository.findAll()).thenReturn(java.util.Arrays.asList(occupied, free));
 
-        mockMvc.perform(get("/teacher/schedule/classrooms/free").with(authentication(teacherAuthentication)).param("weekDay", "MONDAY").param("classHour", "FIRST_CLASS"))
-                .andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0]").value("Room 102"));
-        
+        mockMvc.perform(get("/teacher/schedule/classrooms/free").with(authentication(teacherAuthentication))
+                .param("weekDay", "MONDAY").param("classHour", "FIRST_CLASS")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1)).andExpect(jsonPath("$[0]").value("Room 102"));
+
     }
 
 }

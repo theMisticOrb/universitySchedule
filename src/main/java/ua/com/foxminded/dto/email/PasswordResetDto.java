@@ -1,33 +1,33 @@
 package ua.com.foxminded.dto.email;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import ua.com.foxminded.annotation.NotBlankCharArray;
+import ua.com.foxminded.annotation.SizeCharArray;
 
 public class PasswordResetDto {
 
-    @NotBlank
-    @Size(min = 8, message = "{validation.password.size}")
-    private String password;
+    @NotBlankCharArray
+    @SizeCharArray(min = 8, message = "{validation.password.size}")
+    private char[] password;
 
-    @NotBlank
-    private String confirmPassword;
+    @NotBlankCharArray
+    private char[] confirmPassword;
 
     public PasswordResetDto() {
     }
 
-    public String getPassword() {
+    public char[] getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(char[] password) {
         this.password = password;
     }
 
-    public String getConfirmPassword() {
+    public char[] getConfirmPassword() {
         return confirmPassword;
     }
 
-    public void setConfirmPassword(String confirmPassword) {
+    public void setConfirmPassword(char[] confirmPassword) {
         this.confirmPassword = confirmPassword;
     }
 

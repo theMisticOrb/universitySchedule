@@ -16,7 +16,7 @@ import ua.com.foxminded.dto.user.ActivationRequestDto;
 import ua.com.foxminded.service.ActivationUserService;
 
 @Controller
-@RequestMapping(WebRoutes.ACTIVATION_PATH)
+@RequestMapping(WebRoutes.ACTIVATION_PATH + "/validate")
 public class ActivationTokenController {
 
     private final ActivationUserService activationService;
@@ -40,7 +40,7 @@ public class ActivationTokenController {
         }
     }
 
-    @PostMapping("/validate")
+    @PostMapping
     public String submit(@RequestParam("tokenValue") String tokenValue,
             @Valid @ModelAttribute("request") ActivationRequestDto request, BindingResult bindingResult, Model model) {
 

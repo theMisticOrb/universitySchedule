@@ -2,7 +2,9 @@ package ua.com.foxminded.dto.user;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+
+import ua.com.foxminded.annotation.NotBlankCharArray;
+import ua.com.foxminded.annotation.SizeCharArray;
 
 public class ActivationRequestDto {
 
@@ -10,20 +12,19 @@ public class ActivationRequestDto {
     @Email(message = "{validation.email.invalid}")
     private String email;
 
-    @NotBlank(message = "{validation.password.blank}")
-    @Size(min = 8, message = "{validation.password.size}")
-    private String password;
+    @NotBlankCharArray(message = "{validation.password.blank}")
+    @SizeCharArray(min = 8, message = "{validation.password.size}")
+    private char[] password;
 
-    @NotBlank(message = "{validation.confirmPassword.blank}")
-    private String confirmPassword;
+    @NotBlankCharArray(message = "{validation.confirmPassword.blank}")
+    private char[] confirmPassword;
 
     public ActivationRequestDto() {
     }
 
     public ActivationRequestDto(
             @NotBlank(message = "{validation.email.blank}") @Email(message = "{validation.email.invalid}") String email,
-            @NotBlank(message = "{validation.password.blank}") @Size(min = 8, message = "{validation.password.size}") String password,
-            @NotBlank(message = "{validation.confirmPassword.blank}") String confirmPassword) {
+            char[] password, char[] confirmPassword) {
         this.email = email;
         this.password = password;
         this.confirmPassword = confirmPassword;
@@ -37,20 +38,20 @@ public class ActivationRequestDto {
         this.email = email;
     }
 
-    public String getPassword() {
+    public char[] getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getConfirmPassword() {
+    public char[] getConfirmPassword() {
         return confirmPassword;
     }
 
-    public void setConfirmPassword(String confirmPassword) {
+    public void setConfirmPassword(char[] confirmPassword) {
         this.confirmPassword = confirmPassword;
+    }
+
+    public void setPassword(char[] password) {
+        this.password = password;
     }
 
 }

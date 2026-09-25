@@ -116,11 +116,12 @@ class ActivationUserServiceTest {
         stubToken(validToken, LocalDateTime.now().plusHours(1), null);
         when(validToken.getUser()).thenReturn(user);
         when(tokenRepository.findByToken(TOKEN_VALUE)).thenReturn(Optional.of(validToken));
-        when(passwordEncoder.encode(RAW_PASSWORD)).thenReturn(ENCODED_PASSWORD);
+        when(passwordEncoder.encode(any(CharSequence.class))).thenReturn(ENCODED_PASSWORD);
 
-        ActivationRequestDto request = mock(ActivationRequestDto.class);
-        when(request.getEmail()).thenReturn(EMAIL);
-        when(request.getPassword()).thenReturn(RAW_PASSWORD);
+        ActivationRequestDto request = new ActivationRequestDto();
+        request.setEmail(EMAIL);
+        request.setPassword(RAW_PASSWORD.toCharArray());
+        request.setConfirmPassword(RAW_PASSWORD.toCharArray());
 
         activationUserService.activateUser(TOKEN_VALUE, request);
 
@@ -137,7 +138,9 @@ class ActivationUserServiceTest {
     void activateUser_shouldThrowAndNotTouchUser_whenTokenInvalid() {
         when(tokenRepository.findByToken(TOKEN_VALUE)).thenReturn(Optional.empty());
  
-        ActivationRequestDto request = mock(ActivationRequestDto.class);
+        ActivationRequestDto request = new ActivationRequestDto();
+        request.setPassword("pass".toCharArray());
+        request.setConfirmPassword("pass".toCharArray());
  
         assertThatThrownBy(() -> activationUserService.activateUser(TOKEN_VALUE, request))
             .isInstanceOf(TokenNotFoundException.class);
@@ -201,7 +204,8 @@ class ActivationUserServiceTest {
 
     @Test
     void resetPassword_shouldThrowIllegalArgument_whenPasswordsDoNotMatch() {
-        assertThatThrownBy(() -> activationUserService.resetPassword(TOKEN_VALUE, "pass1", "pass2"))
+        assertThatThrownBy(
+                () -> activationUserService.resetPassword(TOKEN_VALUE, "pass1".toCharArray(), "pass2".toCharArray()))
                 .isInstanceOf(IllegalArgumentException.class);
 
         verifyNoInteractions(tokenRepository, userRepository, passwordEncoder);
@@ -212,9 +216,9 @@ class ActivationUserServiceTest {
         stubToken(validToken, LocalDateTime.now().plusHours(1), null);
         when(validToken.getUser()).thenReturn(user);
         when(tokenRepository.findByToken(TOKEN_VALUE)).thenReturn(Optional.of(validToken));
-        when(passwordEncoder.encode(RAW_PASSWORD)).thenReturn(ENCODED_PASSWORD);
+        when(passwordEncoder.encode(any(CharSequence.class))).thenReturn(ENCODED_PASSWORD);
 
-        activationUserService.resetPassword(TOKEN_VALUE, RAW_PASSWORD, RAW_PASSWORD);
+        activationUserService.resetPassword(TOKEN_VALUE, RAW_PASSWORD.toCharArray(), RAW_PASSWORD.toCharArray());
 
         verify(user).setPassword(ENCODED_PASSWORD);
         verify(userRepository).save(user);
@@ -226,7 +230,7 @@ class ActivationUserServiceTest {
     void resetPassword_shouldThrowTokenExpired_whenTokenExpired() {
         when(validToken.getExpiryDate()).thenReturn(LocalDateTime.now().minusMinutes(1));
         when(tokenRepository.findByToken(TOKEN_VALUE)).thenReturn(Optional.of(validToken));
-        assertThatThrownBy(() -> activationUserService.resetPassword(TOKEN_VALUE, RAW_PASSWORD, RAW_PASSWORD))
+        assertThatThrownBy(() -> activationUserService.resetPassword(TOKEN_VALUE, RAW_PASSWORD.toCharArray(), RAW_PASSWORD.toCharArray()))
                 .isInstanceOf(TokenExpiredException.class);
 
         verifyNoInteractions(userRepository, passwordEncoder);

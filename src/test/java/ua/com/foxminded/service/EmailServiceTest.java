@@ -80,8 +80,7 @@ class EmailServiceTest {
         verify(messageSource).getMessage(eq("email.activation.text"), argsCaptor.capture(), any(Locale.class));
  
         
-        UriComponentsBuilder.fromHttpUrl(FRONTEND_URL);
-        String expectedLink = UriComponentsBuilder.fromPath(WebRoutes.ACTIVATION_PATH + "/validate")
+        String expectedLink = UriComponentsBuilder.fromHttpUrl(FRONTEND_URL).path(WebRoutes.ACTIVATION_PATH + "/validate")
                 .queryParam("tokenValue", TOKEN).toUriString();
         assertThat(argsCaptor.getValue()).containsExactly(expectedLink);
     }
@@ -116,8 +115,7 @@ class EmailServiceTest {
         ArgumentCaptor<Object[]> argsCaptor = ArgumentCaptor.forClass(Object[].class);
         verify(messageSource).getMessage(eq("email.reset.text"), argsCaptor.capture(), any(Locale.class));
  
-        UriComponentsBuilder.fromHttpUrl(FRONTEND_URL);
-        String expectedLink = UriComponentsBuilder.fromPath(WebRoutes.PASSWORD_RESET_PATH + "/reset-password")
+        String expectedLink = UriComponentsBuilder.fromHttpUrl(FRONTEND_URL).path(WebRoutes.PASSWORD_RESET_PATH + "/reset")
                 .queryParam("tokenValue", TOKEN).toUriString();
         assertThat(argsCaptor.getValue()).containsExactly(expectedLink);
     }

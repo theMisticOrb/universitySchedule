@@ -43,7 +43,7 @@ class ActivationTokenControllerTest {
 
     @Test
     void showForm_shouldReturnActivationView_whenTokenIsValid_andAnonymous() throws Exception {
-        mockMvc.perform(get("/activation").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
+        mockMvc.perform(get("/activation/validate").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
                 .andExpect(view().name("auth/activation")).andExpect(model().attribute("token", TOKEN_VALUE))
                 .andExpect(model().attributeExists("request"));
 
@@ -54,7 +54,7 @@ class ActivationTokenControllerTest {
     void showForm_shouldReturnErrorView_whenTokenExpired() throws Exception {
         doThrow(new TokenExpiredException()).when(activationService).validateToken(TOKEN_VALUE);
 
-        mockMvc.perform(get("/activation").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
+        mockMvc.perform(get("/activation/validate").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
                 .andExpect(view().name("auth/activation-error"))
                 .andExpect(model().attribute("error", "Token has been expired."));
     }
@@ -63,7 +63,7 @@ class ActivationTokenControllerTest {
     void showForm_shouldReturnBadRequest_whenTokenNotFound() throws Exception {
         doThrow(new TokenNotFoundException()).when(activationService).validateToken(TOKEN_VALUE);
 
-        mockMvc.perform(get("/activation").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
+        mockMvc.perform(get("/activation/validate").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
                 .andExpect(view().name("auth/activation-error")).andExpect(model().attribute("token", TOKEN_VALUE))
                 .andExpect(model().attributeExists("error"));
 
@@ -74,7 +74,7 @@ class ActivationTokenControllerTest {
     void showForm_shouldReturnBadRequest_whenTokenAlreadyUsed() throws Exception {
         doThrow(new TokenAlreadyUsedException()).when(activationService).validateToken(TOKEN_VALUE);
 
-        mockMvc.perform(get("/activation").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
+        mockMvc.perform(get("/activation/validate").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
                 .andExpect(view().name("auth/activation-error")).andExpect(model().attribute("token", TOKEN_VALUE))
                 .andExpect(model().attributeExists("error"));
 

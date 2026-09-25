@@ -82,9 +82,9 @@ class PasswordResetControllerTest {
 
     @Test
     void showResetForm_shouldReturnViewWithTokenAndEmptyRequest_whenTokenValid() throws Exception {
-        mockMvc.perform(get(WebRoutes.PASSWORD_RESET_PATH + "/reset").param("tokenValue", TOKEN_VALUE)).andExpect(status().isOk())
-                .andExpect(view().name("auth/reset-password")).andExpect(model().attribute("token", TOKEN_VALUE))
-                .andExpect(model().attributeExists("request"));
+        mockMvc.perform(get(WebRoutes.PASSWORD_RESET_PATH + "/reset").param("tokenValue", TOKEN_VALUE))
+                .andExpect(status().isOk()).andExpect(view().name("auth/reset-password"))
+                .andExpect(model().attribute("token", TOKEN_VALUE)).andExpect(model().attributeExists("request"));
 
         verify(activationUserService, times(1)).validateToken(TOKEN_VALUE);
     }
@@ -114,7 +114,8 @@ class PasswordResetControllerTest {
                 .param("password", PASSWORD).param("confirmPassword", PASSWORD)).andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login?passwordReset=true"));
 
-        verify(activationUserService, times(1)).resetPassword(TOKEN_VALUE, PASSWORD, PASSWORD);
+        verify(activationUserService, times(1)).resetPassword(TOKEN_VALUE, PASSWORD.toCharArray(),
+                PASSWORD.toCharArray());
     }
 
     @Test

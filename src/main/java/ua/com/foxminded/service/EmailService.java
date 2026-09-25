@@ -27,7 +27,7 @@ public class EmailService {
     public void sendActivationEmail(String toEmail, String token) {
 
         String activationLink = UriComponentsBuilder.fromHttpUrl(frontendUrl)
-                .fromPath(WebRoutes.ACTIVATION_PATH + "/validate").queryParam("tokenValue", token).toUriString();
+                .path(WebRoutes.ACTIVATION_PATH + "/validate").queryParam("tokenValue", token).toUriString();
 
         String subject = messageSource.getMessage("email.activation.subject", null, Locale.getDefault());
         String text = messageSource.getMessage("email.activation.text", new Object[] { activationLink },
@@ -42,7 +42,7 @@ public class EmailService {
 
     public void sendPasswordResetEmail(String toEmail, String token) {
         String resetLink = UriComponentsBuilder.fromHttpUrl(frontendUrl)
-                .fromPath(WebRoutes.PASSWORD_RESET_PATH + "/reset-password").queryParam("tokenValue", token)
+                .path(WebRoutes.PASSWORD_RESET_PATH + "/reset").queryParam("tokenValue", token)
                 .toUriString();
 
         String subject = messageSource.getMessage("email.reset.subject", null, Locale.getDefault());

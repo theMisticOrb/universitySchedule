@@ -1,6 +1,8 @@
 package ua.com.foxminded.service;
 
+import java.nio.CharBuffer;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
@@ -42,25 +44,30 @@ public class ActivationUserService {
     }
 
     public void activateUser(String tokenValue, ActivationRequestDto request) {
-        ActivationToken token = getValidToken(tokenValue);
-
-        AppUser user = token.getUser();
-
-        user.setEmail(request.getEmail());
+        char[] password = request.getPassword();
+        char[] confirmPassword = request.getConfirmPassword();
 
         try {
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+            ActivationToken token = getValidToken(tokenValue);
+
+            if (!Arrays.equals(password, confirmPassword)) {
+                throw new IllegalArgumentException("Passwords are not matching.");
+            }
+
+            AppUser user = token.getUser();
+
+            user.setEmail(request.getEmail());
+            user.setPassword(passwordEncoder.encode(CharBuffer.wrap(password)));
+            user.setRegistrationCompleted(true);
+            userRepository.save(user);
+
+            token.setUsedAt(LocalDateTime.now());
+            tokenRepository.save(token);
         } finally {
-            request.setPassword(null);
-            request.setConfirmPassword(null);
+            Arrays.fill(password, '\0');
+            Arrays.fill(confirmPassword, '\0');
         }
-
-        user.setRegistrationCompleted(true);
-
-        userRepository.save(user);
-
-        token.setUsedAt(LocalDateTime.now());
-        tokenRepository.save(token);
     }
 
     public void sendResetEmail(AppUser user) {
@@ -96,38 +103,45 @@ public class ActivationUserService {
         emailService.sendPasswordResetEmail(user.getEmail(), token);
     }
 
-    public void resetPassword(String tokenValue, String newPassword, String confirmPassword) {
-        if (!newPassword.equals(confirmPassword)) {
-            throw new IllegalArgumentException("Passwords are not matching.");
+    public void resetPassword(String tokenValue, char[] newPassword, char[] confirmPassword) {
+
+        try {
+            if (!Arrays.equals(newPassword, confirmPassword)) {
+                throw new IllegalArgumentException("Passwords are not matching.");
+            }
+            ActivationToken token = getValidToken(tokenValue);
+            AppUser user = token.getUser();
+            user.setPassword(passwordEncoder.encode(CharBuffer.wrap(newPassword)));
+            userRepository.save(user);
+            token.setUsedAt(LocalDateTime.now());
+            tokenRepository.save(token);
+        } finally {
+            Arrays.fill(newPassword, '\0');
+            Arrays.fill(confirmPassword, '\0');
         }
-        ActivationToken token = getValidToken(tokenValue);
-        AppUser user = token.getUser();
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
-        token.setUsedAt(LocalDateTime.now());
-        tokenRepository.save(token);
     }
 
     public void completeRegistration(Integer userId, RegistrationCompletionDto request) {
-        if (!request.getPassword().equals(request.getConfirmPassword())) {
-            throw new IllegalArgumentException("Passwords are not matching.");
-        }
+        char[] password = request.getPassword();
+        char[] confirmPassword = request.getConfirmPassword();
 
-        AppUser user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found!"));
-
-        user.setEmail(request.getEmail());
-        
         try {
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            if (!Arrays.equals(password, confirmPassword)) {
+                throw new IllegalArgumentException("Passwords are not matching.");
+            }
+
+            AppUser user = userRepository.findById(userId)
+                    .orElseThrow(() -> new EntityNotFoundException("User not found!"));
+
+            user.setEmail(request.getEmail());
+            user.setPassword(passwordEncoder.encode(CharBuffer.wrap(password)));
+            user.setRegistrationCompleted(true);
+
+            userRepository.save(user);
         } finally {
-            request.setPassword(null);
-            request.setConfirmPassword(null);
+            Arrays.fill(password, '\0');
+            Arrays.fill(confirmPassword, '\0');
         }
-
-        user.setRegistrationCompleted(true);
-
-        userRepository.save(user);
     }
 
 }
