@@ -2,16 +2,14 @@ package ua.com.foxminded.entity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-
-import ua.com.foxminded.enums.UserRole;
 
 @Entity
 @Table(name = "teachers")
@@ -22,15 +20,14 @@ public class Teacher extends AppUser {
     @JoinColumn(name = "department_id", nullable = false)
     private AcademicDepartment department;
 
-    @OneToMany(mappedBy = "teacher")
+    @ManyToMany
+    @JoinTable(name = "teacher_subjects", joinColumns = @JoinColumn(name = "teacher_id"), inverseJoinColumns = @JoinColumn(name = "subject_id"))
     private List<Subject> subjects = new ArrayList<>();
 
     public Teacher() {
     }
 
-    public Teacher(Integer id, String firstName, String middleName, String lastName, String email, String password,
-            Set<UserRole> roles, AcademicDepartment department, List<Subject> subjects) {
-        super(id, firstName, middleName, lastName, email, password, roles);
+    public Teacher(AcademicDepartment department, List<Subject> subjects) {
         this.department = department;
         this.subjects = subjects;
     }

@@ -21,22 +21,25 @@ import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.GroupMapper;
 import ua.com.foxminded.mapper.SubjectMapper;
 import ua.com.foxminded.repository.SubjectRepository;
+import ua.com.foxminded.repository.TeacherRepository;
 
 @Service
 @Transactional
-public class SubjectService {
+public class SubjectService implements FullCrudService<Subject, SubjectCreateUpdateDto, Integer> {
 
-    private SubjectRepository subjectRepository;
-    private TeacherService teacherService;
-    private AcademicDepartmentService departmentService;
-    private SpecializationService specializationService;
-    private SubjectMapper subjectMapper;
-    private GroupMapper groupMapper;
+    private final SubjectRepository subjectRepository;
+    private final TeacherRepository teacherRepository;
+    private final TeacherService teacherService;
+    private final AcademicDepartmentService departmentService;
+    private final SpecializationService specializationService;
+    private final SubjectMapper subjectMapper;
+    private final GroupMapper groupMapper;
 
     public SubjectService(SubjectRepository subjectRepository, TeacherService teacherService,
             AcademicDepartmentService departmentService, SpecializationService specializationService,
-            SubjectMapper subjectMapper, GroupMapper groupMapper) {
+            SubjectMapper subjectMapper, GroupMapper groupMapper, TeacherRepository teacherRepository) {
         this.subjectRepository = subjectRepository;
+        this.teacherRepository = teacherRepository;
         this.teacherService = teacherService;
         this.departmentService = departmentService;
         this.specializationService = specializationService;
@@ -44,21 +47,26 @@ public class SubjectService {
         this.groupMapper = groupMapper;
     }
 
+    @Override
     public Subject addOne(SubjectCreateUpdateDto dto) {
 
-        Teacher teacher = teacherService.findById(dto.getTeacherId());
+        List<Teacher> teachers = dto.getTeacherIds().stream().map(teacherService::findById)
+                .collect(Collectors.toList());
         AcademicDepartment department = departmentService.findByCode(dto.getDepartmentCode());
 
-        Subject subject = subjectMapper.toEntity(dto, teacher, department);
+        Subject subject = subjectMapper.toEntity(dto, teachers, department);
 
         try {
-            return subjectRepository.save(subject);
+            Subject savedSubject = subjectRepository.saveAndFlush(subject);
+            teacherRepository.saveAllAndFlush(teachers);
+            return savedSubject;
         } catch (DataIntegrityViolationException e) {
             throw new DuplicateEntityException("Subject with name: " + dto.getTitle() + " alredy exists!");
 
         }
     }
 
+    @Override
     public Subject findById(Integer id) {
         return subjectRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Subject not found: " + id));
@@ -73,13 +81,15 @@ public class SubjectService {
         return subjectRepository.findAll();
     }
 
-    public Subject update(SubjectCreateUpdateDto updated, Integer id) {
+    @Override
+    public Subject fullUpdate(SubjectCreateUpdateDto updated, Integer id) {
 
         Subject subject = findById(id);
 
-        if (updated.getTeacherId() != null) {
-            Teacher teacher = teacherService.findById(updated.getTeacherId());
-            UpdateUtil.setIfNotNull(teacher, subject::setTeacher);
+        if (updated.getTeacherIds() != null) {
+            List<Teacher> teachers = updated.getTeacherIds().stream().map(teacherService::findById)
+                    .collect(Collectors.toList());
+            UpdateUtil.setIfNotNull(teachers, subject::setTeachers);
 
         }
         UpdateUtil.setIfNotNull(updated.getTitle(), subject::setTitle);
@@ -96,8 +106,15 @@ public class SubjectService {
         return subject;
     }
 
+    @Override
     public void deleteById(Integer id) {
         subjectRepository.deleteById(id);
+    }
+
+    public void createSubjects(List<SubjectCreateUpdateDto> list) {
+
+        List<Subject> subjects = list.stream().map(this::addOne).collect(Collectors.toList());
+        subjectRepository.saveAllAndFlush(subjects);
     }
 
 }

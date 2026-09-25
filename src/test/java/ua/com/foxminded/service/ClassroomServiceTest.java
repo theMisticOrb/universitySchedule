@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,137 +13,116 @@ import javax.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-import ua.com.foxminded.MainApp;
 import ua.com.foxminded.dto.classroom.ClassroomCreateUpdateDto;
 import ua.com.foxminded.entity.Classroom;
+import ua.com.foxminded.exception.DuplicateEntityException;
+import ua.com.foxminded.service.suppport.dto.ClassroomDtoTestBuilder;
 
-@Testcontainers
-@Transactional
-@SpringBootTest(classes = { MainApp.class })
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles({"test"})
-class ClassroomServiceTest {
-
+class ClassroomServiceTest extends AbstractFullCrudServiceTest<Classroom, ClassroomCreateUpdateDto, Integer> {
     @Autowired
     private ClassroomService service;
 
-    @Test
-    void addOne_shouldSaveNewEntity_whenCalled() {
+    @Override
+    protected FullCrudService<Classroom, ClassroomCreateUpdateDto, Integer> getService() {
+        return service;
+    }
 
-        ClassroomCreateUpdateDto classroom = new ClassroomCreateUpdateDto();
-        classroom.setName("2-A");
-        Classroom savedClassroom = service.addOne(classroom);
+    @Override
+    protected ClassroomCreateUpdateDto createValidDto() {
+        return ClassroomDtoTestBuilder.aClassroom().build();
+    }
 
-        assertNotNull(savedClassroom.getId());
-        assertEquals("2-A", savedClassroom.getName());
+    @Override
+    protected Integer getId(Classroom entity) {
+        return entity.getId();
+    }
+
+    @Override
+    protected Integer nonExistentId() {
+        return 999;
     }
 
     @Test
-    void findById_shouldFindEntityById_whenCalledIfEntityExists() {
+    void findByName_shouldReturnClassroom_whenExists() {
+        ClassroomCreateUpdateDto dto = ClassroomDtoTestBuilder.aClassroom().build();
+        service.addOne(dto);
 
-        ClassroomCreateUpdateDto classroom = new ClassroomCreateUpdateDto();
-        classroom.setName("2-A");
-        Classroom savedClassroom = service.addOne(classroom);
+        Classroom result = service.findByName(dto.getName());
 
-        Classroom foundClassroom = service.findById(savedClassroom.getId());
-
-        assertNotNull(foundClassroom);
-        assertEquals(savedClassroom.getId(), foundClassroom.getId());
-        assertEquals("2-A", foundClassroom.getName());
+        assertNotNull(result);
+        assertEquals(dto.getName(), result.getName());
     }
 
     @Test
-    void findById_shouldThrowException_whenCalledifEntityDoesNotExist() {
-        int nonexistentId = 34;
+    void findByName_shouldThrowException_whenNotFound() {
+        String nonexistentName = "Nonexistent Room";
+
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
+                () -> service.findByName(nonexistentName));
+
+        assertEquals("Classroom not found: " + nonexistentName, ex.getMessage());
+    }
+
+    @Test
+    void findById_shouldThrowException_withCorrectMessage() {
+        Integer nonexistentId = nonExistentId();
+
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.findById(nonexistentId));
+
         assertEquals("Classroom not found: " + nonexistentId, ex.getMessage());
     }
 
     @Test
-    void findByTitle_shouldReturnClassroom_whenExists() {
+    void addOne_shouldThrowDuplicateEntityException_whenNameAlreadyExists() {
+        ClassroomCreateUpdateDto dto = ClassroomDtoTestBuilder.aClassroom().withName("2-A").build();
+        service.addOne(dto);
 
-        ClassroomCreateUpdateDto classroom = new ClassroomCreateUpdateDto();
-        classroom.setName("2-A");
-        service.addOne(classroom);
+        ClassroomCreateUpdateDto duplicateDto = ClassroomDtoTestBuilder.aClassroom().withName("2-A").build();
 
-        Classroom result = service.findByName("2-A");
+        DuplicateEntityException ex = assertThrows(DuplicateEntityException.class, () -> service.addOne(duplicateDto));
 
-        assertNotNull(result);
+        assertEquals("Classroom with title: 2-A alredy exists!", ex.getMessage());
+    }
+
+    @Test
+    void fullUpdate_shouldChangeName_whenNameProvided() {
+        ClassroomCreateUpdateDto dto = ClassroomDtoTestBuilder.aClassroom().withName("2-A").build();
+        Classroom saved = service.addOne(dto);
+
+        ClassroomCreateUpdateDto updateDto = new ClassroomCreateUpdateDto();
+        updateDto.setName("3-A");
+
+        Classroom result = service.fullUpdate(updateDto, saved.getId());
+
+        assertEquals(saved.getId(), result.getId());
+        assertEquals("3-A", result.getName());
+    }
+
+    @Test
+    void fullUpdate_shouldNotOverwriteNullFields_whenFieldIsNull() {
+        ClassroomCreateUpdateDto dto = ClassroomDtoTestBuilder.aClassroom().withName("2-A").build();
+        Classroom saved = service.addOne(dto);
+
+        ClassroomCreateUpdateDto updateDto = new ClassroomCreateUpdateDto();
+        updateDto.setName(null);
+
+        Classroom result = service.fullUpdate(updateDto, saved.getId());
+
         assertEquals("2-A", result.getName());
     }
 
     @Test
-    void findAll_shouldGetListOfAllEntities_whenCalledIfNotEmpty() {
+    void createClassrooms_shouldSaveAllProvidedClassrooms() {
+        ClassroomCreateUpdateDto first = ClassroomDtoTestBuilder.aClassroom().withName("2-A").build();
+        ClassroomCreateUpdateDto second = ClassroomDtoTestBuilder.aClassroom().withName("3-A").build();
 
-        ClassroomCreateUpdateDto classroom = new ClassroomCreateUpdateDto();
-        classroom.setName("2-A");
-        service.addOne(classroom);
-
-        ClassroomCreateUpdateDto classroom2 = new ClassroomCreateUpdateDto();
-        classroom2.setName("3-A");
-        service.addOne(classroom2);
+        service.createClassrooms(Arrays.asList(first, second));
 
         List<Classroom> allClassrooms = service.findAll();
+        List<String> names = allClassrooms.stream().map(Classroom::getName).collect(Collectors.toList());
 
-        assertEquals(2, allClassrooms.size());
-
-        List<String> titles = allClassrooms.stream().map(Classroom::getName).collect(Collectors.toList());
-
-        assertTrue(titles.contains("2-A"));
-        assertTrue(titles.contains("3-A"));
+        assertTrue(names.contains("2-A"));
+        assertTrue(names.contains("3-A"));
     }
-
-    @Test
-    void findAll_shouldGetEmptyList_whenCalledIfNoEntities() {
-        List<Classroom> allClassrooms = service.findAll();
-        assertTrue(allClassrooms.isEmpty());
-    }
-
-    @Test
-    void update_shouldUpdateEntity_whenCalled() {
-
-        ClassroomCreateUpdateDto classroom = new ClassroomCreateUpdateDto();
-        classroom.setName("2-A");
-        Classroom classroomSaved = service.addOne(classroom);
-
-        ClassroomCreateUpdateDto updated = new ClassroomCreateUpdateDto();
-        updated.setName("3-A");
-        Classroom classroomUpdated = service.update(updated, classroomSaved.getId());
-
-        assertEquals(classroomSaved.getId(), classroomUpdated.getId());
-        assertEquals("3-A", classroomUpdated.getName());
-
-    }
-
-    @Test
-    void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
-        ClassroomCreateUpdateDto classroom = new ClassroomCreateUpdateDto();
-        classroom.setName("2-A");
-        Classroom classroomSaved = service.addOne(classroom);
-
-        ClassroomCreateUpdateDto updated = new ClassroomCreateUpdateDto();
-        updated.setName(null);
-        Classroom classroomUpdated = service.update(updated, classroomSaved.getId());
-
-        assertEquals("2-A", classroomUpdated.getName());
-    }
-
-    @Test
-    void delete_shouldDeleteEntityById_whenEntityExists() {
-        ClassroomCreateUpdateDto classroom = new ClassroomCreateUpdateDto();
-        classroom.setName("2-A");
-        Classroom classroomSaved = service.addOne(classroom);
-        int id = classroomSaved.getId();
-
-        assertNotNull(service.findById(id));
-        service.deleteById(id);
-        assertThrows(EntityNotFoundException.class, () -> service.findById(id));
-    }
-
 }

@@ -61,6 +61,6 @@ public class SpecializationRestController {
 
     @PutMapping("/{id}")
     public SpecializationResponseDto update(@RequestBody SpecializationCreateUpdateDto dto, @PathVariable Integer id) {
-        return  mapper.toResponseDto(service.update(dto, id));
+        return  mapper.toResponseDto(service.fullUpdate(dto, id));
     }
 }

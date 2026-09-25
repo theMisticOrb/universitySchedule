@@ -38,10 +38,10 @@ public class LessonRestController {
         return service.findAll().stream().map(mapper::toResponseDto).collect(Collectors.toList());
     }
 
-    @GetMapping(params = { "subjectTitle", "weekDay" })
-    public List<LessonResponseDto> findBySubjectTitleAndWeekDay(@RequestParam String subjectTitle,
+    @GetMapping("/filter")
+    public List<LessonResponseDto> findBySubjectTitleAndWeekDay(@RequestParam Integer subjectId,
             @RequestParam WeekDay weekDay) {
-        return service.findBySubjectTitleAndWeekDay(subjectTitle, weekDay).stream().map(mapper::toResponseDto)
+        return service.findBySubjectIdAndWeekDay(subjectId, weekDay).stream()
                 .collect(Collectors.toList());
     }
 
@@ -50,10 +50,10 @@ public class LessonRestController {
         return mapper.toResponseDto(service.findById(id));
     }
 
-    @PostMapping
+    @PostMapping("/{teacherId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public LessonResponseDto create(@RequestBody LessonCreateUpdateDto dto) {
-        return mapper.toResponseDto(service.addOne(dto));
+    public LessonResponseDto create(@RequestBody LessonCreateUpdateDto dto, @PathVariable Integer teacherId) {
+        return mapper.toResponseDto(service.addOne(dto, teacherId));
     }
 
     @DeleteMapping("/{id}")
@@ -65,7 +65,7 @@ public class LessonRestController {
 
     @PutMapping("/{id}")
     public LessonResponseDto update(@RequestBody LessonCreateUpdateDto dto, @PathVariable Integer id) {
-        return mapper.toResponseDto(service.update(dto, id));
+        return mapper.toResponseDto(service.fullUpdate(dto, id));
     }
 
 }

@@ -62,7 +62,7 @@ public class AcademicDepartmentRestController {
 
     @PutMapping("/{id}")
     public AcademicDepartmentResponseDto update(@RequestBody AcademicDepartmentCreateUpdateDto dto, @PathVariable Integer id) {
-        return mapper.toResponseDto(service.update(dto, id));
+        return mapper.toResponseDto(service.fullUpdate(dto, id));
     }
 
 }

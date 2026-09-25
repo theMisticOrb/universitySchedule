@@ -1,5 +1,6 @@
 package ua.com.foxminded.entity;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -23,8 +24,8 @@ public class Student extends AppUser {
     }
 
     public Student(Integer id, String firstName, String middleName, String lastName, String email, String password,
-            Set<UserRole> roles, Group group) {
-        super(id, firstName, middleName, lastName, email, password, roles);
+            LocalDateTime createdAt, Set<UserRole> roles, boolean isRegistrationCompleted, Group group) {
+        super(id, firstName, middleName, lastName, email, password, createdAt, roles, isRegistrationCompleted);
         this.group = group;
     }
 

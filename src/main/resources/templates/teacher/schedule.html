@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title  th:text="#{teacher.schedule.title}">My Schedule</title>
+</head>
+
+<body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <h2 th:text="#{teacher.schedule}">Weekly Schedule</h2>
+    <a th:href="@{/teacher/schedule/add}" th:text="#{teacher.add.lesson}"> Add a lesson</a>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th th:text="#{teacher.schedule.hour}">Class hour</th>
+                <th th:each="day : ${weekDays}" th:text="${day}"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="hour : ${classHours}">
+                <td th:text="${hour.start + ' - ' + hour.end}"></td>
+
+                <td th:each="day : ${weekDays}">
+                    <div th:each="lesson : ${schedule.get(day)}" th:if="${lesson.classHour == hour}">
+
+                        <div th:text="${lesson.subject.title}"></div>
+                        <div th:text="${lesson.group.name}"></div>
+                        <div th:text="${lesson.classroom.name}"></div>
+                        <div th:text="${lesson.teacher.firstName + ' ' + lesson.teacher.lastName}"></div>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>

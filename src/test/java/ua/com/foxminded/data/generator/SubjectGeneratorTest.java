@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -44,13 +45,17 @@ class SubjectGeneratorTest {
 
         Teacher teacher = new Teacher();
         teacher.setId(1);
+        
+        List<Teacher> teachers = new ArrayList<>();
+        teachers.add(teacher);
+       
 
         AcademicDepartment department = new AcademicDepartment();
         department.setId(1);
 
         when(repository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        List<Subject> result = generator.generateSubjects(140, teacher, department);
+        List<Subject> result = generator.generateSubjects(140, teachers, department);
 
         assertEquals(140, result.size());
     }
@@ -60,13 +65,15 @@ class SubjectGeneratorTest {
 
         Teacher teacher = new Teacher();
         teacher.setId(1);
-
+        List<Teacher> teachers = new ArrayList<>();
+        teachers.add(teacher);
+       
         AcademicDepartment department = new AcademicDepartment();
         department.setId(1);
 
         when(repository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        List<Subject> result = generator.generateSubjects(140, teacher, department);
+        List<Subject> result = generator.generateSubjects(140, teachers, department);
 
         Set<String> uniqueKeys = new HashSet<>();
 

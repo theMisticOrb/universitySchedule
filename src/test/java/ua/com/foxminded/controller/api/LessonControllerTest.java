@@ -46,7 +46,7 @@ class LessonControllerTest {
     @MockBean
     private LessonService service;
     @MockBean
-    private LessonMapper groupMapper;
+    private LessonMapper lessonMapper;
 
     @Autowired
     private ObjectMapper mapper;
@@ -62,7 +62,7 @@ class LessonControllerTest {
     private LessonResponseDto createResponseDto() {
         LessonResponseDto dto = new LessonResponseDto();
         dto.setId(1);
-        dto.setSubjectTitle("Math");
+        dto.setSubjectId(1);
         dto.setWeekDay(WeekDay.FRIDAY);
         return dto;
     }
@@ -77,26 +77,25 @@ class LessonControllerTest {
         lessons.add(lesson);
 
         when(service.findAll()).thenReturn(lessons);
-        when(groupMapper.toResponseDto(any(Lesson.class))).thenReturn(responseDto);
+        when(lessonMapper.toResponseDto(any(Lesson.class))).thenReturn(responseDto);
 
-        mvc.perform(get("/api/v1/lessons").param("subjectTitle", "Math")).andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(1)).andExpect(jsonPath("$[0].subjectTitle").value("Math"));
+        mvc.perform(get("/api/v1/lessons").param("subjectId", "1")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(1)).andExpect(jsonPath("$[0].subjectId").value("1"));
     }
 
     @Test
-    void findByTitleAndWeekDay_shouldReturn200_whenCalled() throws Exception {
+    void findBySubjectIdAndWeekDay_shouldReturn200_whenCalled() throws Exception {
 
-        Lesson lesson = createLesson();
         LessonResponseDto responseDto = createResponseDto();
 
-        List<Lesson> lessons = new ArrayList<>();
-        lessons.add(lesson);
+        List<LessonResponseDto> lessons = new ArrayList<>();
+        lessons.add(responseDto);
 
-        when(service.findBySubjectTitleAndWeekDay("Math", WeekDay.FRIDAY)).thenReturn(lessons);
-        when(groupMapper.toResponseDto(any(Lesson.class))).thenReturn(responseDto);
+        when(service.findBySubjectIdAndWeekDay(1, WeekDay.FRIDAY)).thenReturn(lessons);
+        when(lessonMapper.toResponseDto(any(Lesson.class))).thenReturn(responseDto);
 
-        mvc.perform(get("/api/v1/lessons").param("subjectTitle", "Math").param("weekDay", "FRIDAY"))
-                .andExpect(status().isOk()).andExpect(jsonPath("$[0].subjectTitle").value("Math"));
+        mvc.perform(get("/api/v1/lessons/filter").param("subjectId", "1").param("weekDay", "FRIDAY"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$[0].subjectId").value("1"));
     }
 
     @Test
@@ -106,10 +105,10 @@ class LessonControllerTest {
         LessonResponseDto responseDto = createResponseDto();
 
         when(service.findById(1)).thenReturn(lesson);
-        when(groupMapper.toResponseDto(lesson)).thenReturn(responseDto);
+        when(lessonMapper.toResponseDto(lesson)).thenReturn(responseDto);
 
         mvc.perform(get("/api/v1/lessons/1")).andExpect(status().isOk())
-                .andExpect(jsonPath("$.subjectTitle").value(lesson.getSubject().getTitle()));
+                .andExpect(jsonPath("$.subjectId").value(lesson.getSubject().getId()));
     }
 
     @Test
@@ -120,12 +119,12 @@ class LessonControllerTest {
         LessonCreateUpdateDto requestDto = new LessonCreateUpdateDto();
         requestDto.setSubjectId(1);
 
-        when(service.addOne(any(LessonCreateUpdateDto.class))).thenReturn(lesson);
-        when(groupMapper.toResponseDto(lesson)).thenReturn(responseDto);
+        when(service.addOne(any(LessonCreateUpdateDto.class), eq(1))).thenReturn(lesson);
+        when(lessonMapper.toResponseDto(lesson)).thenReturn(responseDto);
 
-        mvc.perform(post("/api/v1/lessons").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/api/v1/lessons/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isCreated())
-                .andExpect(jsonPath("$.subjectTitle").value(lesson.getSubject().getTitle()));
+                .andExpect(jsonPath("$.subjectId").value(lesson.getSubject().getId()));
     }
 
     @Test
@@ -144,12 +143,12 @@ class LessonControllerTest {
         LessonCreateUpdateDto requestDto = new LessonCreateUpdateDto();
         requestDto.setSubjectId(1);
 
-        when(service.update(any(LessonCreateUpdateDto.class), eq(1))).thenReturn(lesson);
-        when(groupMapper.toResponseDto(lesson)).thenReturn(responseDto);
+        when(service.fullUpdate(any(LessonCreateUpdateDto.class), eq(1))).thenReturn(lesson);
+        when(lessonMapper.toResponseDto(lesson)).thenReturn(responseDto);
 
         mvc.perform(put("/api/v1/lessons/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
-                .andExpect(jsonPath("$.subjectTitle").value(lesson.getSubject().getTitle()));
+                .andExpect(jsonPath("$.subjectId").value(lesson.getSubject().getId()));
 
     }
 }

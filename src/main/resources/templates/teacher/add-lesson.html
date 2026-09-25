@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title th:text="#{teacher.add.lesson}">Add a lesson</title>
+</head>
+
+<body>
+    <div th:replace="fragments/header :: header"></div>
+    <h2 th:text="#{teacher.add.lesson}">Add a lesson</h2>
+
+    <div th:if="${error}" style="color:red;" th:text="${error}"></div>
+
+    <form th:action="@{/teacher/schedule/add}" method="post">
+        <div>
+
+            <select id="groupSelect" name="groupId">
+                <option value="" th:text="#{teacher.add.lesson.select.group}">-- Select group --</option>
+                <option th:each="group : ${groups}" th:value="${group.id}" th:text="${group.name}">
+                </option>
+            </select>
+            <div id="groupSchedule">
+                <p th:text="#{teacher.add.lesson.select.group.message}">Select a group to view its schedule.</p>
+            </div>
+        </div>
+
+
+        <div>
+            <select id="subjectSelect" name="subjectId">
+                <option value="" th:text="#{teacher.add.lesson.select.subject}">-- Select a subject --</option>
+                <option th:each="subject : ${subjects}" th:value="${subject.id}" th:text="${subject.title}">
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <select id="weekDaySelect" name="weekDay">
+                <option value="" th:text="#{teacher.add.lesson.select.day}">-- Select a week day --</option>
+                <option th:each="day : ${weekDays}" th:value="${day}" th:text="${day}">
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <select id="classHourSelect" name="classHour">
+                <option value="" th:text="#{teacher.add.lesson.select.hour}">-- Select a free hour --</option>
+                <option th:each="hour : ${classHours}" th:value="${hour}" th:text="${hour.start} + ' - ' + ${hour.end}">
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <select id="classroomSelect" name="classroomName">
+                <option value="" th:text="#{teacher.add.lesson.select.classroom}">-- Select a free classroom --</option>
+                <option th:each="classroom : ${classrooms}" th:value="${classroom.name}" th:text="${classroom.name}">
+                </option>
+            </select>
+        </div>
+
+
+
+        <button type="submit" th:text="#{admin.add.saveAll}">Save all</button>
+        <a th:href="@{/teacher/schedule}" th:text="#{admin.add.cancel}">Cancel </a>
+    </form>
+</body>
+
+<script th:inline="javascript">
+
+    /*<![CDATA[*/
+    var MSG_HOUR_HEADER = /*[[#{lesson.list.table.hour}]]*/ 'Class hour';
+    var MSG_DAY_MO = /*[[#{lesson.add.script.day.mo}]]*/ 'Monday';
+    var MSG_DAY_TU = /*[[#{lesson.add.script.day.tu}]]*/ 'Tuesday';
+    var MSG_DAY_WE = /*[[#{lesson.add.script.day.we}]]*/ 'Wednesday';
+    var MSG_DAY_TH = /*[[#{lesson.add.script.day.th}]]*/ 'Thursday';
+    var MSG_DAY_FR = /*[[#{lesson.add.script.day.fr}]]*/ 'Friday';
+    var MSG_DAY_SA = /*[[#{lesson.add.script.day.sa}]]*/ 'Saturday';
+    var MSG_FREE = /*[[#{lesson.add.script.free}]]*/ 'Free hour';
+    var MSG_SELECT_CLASSROOM = /*[[#{teacher.add.lesson.select.classroom}]]*/ 'Select a free classroom';
+    var MSG_ALL_TAKEN = /*[[#{teacher.add.lesson.select.classroom.alltaken}]]*/ 'No free classroom';
+    /*]]>*/
+
+    document.getElementById('groupSelect').onchange = function () {
+        var groupId = this.value;
+
+        if (groupId === '') {
+            document.getElementById('groupSchedule');
+            return;
+        }
+
+        fetch('/teacher/schedule/group?id=' + encodeURIComponent(groupId))
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (schedule) {
+                buildScheduleTable(schedule);
+            });
+    };
+
+    function buildScheduleTable(schedule) {
+        var dayKeys = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+        var dayLabels = [
+            MSG_DAY_MO,
+            MSG_DAY_TU,
+            MSG_DAY_WE,
+            MSG_DAY_TH,
+            MSG_DAY_FR,
+            MSG_DAY_SA
+        ];
+
+
+        var hourOptions = document.querySelectorAll('select[name="classHour"] option');
+
+        var table = document.createElement('table');
+        table.border = '1';
+        table.cellPadding = '5';
+        table.style.borderCollapse = 'collapse';
+
+        var headerRow = document.createElement('tr');
+        var hourHeaderCell = document.createElement('th');
+
+        hourHeaderCell.textContent = MSG_HOUR_HEADER;
+        headerRow.appendChild(hourHeaderCell);
+
+        for (var d = 0; d < dayLabels.length; d++) {
+            var dayHeaderCell = document.createElement('th');
+            dayHeaderCell.textContent = dayLabels[d];
+            headerRow.appendChild(dayHeaderCell);
+        }
+        table.appendChild(headerRow);
+
+        for (var h = 0; h < hourOptions.length; h++) {
+            var hourValue = hourOptions[h].value;
+
+            if (hourValue === '') {
+                continue;
+            }
+
+            var hourLabel = hourOptions[h].textContent;
+            var row = document.createElement('tr');
+            var hourCell = document.createElement('td');
+            hourCell.textContent = hourLabel;
+            row.appendChild(hourCell);
+
+            for (var d2 = 0; d2 < dayKeys.length; d2++) {
+                var dayKey = dayKeys[d2];
+                var lessonsOfDay = schedule[dayKey] || [];
+
+                var lessonFound = null;
+                for (var l = 0; l < lessonsOfDay.length; l++) {
+                    if (lessonsOfDay[l].classHour === hourValue) {
+                        lessonFound = lessonsOfDay[l];
+                        break;
+                    }
+                }
+
+                var cell = document.createElement('td');
+
+                if (lessonFound !== null) {
+                    cell.style.background = '#ffe0e0';
+
+                    var subjectText = document.createTextNode(lessonFound.subjectTitle);
+                    var br = document.createElement('br');
+                    var classroomText = document.createTextNode(lessonFound.classroomName);
+
+                    cell.appendChild(subjectText);
+                    cell.appendChild(br);
+                    cell.appendChild(classroomText);
+                } else {
+                    cell.style.background = '#e6ffe6';
+                    cell.textContent = MSG_FREE;
+                }
+
+                row.appendChild(cell);
+            }
+
+            table.appendChild(row);
+        }
+        var container = document.getElementById('groupSchedule');
+        container.innerHTML = '';
+        container.appendChild(table);
+    }
+
+    document.getElementById('weekDaySelect').onchange = updateFreeClassrooms;
+    document.getElementById('classHourSelect').onchange = updateFreeClassrooms;
+
+    function updateFreeClassrooms() {
+        var weekDay = document.getElementById('weekDaySelect').value;
+        var classHour = document.getElementById('classHourSelect').value;
+        var classroomSelect = document.getElementById('classroomSelect');
+
+        if (weekDay === '' || classHour === '') {
+            return;
+        }
+
+        fetch('/teacher/schedule/classrooms/free?weekDay=' + weekDay + '&classHour=' + classHour)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (freeNames) {
+                classroomSelect.innerHTML = '';
+
+                if (freeNames.length === 0) {
+                    var noneOption = document.createElement('option');
+                    noneOption.value = '';
+                    noneOption.textContent = MSG_ALL_TAKEN;
+                    classroomSelect.appendChild(noneOption);
+                    return;
+                }
+
+                var placeholderOption = document.createElement('option');
+                placeholderOption.value = '';
+                placeholderOption.textContent = '--' + MSG_SELECT_CLASSROOM + '--';
+                classroomSelect.appendChild(placeholderOption);
+
+                for (var i = 0; i < freeNames.length; i++) {
+                    var option = document.createElement('option');
+
+                    option.value = freeNames[i];
+                    option.textContent = freeNames[i];
+                    classroomSelect.appendChild(option);
+                }
+            });
+    }
+</script>
+
+</html>

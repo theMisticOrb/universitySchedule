@@ -1,5 +1,6 @@
 package ua.com.foxminded.entity;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,7 +27,6 @@ import ua.com.foxminded.enums.UserRole;
 @Table(name = "users")
 public abstract class AppUser {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_gen")
     @SequenceGenerator(name = "user_id_gen", sequenceName = "user_id_seq", allocationSize = 30)
@@ -48,24 +48,32 @@ public abstract class AppUser {
     @Column(name = "user_password")
     private String password;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")
     private Set<UserRole> roles = new HashSet<>();
 
+    @Column(name = "is_registration_completed")
+    private boolean isRegistrationCompleted;
+
     protected AppUser() {
     }
 
     protected AppUser(Integer id, String firstName, String middleName, String lastName, String email, String password,
-            Set<UserRole> roles) {
+            LocalDateTime createdAt, Set<UserRole> roles, boolean isRegistrationCompleted) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.createdAt = createdAt;
         this.roles = roles;
+        this.isRegistrationCompleted = isRegistrationCompleted;
     }
 
     public Integer getId() {
@@ -122,6 +130,22 @@ public abstract class AppUser {
 
     public void setRoles(Set<UserRole> roles) {
         this.roles = roles;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public boolean isRegistrationCompleted() {
+        return isRegistrationCompleted;
+    }
+
+    public void setRegistrationCompleted(boolean isRegistrationCompleted) {
+        this.isRegistrationCompleted = isRegistrationCompleted;
     }
 
 }

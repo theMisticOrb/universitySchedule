@@ -69,7 +69,6 @@ class StudentControllerTest {
         dto.setFirstName("Bob");
         dto.setMiddleName("Bobovitch");
         dto.setLastName("Bobinski");
-        dto.setGroupId(1);
         return dto;
     }
 
@@ -134,7 +133,6 @@ class StudentControllerTest {
         StudentResponseDto responseDto = createResponseDto();
 
         StudentCreateUpdateDto requestDto = new StudentCreateUpdateDto();
-        requestDto.setGroupId(1);
         requestDto.setFirstName("Bob");
         requestDto.setMiddleName("Bobovitch");
         requestDto.setLastName("Bobinski");
@@ -161,18 +159,17 @@ class StudentControllerTest {
         StudentResponseDto responseDto = createResponseDto();
 
         StudentCreateUpdateDto requestDto = new StudentCreateUpdateDto();
-        requestDto.setGroupId(1);
         requestDto.setFirstName("Bob");
         requestDto.setMiddleName("Bobovitch");
         requestDto.setLastName("Bobinski");
 
-        when(service.update(any(StudentCreateUpdateDto.class), eq(1))).thenReturn(student);
+        when(service.fullUpdate(any(StudentCreateUpdateDto.class), eq(1))).thenReturn(student);
         when(studentMapper.toResponseDto(student)).thenReturn(responseDto);
 
         mvc.perform(put("/api/v1/students/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk());
 
-        verify(service).update(any(StudentCreateUpdateDto.class), eq(1));
+        verify(service).fullUpdate(any(StudentCreateUpdateDto.class), eq(1));
         verify(studentMapper).toResponseDto(student);
 
     }

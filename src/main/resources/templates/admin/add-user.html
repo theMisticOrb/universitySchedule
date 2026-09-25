@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title th:text="#{admin.dashboard.users.addusers}">Add users</title>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+</head>
+
+<body>
+
+    <div th:replace="fragments/header :: header"></div>
+    <h2 th:text="#{admin.dashboard.users.addusers}">Add Users</h2>
+
+    <div>
+
+        <input type="text" id="firstName" th:placeholder="#{admin.add.placeholder.user.first}" />
+        <input type="text" id="middleName" th:placeholder="#{admin.add.placeholder.user.middle}" />
+        <input type="text" id="lastName" th:placeholder="#{admin.add.placeholder.user.last}" />
+        <input type="email" id="email" th:placeholder="Email" />
+
+        <select id="role" onchange="onRoleChange()">
+            <option value="" th:text="#{admin.add.user.role}">-- Select role --</option>
+            <option value="STUDENT" th:text="#{admin.add.user.role.student}">Student</option>
+            <option value="TEACHER" th:text="#{admin.add.user.role.teacher}">Teacher</option>
+        </select>
+
+        <div id="group-field" style="display:none;">
+            <select id="groupName">
+                <option value="" th:text="#{admin.add.user.student.group}">-- Select group --</option>
+                <option th:each="group : ${groups}" th:value="${group.name}" th:text="${group.name}">
+                </option>
+            </select>
+        </div>
+
+        <div id="department-field" style="display:none;">
+            <select id="departmentCode">
+                <option value="" th:text="#{admin.add.user.teacher.dep}">-- Select department --</option>
+                <option th:each="dept : ${departments}" th:value="${dept.code}"
+                    th:text="${dept.title + ' (' + dept.code + ')'}">
+                </option>
+            </select>
+        </div>
+
+        <div id="form-error" style="color:red; display:none;"></div>
+        <button type="button" onclick="addToList()" th:text="#{admin.add.toList}"> Add to list</button>
+    </div>
+
+    <div id="preview" style="display:none;">
+        <h3 th:text="#{admin.add.preview}">The following will be added:</h3>
+        <ul id="user-list"></ul>
+        <button type="button" onclick="saveAll()" th:text="#{admin.add.saveAll}">Save All</button>
+        <div id="save-error" style="color:red; display:none;"></div>
+    </div>
+
+
+    <script th:inline="javascript">
+
+        const users = [];
+
+        function onRoleChange() {
+            const role = document.getElementById('role').value;
+            document.getElementById('group-field').style.display =
+                role === 'STUDENT' ? 'block' : 'none';
+            document.getElementById('department-field').style.display =
+                role === 'TEACHER' ? 'block' : 'none';
+        }
+
+        function addToList() {
+
+
+            const errorDiv = document.getElementById('form-error');
+            errorDiv.style.display = 'none';
+
+            const firstName = document.getElementById('firstName').value.trim();
+            const middleName = document.getElementById('middleName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const role = document.getElementById('role').value;
+            const groupName = document.getElementById('groupName').value;
+            const departmentCode = document.getElementById('departmentCode').value;
+
+
+            if (!firstName || !lastName || !email || !role) {
+                showError(errorDiv, '[[#{admin.add.user.script.fillName}]]');
+                return;
+            }
+            if (role === 'STUDENT' && !groupName) {
+                showError(errorDiv, '[[#{admin.add.user.student.group}]]');
+                return;
+            }
+            if (role === 'TEACHER' && !departmentCode) {
+                showError(errorDiv, '[[#{admin.add.user.teacher.dep}]]');
+                return;
+            }
+
+
+            const user = {
+                firstName, middleName, lastName, email, roles: [role],
+                groupName: role === 'STUDENT' ? groupName : null,
+                departmentCode: role === 'TEACHER' ? departmentCode : null
+            };
+            users.push(user);
+
+            const extraInfo = role === 'STUDENT' ? '[[#{admin.add.user.script.group}]]: ' + groupName
+                : role === 'TEACHER' ? '[[#{admin.add.user.script.dep}]]: ' + departmentCode
+                    : '';
+
+            const li = document.createElement('li');
+            li.textContent = `${lastName} ${firstName} (${email}) — ${role}${extraInfo ? ', ' + extraInfo : ''}`;
+
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = '✕';
+            removeBtn.onclick = () => {
+                const index = [...li.parentNode.children].indexOf(li);
+                users.splice(index, 1);
+                li.remove();
+                if (users.length === 0) {
+                    document.getElementById('preview').style.display = 'none';
+                }
+            };
+            li.appendChild(removeBtn);
+            document.getElementById('user-list').appendChild(li);
+            document.getElementById('preview').style.display = 'block';
+
+            ['firstName', 'middleName', 'lastName', 'email'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('role').value = '';
+            document.getElementById('groupName').value = '';
+            document.getElementById('departmentCode').value = '';
+            onRoleChange();
+            document.getElementById('firstName').focus();
+        }
+
+        function saveAll() {
+            if (users.length === 0) return;
+
+            const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+            const errorDiv = document.getElementById('save-error');
+
+            fetch('/admin/users/add-user/batch', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify({users})
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    } else if (data.error) {
+                        showError(errorDiv, data.error);
+                    }
+                })
+                .catch(() => showError(errorDiv, '[[#{admin.add.script.error}]]'));
+        }
+
+        function showError(div, message) {
+            div.textContent = message;
+            div.style.display = 'block';
+        }
+    </script>
+
+</body>
+
+</html>

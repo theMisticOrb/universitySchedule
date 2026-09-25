@@ -1,5 +1,6 @@
 package ua.com.foxminded.data.structure;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -119,7 +120,11 @@ public class DataStructureGenerator {
     private void generateDepartmentStructure(AcademicDepartment department) {
 
         List<Teacher> teachers = generateTeachers(department);
-        teachers.forEach(teacher -> subjectGen.generateSubjects(config.getSubjectsPerTeacher(), teacher, department));
+
+        teachers.forEach(teacher -> {
+            
+            subjectGen.generateSubjects(config.getSubjectsPerTeacher(), Arrays.asList(teacher), department);
+        });
 
         List<Specialization> specializations = generateSpecializations(department);
         specializations.forEach(specialization -> {
@@ -149,8 +154,8 @@ public class DataStructureGenerator {
     private void addAdmin() {
         if (userRepository.findByEmail(adminEmail).isPresent()) {
             log.info("Admin alredy exists!");
-            log.info("Admin email: admin@school.com");
-            log.info("Admin password: adminPassword123");
+            log.info("Admin email: {}", adminEmail);
+            log.info("Admin password: {}", adminPassword);
             return;
         }
         TeacherCreateUpdateDto adminDto = new TeacherCreateUpdateDto();
@@ -172,8 +177,7 @@ public class DataStructureGenerator {
 
         teacherService.addOne(adminDto);
         log.info("Admin added!");
-        log.info("Admin email: admin@school.com");
-        log.info("Admin password: adminPassword123");
-        
+        log.info("Admin email: {}", adminEmail);
+        log.info("Admin password: {}", adminPassword);
     }
 }

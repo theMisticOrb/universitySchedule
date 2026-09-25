@@ -35,6 +35,10 @@ public class CustomUserDetails implements UserDetails {
                 .collect(Collectors.toList());
     }
 
+    public boolean isRegistrationCompleted() {
+        return user.isRegistrationCompleted();
+    }
+    
     @Override
     public String getPassword() {
         return user.getPassword();

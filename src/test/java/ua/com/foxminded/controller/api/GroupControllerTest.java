@@ -149,7 +149,7 @@ class GroupControllerTest {
         GroupCreateUpdateDto requestDto = new GroupCreateUpdateDto();
         requestDto.setSpecializationCode("A");
 
-        when(service.update(any(GroupCreateUpdateDto.class), eq(1))).thenReturn(group);
+        when(service.fullUpdate(any(GroupCreateUpdateDto.class), eq(1))).thenReturn(group);
         when(groupMapper.toResponseDto(group)).thenReturn(responseDto);
 
         mvc.perform(put("/api/v1/groups/1").contentType(MediaType.APPLICATION_JSON)

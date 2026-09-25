@@ -1,11 +1,13 @@
 package ua.com.foxminded.helpers;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public final class UpdateUtil {
 
@@ -19,12 +21,33 @@ public final class UpdateUtil {
         }
     }
 
-    public static <D, E> List<E> updateListIfNotNull(Collection<? extends D> dtoList,
-            Function<? super D, ? extends E> mapper) {
-        if (dtoList == null) {
-            return Collections.emptyList();
+    public static <D, E, I> void replaceList(List<E> currentList, Collection<? extends D> updatedDtoList,
+            Function<? super D, ? extends E> mapper, JpaRepository<E, I> repository) {
+        if (updatedDtoList == null) {
+            return;
         }
 
-        return dtoList.stream().map(mapper).collect(Collectors.toList());
+        List<E> newEntities = updatedDtoList.stream().map(mapper).collect(Collectors.toList());
+
+        currentList.clear();
+        currentList.addAll(newEntities);
+
+    }
+
+    public static <D, E, I> void replaceSet(Set<E> currentSet, Collection<? extends D> updatedDtoList,
+            Function<? super D, ? extends E> mapper, JpaRepository<E, I> repository) {
+
+        if (updatedDtoList == null) {
+            return;
+        }
+
+        List<E> newEntities = updatedDtoList.stream().map(mapper).collect(Collectors.toList());
+
+        repository.deleteAll(currentSet);
+
+        List<E> saved = repository.saveAll(newEntities);
+
+        currentSet.clear();
+        currentSet.addAll(saved);
     }
 }

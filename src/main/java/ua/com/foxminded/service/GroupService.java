@@ -26,23 +26,27 @@ import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.StudentMapper;
 import ua.com.foxminded.mapper.SubjectMapper;
 import ua.com.foxminded.repository.GroupRepository;
+import ua.com.foxminded.repository.StudentRepository;
 
 @Service
 @Transactional
-public class GroupService {
+public class GroupService implements FullCrudService<Group, GroupCreateUpdateDto, Integer> {
 
-    private GroupRepository groupRepository;
-    private SpecializationService specializationService;
-    private AcademicDepartmentService departmentService;
-    private TeacherService teacherService;
-    private StudentMapper studentMapper;
-    private SubjectMapper subjectMapper;
-    private UniversityProperties properties;
+    private final GroupRepository groupRepository;
+    private final StudentRepository studentRepository;
+    private final SpecializationService specializationService;
+    private final AcademicDepartmentService departmentService;
+    private final TeacherService teacherService;
+    private final StudentMapper studentMapper;
+    private final SubjectMapper subjectMapper;
+    private final UniversityProperties properties;
 
-    public GroupService(GroupRepository groupRepository, SpecializationService specializationService,
-            AcademicDepartmentService departmentService, TeacherService teacherService, StudentMapper studentMapper,
-            SubjectMapper subjectMapper, UniversityProperties properties) {
+    public GroupService(GroupRepository groupRepository, StudentRepository studentRepository,
+            SpecializationService specializationService, AcademicDepartmentService departmentService,
+            TeacherService teacherService, StudentMapper studentMapper, SubjectMapper subjectMapper,
+            UniversityProperties properties) {
         this.groupRepository = groupRepository;
+        this.studentRepository = studentRepository;
         this.specializationService = specializationService;
         this.departmentService = departmentService;
         this.teacherService = teacherService;
@@ -51,6 +55,7 @@ public class GroupService {
         this.properties = properties;
     }
 
+    @Override
     public Group addOne(GroupCreateUpdateDto dto) {
         Group group = new Group();
         Map<Integer, Integer> counter = new HashMap<>();
@@ -95,6 +100,7 @@ public class GroupService {
 
     }
 
+    @Override
     public Group findById(Integer id) {
         return groupRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Group not found: " + id));
     }
@@ -104,29 +110,37 @@ public class GroupService {
                 .orElseThrow(() -> new EntityNotFoundException("Group not found: " + name));
     }
 
+    @Override
     public List<Group> findAll() {
         return groupRepository.findAll();
     }
 
-    public Group update(GroupCreateUpdateDto updated, Integer id) {
-        Group group = findById(id);
+    @Override
+    public Group fullUpdate(GroupCreateUpdateDto updated, Integer groupId) {
+        Group group = findById(groupId);
+
         if (updated.getSpecializationCode() != null) {
             Specialization specialization = specializationService.findByCode(updated.getSpecializationCode());
             UpdateUtil.setIfNotNull(specialization, group::setSpecialization);
         }
-        UpdateUtil.updateListIfNotNull(updated.getStudents(), dto -> studentMapper.toEntity(dto, group));
+
+        UpdateUtil.replaceSet(group.getStudents(), updated.getStudents(),
+                dto -> studentMapper.toEntity(dto, group), studentRepository);
+
         if (updated.getSubjects() != null) {
             Set<Subject> subjects = updated.getSubjects().stream().map(dto -> {
-                Teacher teacher = teacherService.findById(dto.getTeacherId());
+                List<Teacher> teacher = dto.getTeacherIds().stream().map(teacherService::findById)
+                        .collect(Collectors.toList());
                 AcademicDepartment department = departmentService.findByCode(dto.getDepartmentCode());
                 return subjectMapper.toEntity(dto, teacher, department);
             }).collect(Collectors.toSet());
-
             group.setSubjects(subjects);
         }
+
         return group;
     }
 
+    @Override
     public void deleteById(Integer id) {
         groupRepository.deleteById(id);
     }

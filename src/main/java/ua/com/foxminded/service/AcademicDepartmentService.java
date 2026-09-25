@@ -1,6 +1,7 @@
 package ua.com.foxminded.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -16,24 +17,30 @@ import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.AcademicDepartmentMapper;
 import ua.com.foxminded.mapper.SpecializationMapper;
 import ua.com.foxminded.repository.AcademicDepartmentRepository;
+import ua.com.foxminded.repository.SpecializationRepository;
 
 @Service
 @Transactional
-public class AcademicDepartmentService {
+public class AcademicDepartmentService
+        implements FullCrudService<AcademicDepartment, AcademicDepartmentCreateUpdateDto, Integer> {
 
-    private AcademicDepartmentRepository departmentRepository;
-    private FacultyService facultyService;
-    private SpecializationMapper specializationMapper;
-    private AcademicDepartmentMapper departmentMapper;
+    private final AcademicDepartmentRepository departmentRepository;
+    private final SpecializationRepository specializationRepo;
+    private final FacultyService facultyService;
+    private final SpecializationMapper specializationMapper;
+    private final AcademicDepartmentMapper departmentMapper;
 
-    public AcademicDepartmentService(AcademicDepartmentRepository departmentRepository, FacultyService facultyService,
+    public AcademicDepartmentService(AcademicDepartmentRepository departmentRepository,
+            SpecializationRepository specializationRepo, FacultyService facultyService,
             SpecializationMapper specializationMapper, AcademicDepartmentMapper departmentMapper) {
         this.departmentRepository = departmentRepository;
+        this.specializationRepo = specializationRepo;
         this.facultyService = facultyService;
         this.specializationMapper = specializationMapper;
         this.departmentMapper = departmentMapper;
     }
 
+    @Override
     public AcademicDepartment addOne(AcademicDepartmentCreateUpdateDto dto) {
 
         Faculty faculty = facultyService.findByCode(dto.getFacultyCode());
@@ -58,16 +65,19 @@ public class AcademicDepartmentService {
                 .orElseThrow(() -> new EntityNotFoundException("Academic Department not found by code: " + code));
     }
 
+    @Override
     public AcademicDepartment findById(Integer id) {
         return departmentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Academic Department not found by id: " + id));
     }
 
+    @Override
     public List<AcademicDepartment> findAll() {
         return departmentRepository.findAll();
     }
 
-    public AcademicDepartment update(AcademicDepartmentCreateUpdateDto updated, Integer id) {
+    @Override
+    public AcademicDepartment fullUpdate(AcademicDepartmentCreateUpdateDto updated, Integer id) {
 
         AcademicDepartment department = findById(id);
 
@@ -75,15 +85,22 @@ public class AcademicDepartmentService {
             Faculty faculty = facultyService.findByCode(updated.getFacultyCode());
             UpdateUtil.setIfNotNull(faculty, department::setFaculty);
         }
-        UpdateUtil.updateListIfNotNull(updated.getSpecializations(),
-                updatedDto -> specializationMapper.toEntity(updatedDto, department));
+        UpdateUtil.replaceList(department.getSpecializations(), updated.getSpecializations(),
+                updatedDto -> specializationMapper.toEntity(updatedDto, department), specializationRepo);
         UpdateUtil.setIfNotNull(updated.getTitle(), department::setTitle);
         UpdateUtil.setIfNotNull(updated.getCode(), department::setCode);
         return department;
     }
 
+    @Override
     public void deleteById(Integer id) {
         departmentRepository.deleteById(id);
+    }
+
+    public void createDepartments(List<AcademicDepartmentCreateUpdateDto> list) {
+        List<AcademicDepartment> departments = list.stream().map(this::addOne).collect(Collectors.toList());
+        departmentRepository.saveAllAndFlush(departments);
+
     }
 
 }

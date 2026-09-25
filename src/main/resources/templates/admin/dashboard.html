@@ -26,6 +26,15 @@
         <a th:href="@{/admin/students}" th:text="#{admin.dashboard.students.management}"></a><br>
         <a th:href="@{/admin/teachers}" th:text="#{admin.dashboard.teachers.management}"></a>
     </nav>
+    <br>
+    <nav>
+        <a th:href="@{/admin/faculties/add}" th:text="#{admin.add.faculty}">Add a department</a>
+        <a th:href="@{/admin/departments/add}" th:text="#{admin.add.department}">Add a department</a>
+        <a th:href="@{/admin/groups/add}" th:text="#{admin.add.group}">Add a group</a>
+        <a th:href="@{/admin/subjects/add}" th:text="#{admin.add.subject}">Add a subject</a>
+        <a th:href="@{/admin/users/add-user}" th:text="#{admin.dashboard.users.addusers}">Add users</a><br>
+        <a th:href="@{/admin/classroom/add}" th:text="#{admin.add.classroom}">Add a classroom</a><br>
+    </nav>
 
 </body>
 

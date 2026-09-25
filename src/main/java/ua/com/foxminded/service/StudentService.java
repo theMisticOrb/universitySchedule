@@ -20,12 +20,12 @@ import ua.com.foxminded.repository.StudentRepository;
 
 @Service
 @Transactional
-public class StudentService {
+public class StudentService implements FullCrudService<Student, StudentCreateUpdateDto, Integer> {
 
-    private StudentRepository studentRepository;
-    private GroupService groupService;
-    private StudentMapper studentMapper;
-    private PasswordEncoder passwordEncoder;
+    private final StudentRepository studentRepository;
+    private final GroupService groupService;
+    private final StudentMapper studentMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public StudentService(StudentRepository studentRepository, GroupService groupService, StudentMapper studentMapper,
             PasswordEncoder passwordEncoder) {
@@ -35,6 +35,7 @@ public class StudentService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Override
     public Student addOne(StudentCreateUpdateDto dto) {
         Student student = setStudentValues(dto);
         return studentRepository.save(student);
@@ -53,6 +54,7 @@ public class StudentService {
 
     }
 
+    @Override
     public Student findById(Integer id) {
         return studentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Student not found: " + id));
@@ -75,12 +77,13 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
-    public Student update(StudentCreateUpdateDto updated, Integer id) {
+    @Override
+    public Student fullUpdate(StudentCreateUpdateDto updated, Integer id) {
 
         Student student = findById(id);
 
-        if (updated.getGroupId() != null) {
-            Group group = groupService.findById(updated.getGroupId());
+        if (updated.getGroupName() != null) {
+            Group group = groupService.findByName(updated.getGroupName());
             UpdateUtil.setIfNotNull(group, student::setGroup);
         }
 
@@ -90,12 +93,13 @@ public class StudentService {
         return student;
     }
 
+    @Override
     public void deleteById(Integer id) {
         studentRepository.deleteById(id);
     }
 
     private Student setStudentValues(StudentCreateUpdateDto dto) {
-        Group group = groupService.findById(dto.getGroupId());
+        Group group = groupService.findByName(dto.getGroupName());
         Student student = studentMapper.toEntity(dto, group);
 
         student.setPassword(passwordEncoder.encode(dto.getPassword()));

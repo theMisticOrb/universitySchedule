@@ -4,169 +4,183 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.persistence.EntityNotFoundException;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-import ua.com.foxminded.MainApp;
 import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
+import ua.com.foxminded.dto.user.StudentCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Specialization;
-import ua.com.foxminded.repository.AcademicDepartmentRepository;
-import ua.com.foxminded.repository.FacultyRepository;
-import ua.com.foxminded.repository.SpecializationRepository;
+import ua.com.foxminded.enums.UserRole;
+import ua.com.foxminded.service.suppport.dto.GroupDtoTestBuilder;
+import ua.com.foxminded.service.suppport.dto.StudentDtoTestBuilder;
 
-@Testcontainers
-@Transactional
-@SpringBootTest(classes = { MainApp.class })
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles({ "test" })
-class GroupServiceTest {
+class GroupServiceTest extends AbstractFullCrudServiceTest<Group, GroupCreateUpdateDto, Integer> {
 
     @Autowired
     private GroupService service;
 
-    @Autowired
-    private FacultyRepository facultyRepository;
-    @Autowired
-    private AcademicDepartmentRepository departmentRepository;
-    @Autowired
-    private SpecializationRepository specializationRepository;
+    @Override
+    protected FullCrudService<Group, GroupCreateUpdateDto, Integer> getService() {
+        return service;
+    }
 
-    private GroupCreateUpdateDto group = new GroupCreateUpdateDto();
+    @Override
+    protected GroupCreateUpdateDto createValidDto() {
+        Faculty faculty = testDataFactory.persistFaculty();
+        AcademicDepartment department = testDataFactory.persistDepartment(faculty);
+        Specialization specialization = testDataFactory.persistSpecialization(department);
 
-    @BeforeEach
-    void setUp() {
-        Faculty faculty = new Faculty();
-        faculty.setCode("EN");
-        faculty.setTitle("Engineering");
-        Faculty engineeringFaculty = facultyRepository.save(faculty);
+        return GroupDtoTestBuilder.aGroup().withSpecializationCode(specialization.getCode()).build();
+    }
 
-        AcademicDepartment computerScience = new AcademicDepartment();
-        computerScience.setTitle("Computer Science");
-        computerScience.setCode("CS");
-        computerScience.setFaculty(engineeringFaculty);
-        AcademicDepartment csDepartment = departmentRepository.save(computerScience);
+    @Override
+    protected Integer getId(Group entity) {
+        return entity.getId();
+    }
 
-        Specialization specialization = new Specialization();
-        specialization.setDepartment(csDepartment);
-        specialization.setTitle("Security");
-        specialization.setCode("SE");
-        Specialization security = specializationRepository.save(specialization);
-
-        group.setSpecializationCode(security.getCode());
-
+    @Override
+    protected Integer nonExistentId() {
+        return 999;
     }
 
     @Test
-    void addOne_shouldSaveNewEntity_whenCalled() {
+    void addOne_shouldGenerateNameAndSetFirstYear_whenCalled() {
+        Group saved = getService().addOne(createValidDto());
 
-        Group firstGroup = service.addOne(group);
-
-        assertNotNull(firstGroup.getId());
-        assertEquals(1, firstGroup.getYearOfUniv().getCurentYearInUniv());
+        assertNotNull(saved.getName());
+        assertEquals(1, saved.getYearOfUniv().getCurentYearInUniv());
     }
 
     @Test
-    void findById_shouldFindEntityById_whenCalledIfEntityExists() {
+    void findByName_shouldReturnGroup_whenExists() {
+        Group saved = getService().addOne(createValidDto());
 
-        Group saved = service.addOne(group);
-        Group found = service.findById(saved.getId());
+        Group result = service.findByName(saved.getName());
 
-        assertNotNull(found);
-        assertEquals(saved.getId(), found.getId());
+        assertNotNull(result);
+        assertEquals(saved.getId(), result.getId());
+        assertEquals(saved.getName(), result.getName());
     }
 
     @Test
-    void findById_shouldThrowException_whenCalledifEntityDoesNotExist() {
-        int nonexistentId = 34;
+    void findByName_shouldThrowException_whenNotFound() {
+        String nonexistentName = "NONEXISTENT.NAME.1.1";
+
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
+                () -> service.findByName(nonexistentName));
+
+        assertEquals("Group not found: " + nonexistentName, ex.getMessage());
+    }
+
+    @Test
+    void findById_shouldThrowException_withCorrectMessage() {
+        Integer nonexistentId = nonExistentId();
+
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.findById(nonexistentId));
+
         assertEquals("Group not found: " + nonexistentId, ex.getMessage());
     }
 
     @Test
-    void findAll_shouldGetListOfAllEntities_whenCalledIfNotEmpty() {
+    void update_shouldChangeSpecialization_whenSpecializationCodeProvided() {
+        Group saved = getService().addOne(createValidDto());
 
-        List<Group> allGroups = service.findAll();
+        Faculty faculty = testDataFactory.persistFaculty();
+        AcademicDepartment department = testDataFactory.persistDepartment(faculty);
+        Specialization newSpecialization = testDataFactory.persistSpecialization("Math", department);
 
-        assertNotNull(allGroups);
+        GroupCreateUpdateDto updateDto = GroupDtoTestBuilder.aGroup()
+                .withSpecializationCode(newSpecialization.getCode()).build();
 
-    }
+        Group result = service.fullUpdate(updateDto, saved.getId());
 
-    @Test
-    void findByTitle_shouldReturnGroup_whenExists() {
-        Group saved = service.addOne(group);
-        String groupName = saved.getName();
-
-        Group result = service.findByName(groupName);
-
-        assertNotNull(result);
-        assertEquals(groupName, result.getName());
         assertEquals(saved.getId(), result.getId());
+        assertEquals(newSpecialization.getId(), result.getSpecialization().getId());
+        assertEquals("Math", result.getSpecialization().getTitle());
     }
 
     @Test
-    void update_shouldUpdateEntity_whenCalled() {
-        Group firstGroup = service.addOne(group);
+    void update_shouldNotOverwriteSpecialization_whenSpecializationCodeIsNull() {
+        Faculty faculty = testDataFactory.persistFaculty();
+        AcademicDepartment department = testDataFactory.persistDepartment(faculty);
+        Specialization specialization = testDataFactory.persistSpecialization("Security", department);
 
-        Faculty faculty = new Faculty();
-        faculty.setTitle("Data Science");
-        faculty.setCode("DS");
-        Faculty engineeringFaculty = facultyRepository.save(faculty);
+        GroupCreateUpdateDto dto = GroupDtoTestBuilder.aGroup().withSpecializationCode(specialization.getCode())
+                .build();
+        Group saved = getService().addOne(dto);
 
-        AcademicDepartment computerScience = new AcademicDepartment();
-        computerScience.setTitle("Analitics");
-        computerScience.setCode("AN");
-        computerScience.setFaculty(engineeringFaculty);
-        AcademicDepartment csDepartment = departmentRepository.save(computerScience);
+        GroupCreateUpdateDto updateDto = new GroupCreateUpdateDto();
+        updateDto.setSpecializationCode(null);
 
-        Specialization specialization = new Specialization();
-        specialization.setTitle("Math");
-        specialization.setCode("MT");
-        specialization.setDepartment(csDepartment);
-        Specialization mathSpecialization = specializationRepository.save(specialization);
-
-        GroupCreateUpdateDto firstGroupUpdated = new GroupCreateUpdateDto();
-        firstGroupUpdated.setSpecializationCode(mathSpecialization.getCode());
-        Group result = service.update(firstGroupUpdated, firstGroup.getId());
-
-        assertEquals(firstGroup.getId(), result.getId());
-        assertEquals(mathSpecialization.getId(), result.getSpecialization().getId());
-        assertEquals(mathSpecialization.getTitle(), result.getSpecialization().getTitle());
-
-    }
-
-    @Test
-    void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
-
-        Group firstGroup = service.addOne(group);
-
-        GroupCreateUpdateDto computerScienceUpdated = new GroupCreateUpdateDto();
-        computerScienceUpdated.setSpecializationCode(null);
-        Group result = service.update(computerScienceUpdated, firstGroup.getId());
+        Group result = service.fullUpdate(updateDto, saved.getId());
 
         assertEquals("Security", result.getSpecialization().getTitle());
     }
 
     @Test
-    void delete_shouldDeleteEntityById_whenEntityExists() {
-        Group firstGroup = service.addOne(group);
-        int id = firstGroup.getId();
+    void fullUpdate_shouldFollowReplaceListSemantics_forStudents() {
+        Faculty faculty = testDataFactory.persistFaculty();
+        AcademicDepartment department = testDataFactory.persistDepartment(faculty);
+        Specialization spec = testDataFactory.persistSpecialization(department);
+        Group group = service.addOne(GroupDtoTestBuilder.aGroup().withSpecializationCode(spec.getCode()).build());
 
-        assertNotNull(service.findById(id));
-        service.deleteById(id);
-        assertThrows(EntityNotFoundException.class, () -> service.findById(id));
+        GroupCreateUpdateDto twoStudents = new GroupCreateUpdateDto();
+        twoStudents.setStudents(buildStudentDtos(2, group.getName()));
+        service.fullUpdate(twoStudents, group.getId());
+
+        assertEquals(2, service.findById(group.getId()).getStudents().size());
+
+        GroupCreateUpdateDto threeStudents = new GroupCreateUpdateDto();
+        threeStudents.setStudents(buildStudentDtos(3, group.getName()));
+        service.fullUpdate(threeStudents, group.getId());
+
+        assertEquals(3, service.findById(group.getId()).getStudents().size());
+
+        GroupCreateUpdateDto nullStudents = new GroupCreateUpdateDto();
+        nullStudents.setStudents(null);
+        service.fullUpdate(nullStudents, group.getId());
+
+        assertEquals(3, service.findById(group.getId()).getStudents().size());
     }
 
+    private List<StudentCreateUpdateDto> buildStudentDtos(int count, String groupName) {
+        return IntStream.range(0, count)
+                .mapToObj(i -> StudentDtoTestBuilder.aStudent().withGroupName(groupName)
+                        .withEmail("student")
+                        .withFirstName("FirstName")
+                        .withMiddleName("MiddleName")
+                        .withLastName("LastName")
+                        .withRoles(Collections.singleton(UserRole.STUDENT)).build())
+                .collect(Collectors.toList());
+    }
+
+    @Test
+    void addAll_shouldSaveAllGroupsWithIncrementingNumbers_whenCalled() {
+        Faculty faculty = testDataFactory.persistFaculty();
+        AcademicDepartment department = testDataFactory.persistDepartment(faculty);
+        Specialization specialization = testDataFactory.persistSpecialization(department);
+
+        GroupCreateUpdateDto first = GroupDtoTestBuilder.aGroup().withSpecializationCode(specialization.getCode())
+                .build();
+        GroupCreateUpdateDto second = GroupDtoTestBuilder.aGroup().withSpecializationCode(specialization.getCode())
+                .build();
+
+        List<Group> result = service.addAll(Arrays.asList(first, second));
+
+        assertEquals(2, result.size());
+        assertNotNull(result.get(0).getId());
+        assertNotNull(result.get(1).getId());
+        assertEquals(false, result.get(0).getName().equals(result.get(1).getName()));
+    }
 }

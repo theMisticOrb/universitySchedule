@@ -7,22 +7,26 @@ public class LessonResponseDto {
 
     private Integer id;
     private String classroomName;
+    private Integer subjectId;
     private String subjectTitle;
     private ClassHour classHour;
     private WeekDay weekDay;
     private Integer groupId;
+    private String groupName;
 
     public LessonResponseDto() {
     }
 
-    public LessonResponseDto(Integer id, String classroomName, String subjectTitle, ClassHour classHour,
-            WeekDay weekDay, Integer groupId) {
+    public LessonResponseDto(Integer id, String classroomName, Integer subjectId, String subjectTitle,
+            ClassHour classHour, WeekDay weekDay, Integer groupId, String groupName) {
         this.id = id;
         this.classroomName = classroomName;
+        this.subjectId = subjectId;
         this.subjectTitle = subjectTitle;
         this.classHour = classHour;
         this.weekDay = weekDay;
         this.groupId = groupId;
+        this.groupName = groupName;
     }
 
     public Integer getId() {
@@ -41,12 +45,28 @@ public class LessonResponseDto {
         this.classroomName = classroomName;
     }
 
+    public Integer getSubjectId() {
+        return subjectId;
+    }
+
     public String getSubjectTitle() {
         return subjectTitle;
     }
 
     public void setSubjectTitle(String subjectTitle) {
         this.subjectTitle = subjectTitle;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public void setSubjectId(Integer subjectId) {
+        this.subjectId = subjectId;
     }
 
     public ClassHour getClassHour() {

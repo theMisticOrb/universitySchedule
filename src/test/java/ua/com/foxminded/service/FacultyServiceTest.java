@@ -1,145 +1,197 @@
 package ua.com.foxminded.service;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-import ua.com.foxminded.MainApp;
+import ua.com.foxminded.dto.department.AcademicDepartmentCreateUpdateDto;
 import ua.com.foxminded.dto.faculty.FacultyCreateUpdateDto;
 import ua.com.foxminded.entity.Faculty;
+import ua.com.foxminded.exception.DuplicateEntityException;
+import ua.com.foxminded.service.suppport.TestDataFactory;
+import ua.com.foxminded.service.suppport.dto.AcademicDepartmentDtoTestBuilder;
+import ua.com.foxminded.service.suppport.dto.FacultyDtoTestBuilder;
 
-@Testcontainers
-@Transactional
-@SpringBootTest(classes = { MainApp.class })
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles({ "test" })
-class FacultyServiceTest {
+class FacultyServiceTest extends AbstractFullCrudServiceTest<Faculty, FacultyCreateUpdateDto, Integer> {
 
     @Autowired
     private FacultyService service;
 
-    @Test
-    void addOne_shouldSaveNewEntity_whenCalled() {
-
-        FacultyCreateUpdateDto faculty = new FacultyCreateUpdateDto();
-        faculty.setTitle("Engineering");
-        Faculty savedFaculty = service.addOne(faculty);
-
-        assertNotNull(savedFaculty.getId());
-        assertEquals("Engineering", savedFaculty.getTitle());
+    @Override
+    protected FullCrudService<Faculty, FacultyCreateUpdateDto, Integer> getService() {
+        return service;
     }
 
-    @Test
-    void findById_shouldFindEntityById_whenCalledIfEntityExists() {
-        FacultyCreateUpdateDto faculty = new FacultyCreateUpdateDto();
-        faculty.setTitle("Engineering");
-        Faculty saved = service.addOne(faculty);
-
-        Faculty found = service.findById(saved.getId());
-
-        assertNotNull(found);
-        assertEquals(saved.getId(), found.getId());
-        assertEquals("Engineering", found.getTitle());
+    @Override
+    protected FacultyCreateUpdateDto createValidDto() {
+        return FacultyDtoTestBuilder.aFaculty().build();
     }
 
-    @Test
-    void findById_shouldThrowException_whenCalledifEntityDoesNotExist() {
-        int nonexistentId = 34;
-        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.findById(nonexistentId));
-        assertEquals("Faculty not found by id: " + nonexistentId, ex.getMessage());
+    @Override
+    protected Integer getId(Faculty entity) {
+        return entity.getId();
     }
 
-    @Test
-    void findAll_shouldGetListOfAllEntities_whenCalledIfNotEmpty() {
-        FacultyCreateUpdateDto facultyEngineering = new FacultyCreateUpdateDto();
-        facultyEngineering.setTitle("Engineering");
-        service.addOne(facultyEngineering);
-
-        FacultyCreateUpdateDto facultyEconomy = new FacultyCreateUpdateDto();
-        facultyEconomy.setTitle("Economy");
-        service.addOne(facultyEconomy);
-        List<Faculty> allFaculties = service.findAll();
-
-        assertEquals(2, allFaculties.size());
-
-        List<String> titles = allFaculties.stream().map(Faculty::getTitle).collect(Collectors.toList());
-
-        assertTrue(titles.contains("Economy"));
-        assertTrue(titles.contains("Engineering"));
-    }
-
-    @Test
-    void findAll_shouldGetEmptyList_whenCalledIfNoEntities() {
-        List<Faculty> allFaculties = service.findAll();
-        assertTrue(allFaculties.isEmpty());
+    @Override
+    protected Integer nonExistentId() {
+        return 999;
     }
 
     @Test
     void findByTitle_shouldReturnFaculty_whenExists() {
-        FacultyCreateUpdateDto faculty = new FacultyCreateUpdateDto();
-        faculty.setTitle("Engineering");
+        FacultyCreateUpdateDto dto = FacultyDtoTestBuilder.aFaculty().build();
+        service.addOne(dto);
 
-        service.addOne(faculty);
-
-        Faculty result = service.findByTitle("Engineering");
+        Faculty result = service.findByTitle(dto.getTitle());
 
         assertNotNull(result);
+        assertEquals(dto.getTitle(), result.getTitle());
+    }
+
+    @Test
+    void findByTitle_shouldThrowException_whenNotFound() {
+        String nonexistentTitle = "Nonexistent Faculty";
+
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
+                () -> service.findByTitle(nonexistentTitle));
+
+        assertEquals("Faculty not found: " + nonexistentTitle, ex.getMessage());
+    }
+
+    @Test
+    void findByCode_shouldReturnFaculty_whenExists() {
+        FacultyCreateUpdateDto dto = createValidDto();
+        service.addOne(dto);
+
+        Faculty result = service.findByCode(dto.getCode());
+
+        assertNotNull(result);
+        assertEquals(dto.getCode(), result.getCode());
+    }
+
+    @Test
+    void findByCode_shouldThrowException_whenNotFound() {
+        String nonexistentCode = "NON_EXISTENT_CODE";
+
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
+                () -> service.findByCode(nonexistentCode));
+
+        assertEquals("Faculty with this code are not found: " + nonexistentCode, ex.getMessage());
+    }
+
+    @Test
+    void findById_shouldThrowException_withCorrectMessage() {
+        Integer nonexistentId = nonExistentId();
+
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.findById(nonexistentId));
+
+        assertEquals("Faculty not found by id: " + nonexistentId, ex.getMessage());
+    }
+
+    @Test
+    void addOne_shouldThrowDuplicateEntityException_whenTitleAlreadyExists() {
+        FacultyCreateUpdateDto dto = FacultyDtoTestBuilder.aFaculty().withTitle("Engineering").build();
+        service.addOne(dto);
+
+        FacultyCreateUpdateDto duplicateDto = FacultyDtoTestBuilder.aFaculty().withTitle("Engineering").build();
+
+        DuplicateEntityException ex = assertThrows(DuplicateEntityException.class, () -> service.addOne(duplicateDto));
+
+        assertEquals("Faculty with title: Engineering alredy exists!", ex.getMessage());
+    }
+
+    @Test
+    void update_shouldChangeTitleAndCode_whenProvided() {
+        FacultyCreateUpdateDto dto = FacultyDtoTestBuilder.aFaculty().withTitle("Engineering").build();
+        Faculty saved = service.addOne(dto);
+
+        FacultyCreateUpdateDto updateDto = FacultyDtoTestBuilder.aFaculty().withTitle("Economy").build();
+
+        Faculty result = service.fullUpdate(updateDto, saved.getId());
+
+        assertEquals(saved.getId(), result.getId());
+        assertEquals("Economy", result.getTitle());
+    }
+
+    @Test
+    void update_shouldNotOverwriteNullFields_whenFieldIsNull() {
+        FacultyCreateUpdateDto dto = FacultyDtoTestBuilder.aFaculty().withTitle("Engineering").build();
+        Faculty saved = service.addOne(dto);
+
+        FacultyCreateUpdateDto updateDto = new FacultyCreateUpdateDto();
+        updateDto.setTitle(null);
+
+        Faculty result = service.fullUpdate(updateDto, saved.getId());
+
         assertEquals("Engineering", result.getTitle());
     }
 
     @Test
-    void update_shouldUpdateEntity_whenCalled() {
-        FacultyCreateUpdateDto engineeging = new FacultyCreateUpdateDto();
-        engineeging.setTitle("Engineering");
-        Faculty engineegingFaculty = service.addOne(engineeging);
+    void fullUpdate_shouldFollowReplaceListSemantics_forFaculties() {
+        Faculty faculty = testDataFactory.persistFaculty();
 
-        FacultyCreateUpdateDto economy = new FacultyCreateUpdateDto();
-        economy.setTitle("Economy");
-        Faculty economyFacultyUpdated = service.update(economy, engineegingFaculty.getId());
+        FacultyCreateUpdateDto twoDepartments = new FacultyCreateUpdateDto();
+        twoDepartments.setDepartments(buildDepartmentDtos(2));
+        service.fullUpdate(twoDepartments, faculty.getId());
 
-        assertEquals(engineegingFaculty.getId(), economyFacultyUpdated.getId());
-        assertEquals("Economy", economyFacultyUpdated.getTitle());
+        assertEquals(2, service.findById(faculty.getId()).getDepartments().size());
 
+        FacultyCreateUpdateDto threeSpecs = new FacultyCreateUpdateDto();
+        threeSpecs.setDepartments(buildDepartmentDtos(3));
+        service.fullUpdate(threeSpecs, faculty.getId());
+
+        assertEquals(3, service.findById(faculty.getId()).getDepartments().size());
+
+        FacultyCreateUpdateDto nullSpecs = new FacultyCreateUpdateDto();
+        nullSpecs.setDepartments(null);
+        nullSpecs.setTitle("Unrelated title change");
+        service.fullUpdate(nullSpecs, faculty.getId());
+
+        assertEquals(3, service.findById(faculty.getId()).getDepartments().size());
+    }
+    
+    private List<AcademicDepartmentCreateUpdateDto> buildDepartmentDtos(int count) {
+        return IntStream.range(0, count)
+                .mapToObj(i -> AcademicDepartmentDtoTestBuilder.anAcademicDepartment()
+                        .withTitle(TestDataFactory.uniqueName("Department")).withFacultyCode("UNUSED").build())
+                .collect(Collectors.toList());
+    }
+    
+    @Test
+    void count_shouldReturnNumberOfFaculties() {
+        service.addOne(FacultyDtoTestBuilder.aFaculty().build());
+        service.addOne(FacultyDtoTestBuilder.aFaculty().build());
+
+        assertEquals(2, service.count());
     }
 
     @Test
-    void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
-        FacultyCreateUpdateDto engineeging = new FacultyCreateUpdateDto();
-        engineeging.setTitle("Engineering");
-        Faculty engineegingFaculty = service.addOne(engineeging);
-
-        FacultyCreateUpdateDto economy = new FacultyCreateUpdateDto();
-        economy.setTitle(null);
-        Faculty economyFacultyUpdated = service.update(engineeging, engineegingFaculty.getId());
-
-        assertEquals(engineegingFaculty.getId(), economyFacultyUpdated.getId());
-        assertEquals("Engineering", economyFacultyUpdated.getTitle());
+    void count_shouldReturnZero_whenNoFacultiesExist() {
+        assertEquals(0, service.count());
     }
 
     @Test
-    void delete_shouldDeleteEntityById_whenEntityExists() {
-        FacultyCreateUpdateDto engineeging = new FacultyCreateUpdateDto();
-        engineeging.setTitle("Engineering");
-        Faculty engineegingFaculty = service.addOne(engineeging);
+    void createFaculties_shouldSaveAllProvidedFaculties() {
+        FacultyCreateUpdateDto first = FacultyDtoTestBuilder.aFaculty().withTitle("Engineering").build();
+        FacultyCreateUpdateDto second = FacultyDtoTestBuilder.aFaculty().withTitle("Economy").build();
 
-        int id = engineegingFaculty.getId();
+        service.createFaculties(Arrays.asList(first, second));
 
-        assertNotNull(service.findById(id));
-        service.deleteById(id);
-        assertThrows(EntityNotFoundException.class, () -> service.findById(id));
+        List<Faculty> allFaculties = service.findAll();
+        List<String> titles = allFaculties.stream().map(Faculty::getTitle).collect(Collectors.toList());
+
+        assertTrue(titles.contains("Engineering"));
+        assertTrue(titles.contains("Economy"));
     }
 }

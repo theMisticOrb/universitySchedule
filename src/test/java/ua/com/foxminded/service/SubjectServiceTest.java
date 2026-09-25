@@ -3,165 +3,161 @@ package ua.com.foxminded.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.HashSet;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-import ua.com.foxminded.MainApp;
 import ua.com.foxminded.dto.subject.SubjectCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
 import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
-import ua.com.foxminded.enums.UserRole;
-import ua.com.foxminded.repository.AcademicDepartmentRepository;
-import ua.com.foxminded.repository.FacultyRepository;
-import ua.com.foxminded.repository.TeacherRepository;
+import ua.com.foxminded.exception.DuplicateEntityException;
+import ua.com.foxminded.service.suppport.dto.SubjectDtoTestBuilder;
 
-@Testcontainers
-@Transactional
-@SpringBootTest(classes = { MainApp.class })
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles({ "test" })
-class SubjectServiceTest {
+class SubjectServiceTest extends AbstractFullCrudServiceTest<Subject, SubjectCreateUpdateDto, Integer> {
 
     @Autowired
     private SubjectService service;
 
-    @Autowired
-    private TeacherRepository teacherRepository;
-    @Autowired
-    private FacultyRepository facultyRepository;
-    @Autowired
-    private AcademicDepartmentRepository departmentRepository;
+    @Override
+    protected FullCrudService<Subject, SubjectCreateUpdateDto, Integer> getService() {
+        return service;
+    }
 
-    private SubjectCreateUpdateDto subject = new SubjectCreateUpdateDto();
+    @Override
+    protected SubjectCreateUpdateDto createValidDto() {
+        AcademicDepartment department = persistValidDepartment();
+        Teacher teacher = testDataFactory.persistTeacher(department);
 
-    @BeforeEach
-    void setUp() {
+        return SubjectDtoTestBuilder.aSubject().withDepartmentCode(department.getCode())
+                .withTeacherIds(Collections.singletonList(teacher.getId())).build();
+    }
 
-        Faculty faculty = new Faculty();
-        faculty.setTitle("Engineering");
-        faculty.setCode("EN");
-        Faculty engineeringFaculty = facultyRepository.save(faculty);
+    @Override
+    protected Integer getId(Subject entity) {
+        return entity.getId();
+    }
 
-        AcademicDepartment computerScience = new AcademicDepartment();
-        computerScience.setTitle("Computer Science");
-        computerScience.setCode("CS");
-        computerScience.setFaculty(engineeringFaculty);
-        AcademicDepartment csDepartment = departmentRepository.save(computerScience);
-        
-        Set<UserRole> roles = new HashSet<>();
-        roles.add(UserRole.TEACHER);
-        
-        Teacher teacher = new Teacher();
-        teacher.setFirstName("Don");
-        teacher.setMiddleName("Bon");
-        teacher.setLastName("Jon");
-        teacher.setDepartment(csDepartment);
-        teacher.setEmail("Jon@ua.com");
-        teacher.setPassword("Jon1234");
-        teacher.setRoles(roles);
-        Teacher jonTeacher = teacherRepository.save(teacher);
+    @Override
+    protected Integer nonExistentId() {
+        return 999;
+    }
 
-        subject.setTeacherId(jonTeacher.getId());
-        subject.setTitle("Math");
-        subject.setDepartmentCode(csDepartment.getCode());
-
+    private AcademicDepartment persistValidDepartment() {
+        Faculty faculty = testDataFactory.persistFaculty();
+        return testDataFactory.persistDepartment(faculty);
     }
 
     @Test
-    void addOne_shouldSaveNewEntity_whenCalled() {
+    void findByTitle_shouldReturnSubject_whenExists() {
+        SubjectCreateUpdateDto dto = createValidDto();
+        Subject saved = service.addOne(dto);
 
-        Subject firstSubject = service.addOne(subject);
-
-        assertNotNull(firstSubject.getId());
-        assertEquals("Math", firstSubject.getTitle());
-    }
-
-    @Test
-    void findById_shouldFindEntityById_whenCalledIfEntityExists() {
-
-        Subject saved = service.addOne(subject);
-        Subject found = service.findById(saved.getId());
-
-        assertNotNull(found);
-        assertEquals(saved.getId(), found.getId());
-    }
-
-    @Test
-    void findById_shouldThrowException_whenCalledifEntityDoesNotExist() {
-        int nonexistentId = 34;
-        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.findById(nonexistentId));
-        assertEquals("Subject not found: " + nonexistentId, ex.getMessage());
-    }
-
-    @Test
-    void findAll_shouldGetListOfAllEntities_whenCalledIfNotEmpty() {
-
-        List<Subject> allSubjects = service.findAll();
-
-        assertNotNull(allSubjects);
-
-    }
-
-    @Test
-    void findByTitle_shouldReturnStudent_whenExists() {
-        Subject saved = service.addOne(subject);
-
-        Subject result = service.findByTitle("Math");
+        Subject result = service.findByTitle(dto.getTitle());
 
         assertNotNull(result);
-        assertEquals("Math", result.getTitle());
         assertEquals(saved.getId(), result.getId());
     }
 
     @Test
-    void update_shouldUpdateEntity_whenCalled() {
-        Subject firstSubject = service.addOne(subject);
+    void findByTitle_shouldThrowException_whenNotFound() {
+        String nonexistentTitle = "Nonexistent Subject";
 
-        SubjectCreateUpdateDto firstSubjectUpdated = new SubjectCreateUpdateDto();
-        firstSubjectUpdated.setTitle("History");
-        Subject result = service.update(firstSubjectUpdated, firstSubject.getId());
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
+                () -> service.findByTitle(nonexistentTitle));
 
-        assertEquals(firstSubject.getId(), result.getId());
-        assertEquals("History", result.getTitle());
-
+        assertEquals("Subject not found: " + nonexistentTitle, ex.getMessage());
     }
 
     @Test
-    void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
-        Subject firstSubject = service.addOne(subject);
+    void findById_shouldThrowException_withCorrectMessage() {
+        Integer nonexistentId = nonExistentId();
 
-        SubjectCreateUpdateDto firstSubjectUpdated = new SubjectCreateUpdateDto();
-        firstSubjectUpdated.setTitle(null);
-        Subject result = service.update(firstSubjectUpdated, firstSubject.getId());
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.findById(nonexistentId));
 
-        assertEquals(firstSubject.getId(), result.getId());
+        assertEquals("Subject not found: " + nonexistentId, ex.getMessage());
+    }
+
+    @Test
+    void addOne_shouldThrowDuplicateEntityException_whenTitleAlreadyExists() {
+        AcademicDepartment department = persistValidDepartment();
+        Teacher teacher = testDataFactory.persistTeacher(department);
+
+        SubjectCreateUpdateDto dto = SubjectDtoTestBuilder.aSubject().withTitle("Math")
+                .withDepartmentCode(department.getCode()).withTeacherIds(Collections.singletonList(teacher.getId()))
+                .build();
+        service.addOne(dto);
+
+        SubjectCreateUpdateDto duplicateDto = SubjectDtoTestBuilder.aSubject().withTitle("Math")
+                .withDepartmentCode(department.getCode()).withTeacherIds(Collections.singletonList(teacher.getId()))
+                .build();
+
+        DuplicateEntityException ex = assertThrows(DuplicateEntityException.class, () -> service.addOne(duplicateDto));
+
+        assertEquals("Subject with name: Math alredy exists!", ex.getMessage());
+    }
+
+    @Test
+    void update_shouldChangeTeachers_whenTeacherEmailsProvided() {
+        AcademicDepartment department = persistValidDepartment();
+        Teacher originalTeacher = testDataFactory.persistTeacher(department);
+
+        SubjectCreateUpdateDto dto = SubjectDtoTestBuilder.aSubject().withDepartmentCode(department.getCode())
+                .withTeacherIds(Collections.singletonList(originalTeacher.getId())).build();
+        Subject saved = service.addOne(dto);
+
+        Teacher newTeacher = testDataFactory.persistTeacher(department);
+        SubjectCreateUpdateDto updateDto = new SubjectCreateUpdateDto();
+        updateDto.setTeacherIds(Collections.singletonList(newTeacher.getId()));
+
+        Subject result = service.fullUpdate(updateDto, saved.getId());
+
+        assertEquals(saved.getId(), result.getId());
+        assertEquals(1, result.getTeachers().size());
+        assertEquals(newTeacher.getId(), result.getTeachers().get(0).getId());
+    }
+
+    @Test
+    void update_shouldNotOverwriteTitle_whenTitleIsNull() {
+        SubjectCreateUpdateDto dto = SubjectDtoTestBuilder.aSubject().withTitle("Math")
+                .withDepartmentCode(persistValidDepartment().getCode()).build();
+        Subject saved = service.addOne(dto);
+
+        SubjectCreateUpdateDto updateDto = new SubjectCreateUpdateDto();
+        updateDto.setTitle(null);
+
+        Subject result = service.fullUpdate(updateDto, saved.getId());
+
         assertEquals("Math", result.getTitle());
-
     }
 
     @Test
-    void delete_shouldDeleteEntityById_whenEntityExists() {
-        Subject firstSubject = service.addOne(subject);
-        int id = firstSubject.getId();
+    void createSubjects_shouldSaveAllProvidedSubjects() {
+        AcademicDepartment department = persistValidDepartment();
+        Teacher teacher = testDataFactory.persistTeacher(department);
 
-        assertNotNull(service.findById(id));
-        service.deleteById(id);
-        assertThrows(EntityNotFoundException.class, () -> service.findById(id));
+        SubjectCreateUpdateDto first = SubjectDtoTestBuilder.aSubject().withTitle("Math")
+                .withDepartmentCode(department.getCode()).withTeacherIds(Collections.singletonList(teacher.getId()))
+                .build();
+        SubjectCreateUpdateDto second = SubjectDtoTestBuilder.aSubject().withTitle("History")
+                .withDepartmentCode(department.getCode()).withTeacherIds(Collections.singletonList(teacher.getId()))
+                .build();
+
+        service.createSubjects(Arrays.asList(first, second));
+
+        List<Subject> all = service.findAll();
+        List<String> titles = all.stream().map(Subject::getTitle).collect(Collectors.toList());
+
+        assertTrue(titles.contains("Math"));
+        assertTrue(titles.contains("History"));
     }
-
 }

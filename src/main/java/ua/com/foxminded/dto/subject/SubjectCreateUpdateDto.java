@@ -8,8 +8,7 @@ import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
 public class SubjectCreateUpdateDto {
 
     private String title;
-    private Integer teacherId;
-    private String teacherFullName;
+    private List<Integer> teacherIds;
     private String departmentCode;
     private List<GroupCreateUpdateDto> groups;
     private List<LessonCreateUpdateDto> lessons;
@@ -17,11 +16,10 @@ public class SubjectCreateUpdateDto {
     public SubjectCreateUpdateDto() {
     }
 
-    public SubjectCreateUpdateDto(String title, Integer teacherId, String teacherFullName, String departmentCode,
+    public SubjectCreateUpdateDto(String title, List<Integer> teacherIds, String departmentCode,
             List<GroupCreateUpdateDto> groups, List<LessonCreateUpdateDto> lessons) {
         this.title = title;
-        this.teacherId = teacherId;
-        this.teacherFullName = teacherFullName;
+        this.teacherIds = teacherIds;
         this.departmentCode = departmentCode;
         this.groups = groups;
         this.lessons = lessons;
@@ -35,20 +33,12 @@ public class SubjectCreateUpdateDto {
         this.title = title;
     }
 
-    public Integer getTeacherId() {
-        return teacherId;
+    public List<Integer> getTeacherIds() {
+        return teacherIds;
     }
 
-    public void setTeacherId(Integer teacherId) {
-        this.teacherId = teacherId;
-    }
-
-    public String getTeacherFullName() {
-        return teacherFullName;
-    }
-
-    public void setTeacherFullName(String teacherFullName) {
-        this.teacherFullName = teacherFullName;
+    public void setTeacherIds(List<Integer> teacherIds) {
+        this.teacherIds = teacherIds;
     }
 
     public String getDepartmentCode() {
@@ -74,6 +64,5 @@ public class SubjectCreateUpdateDto {
     public void setLessons(List<LessonCreateUpdateDto> lessons) {
         this.lessons = lessons;
     }
-
 
 }

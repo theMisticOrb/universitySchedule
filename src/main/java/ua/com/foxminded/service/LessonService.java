@@ -1,81 +1,111 @@
 package ua.com.foxminded.service;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.dto.lesson.LessonCreateUpdateDto;
+import ua.com.foxminded.dto.lesson.LessonResponseDto;
 import ua.com.foxminded.entity.Classroom;
 import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Lesson;
 import ua.com.foxminded.entity.Subject;
 import ua.com.foxminded.entity.Teacher;
+import ua.com.foxminded.enums.ClassHour;
 import ua.com.foxminded.enums.WeekDay;
 import ua.com.foxminded.exception.DuplicateEntityException;
 import ua.com.foxminded.helpers.UpdateUtil;
 import ua.com.foxminded.mapper.LessonMapper;
 import ua.com.foxminded.repository.LessonRepository;
+import ua.com.foxminded.repository.TeacherRepository;
 
 @Service
 @Transactional
-public class LessonService {
+public class LessonService implements ReadUpdateDeleteService<Lesson, LessonCreateUpdateDto, Integer> {
 
-    private LessonRepository lessonRepository;
-    private ClassroomService classroomService;
-    private SubjectService subjectService;
-    private GroupService groupService;
-    private TeacherService teacherService;
-    private LessonMapper lessonMapper;
+    private final LessonRepository lessonRepository;
+    private final TeacherRepository teacherRepository;
+    private final ClassroomService classroomService;
+    private final SubjectService subjectService;
+    private final GroupService groupService;
+    private final LessonMapper lessonMapper;
 
-    public LessonService(LessonRepository lessonRepository, ClassroomService classroomService,
-            SubjectService subjectService, GroupService groupService, TeacherService teacherService,
+    public LessonService(LessonRepository lessonRepository, TeacherRepository teacherRepository,
+            ClassroomService classroomService, SubjectService subjectService, GroupService groupService,
             LessonMapper lessonMapper) {
         this.lessonRepository = lessonRepository;
+        this.teacherRepository = teacherRepository;
         this.classroomService = classroomService;
         this.subjectService = subjectService;
         this.groupService = groupService;
-        this.teacherService = teacherService;
         this.lessonMapper = lessonMapper;
     }
 
-    public Lesson addOne(LessonCreateUpdateDto dto) {
+    public Lesson addOne(LessonCreateUpdateDto dto, Integer teacherId) {
 
-        Classroom classroom = classroomService.findById(dto.getClassroomId());
+        Teacher teacher = teacherRepository.findById(teacherId)
+                .orElseThrow(() -> new IllegalArgumentException("Teacher not found."));
         Subject subject = subjectService.findById(dto.getSubjectId());
+
+        if (!teacherRepository.existsByIdAndSubjects_Id(teacherId, subject.getId())) {
+            throw new AccessDeniedException("You don't teach this subject.");
+        }
+        if (lessonRepository.existsByGroup_IdAndWeekDayAndClassHour(dto.getGroupId(), dto.getWeekDay(),
+                dto.getClassHour())) {
+            throw new IllegalArgumentException("The group already has a class at that time");
+        }
+        if (lessonRepository.existsByTeacher_IdAndWeekDayAndClassHour(teacherId, dto.getWeekDay(),
+                dto.getClassHour())) {
+            throw new IllegalArgumentException("You already have a class at that time");
+        }
+        if (lessonRepository.existsByClassroom_NameAndWeekDayAndClassHour(dto.getClassroomName(), dto.getWeekDay(),
+                dto.getClassHour())) {
+            throw new IllegalArgumentException("The classroom is already occupied at that time");
+        }
+
+        Classroom classroom = classroomService.findByName(dto.getClassroomName());
         Group group = groupService.findById(dto.getGroupId());
-        Teacher teacher = teacherService.findById(dto.getTeacherId());
 
         Lesson lesson = lessonMapper.toEntity(dto, classroom, subject, group, teacher);
 
         try {
-            return lessonRepository.save(lesson);
+            return lessonRepository.saveAndFlush(lesson);
         } catch (DataIntegrityViolationException e) {
             throw new DuplicateEntityException("Lesson with subject: " + subject.getTitle()
-                    + " alredy exists in classroom: " + classroom.getName() + "!");
+                    + " alredy exists in classroom: " + classroom.getName() + " on this day and hour!");
         }
     }
 
+    @Override
     public Lesson findById(Integer id) {
         return lessonRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Lesson not found: " + id));
     }
 
-    public List<Lesson> findBySubjectTitleAndWeekDay(String subjectTitle, WeekDay weekDay) {
-        return lessonRepository.findBySubject_TitleAndWeekDay(subjectTitle, weekDay);
+    public List<LessonResponseDto> findBySubjectIdAndWeekDay(Integer subjectId, WeekDay weekDay) {
+        return lessonRepository.findBySubject_IdAndWeekDay(subjectId, weekDay);
     }
 
     public List<Lesson> findAll() {
         return lessonRepository.findAll();
     }
 
-    public Lesson update(LessonCreateUpdateDto updated, Integer id) {
+    @Override
+    public Lesson fullUpdate(LessonCreateUpdateDto updated, Integer id) {
         Lesson lesson = findById(id);
 
-        if (updated.getClassroomId() != null) {
-            Classroom classroom = classroomService.findById(updated.getClassroomId());
+        if (updated.getClassroomName() != null) {
+            Classroom classroom = classroomService.findByName(updated.getClassroomName());
             UpdateUtil.setIfNotNull(classroom, lesson::setClassroom);
         }
         if (updated.getSubjectId() != null) {
@@ -86,18 +116,39 @@ public class LessonService {
             Group group = groupService.findById(updated.getGroupId());
             UpdateUtil.setIfNotNull(group, lesson::setGroup);
         }
-        if (updated.getTeacherId() != null) {
-            Teacher teacher = teacherService.findById(updated.getTeacherId());
-            UpdateUtil.setIfNotNull(teacher, lesson::setTeacher);
-        }
 
         UpdateUtil.setIfNotNull(updated.getClassHour(), lesson::setClassHour);
-        UpdateUtil.setIfNotNull(updated.getWeekDay(), lesson::setWeekDay);
         UpdateUtil.setIfNotNull(updated.getWeekDay(), lesson::setWeekDay);
         return lesson;
     }
 
+    @Override
     public void deleteById(Integer id) {
         lessonRepository.deleteById(id);
     }
+
+    public Map<WeekDay, List<LessonResponseDto>> getWeeklyScheduleForTeacher(Integer teacherId) {
+        List<LessonResponseDto> lessons = lessonRepository.findByTeacher_Id(teacherId);
+
+        return Arrays.stream(WeekDay.values())
+                .collect(Collectors.toMap(day -> day, day -> lessons.stream().filter(l -> l.getWeekDay() == day)
+                        .sorted(Comparator.comparing(l -> l.getClassHour().getStart())).collect(Collectors.toList()),
+                        (a, b) -> a, LinkedHashMap::new));
+
+    }
+
+    public Map<WeekDay, List<LessonResponseDto>> getWeeklyScheduleForGroup(Integer groupId) {
+
+        List<LessonResponseDto> lessons = lessonRepository.findByGroup_Id(groupId);
+
+        return Arrays.stream(WeekDay.values())
+                .collect(Collectors.toMap(day -> day, day -> lessons.stream().filter(l -> l.getWeekDay() == day)
+                        .sorted(Comparator.comparing(l -> l.getClassHour().getStart())).collect(Collectors.toList()),
+                        (a, b) -> a, LinkedHashMap::new));
+    }
+
+    public Set<Integer> findOccupiedClassroomIds(WeekDay weekDay, ClassHour classHour) {
+        return lessonRepository.findOccupiedClassroomIds(weekDay, classHour);
+    }
+
 }

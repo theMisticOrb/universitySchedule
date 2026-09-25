@@ -155,14 +155,14 @@ class AcademicDepartmentControllerTest {
         requestDto.setFacultyCode("CS");
         requestDto.setTitle("Computer Science");
 
-        when(service.update(any(AcademicDepartmentCreateUpdateDto.class), eq(1))).thenReturn(department);
+        when(service.fullUpdate(any(AcademicDepartmentCreateUpdateDto.class), eq(1))).thenReturn(department);
         when(departmentMapper.toResponseDto(department)).thenReturn(responseDto);
 
         mvc.perform(put("/api/v1/departments/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
 
-        verify(service).update(any(AcademicDepartmentCreateUpdateDto.class), eq(1));
+        verify(service).fullUpdate(any(AcademicDepartmentCreateUpdateDto.class), eq(1));
         verify(departmentMapper).toResponseDto(department);
 
     }

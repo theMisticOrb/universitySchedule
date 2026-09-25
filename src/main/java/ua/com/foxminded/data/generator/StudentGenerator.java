@@ -52,10 +52,10 @@ public class StudentGenerator {
             student.setFirstName(firstName);
             student.setMiddleName(middleName);
             student.setLastName(lastName);
-            student.setGroupId(group.getId());
             student.setRoles(roles);
             student.setEmail(email);
             student.setPassword(password);
+            student.setGroupName(group.getName());
 
             students.add(student);
 

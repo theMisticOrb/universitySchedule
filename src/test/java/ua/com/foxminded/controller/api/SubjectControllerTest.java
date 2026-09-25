@@ -58,16 +58,23 @@ class SubjectControllerTest {
         Teacher teacher = new Teacher();
         teacher.setId(1);
 
+        List<Teacher> teachers = new ArrayList<>();
+        teachers.add(teacher);
+
         entity.setId(1);
-        entity.setTeacher(teacher);
+        entity.setTeachers(teachers);
         entity.setTitle("Computer Science");
         return entity;
     }
 
     private SubjectResponseDto createResponseDto() {
         SubjectResponseDto dto = new SubjectResponseDto();
+
+        List<String> teacherEmails = new ArrayList<>();
+        teacherEmails.add("teacher@gmail.com");
+
         dto.setId(1);
-        dto.setTeacherId(1);
+        dto.setTeacherEmails(teacherEmails);
         dto.setTitle("Computer Science");
         return dto;
     }
@@ -128,7 +135,10 @@ class SubjectControllerTest {
         SubjectResponseDto responseDto = createResponseDto();
 
         SubjectCreateUpdateDto requestDto = new SubjectCreateUpdateDto();
-        requestDto.setTeacherId(1);
+
+        List<Integer> teacherIds = new ArrayList<>();
+        teacherIds.add(1);
+        requestDto.setTeacherIds(teacherIds);
         requestDto.setTitle("Computer Science");
 
         when(service.addOne(any(SubjectCreateUpdateDto.class))).thenReturn(subject);
@@ -154,17 +164,19 @@ class SubjectControllerTest {
         SubjectResponseDto responseDto = createResponseDto();
 
         SubjectCreateUpdateDto requestDto = new SubjectCreateUpdateDto();
-        requestDto.setTeacherId(1);
+        List<Integer> teacherIds = new ArrayList<>();
+        teacherIds.add(1);
+        requestDto.setTeacherIds(teacherIds);
         requestDto.setTitle("Computer Science");
 
-        when(service.update(any(SubjectCreateUpdateDto.class), eq(1))).thenReturn(subject);
+        when(service.fullUpdate(any(SubjectCreateUpdateDto.class), eq(1))).thenReturn(subject);
         when(specializationMapper.toResponseDto(subject)).thenReturn(responseDto);
 
         mvc.perform(put("/api/v1/subjects/1").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(requestDto))).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Computer Science"));
 
-        verify(service).update(any(SubjectCreateUpdateDto.class), eq(1));
+        verify(service).fullUpdate(any(SubjectCreateUpdateDto.class), eq(1));
         verify(specializationMapper).toResponseDto(subject);
 
     }

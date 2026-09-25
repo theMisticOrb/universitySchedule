@@ -4,23 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.HashSet;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-import ua.com.foxminded.MainApp;
-import ua.com.foxminded.dto.group.GroupCreateUpdateDto;
 import ua.com.foxminded.dto.user.StudentCreateUpdateDto;
 import ua.com.foxminded.entity.AcademicDepartment;
 import ua.com.foxminded.entity.Faculty;
@@ -28,148 +20,164 @@ import ua.com.foxminded.entity.Group;
 import ua.com.foxminded.entity.Specialization;
 import ua.com.foxminded.entity.Student;
 import ua.com.foxminded.enums.UserRole;
-import ua.com.foxminded.repository.AcademicDepartmentRepository;
-import ua.com.foxminded.repository.FacultyRepository;
-import ua.com.foxminded.repository.SpecializationRepository;
+import ua.com.foxminded.service.suppport.dto.StudentDtoTestBuilder;
 
-@Testcontainers
-@Transactional
-@SpringBootTest(classes = { MainApp.class })
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles({ "test" })
-class StudentServiceTest {
+class StudentServiceTest extends AbstractFullCrudServiceTest<Student, StudentCreateUpdateDto, Integer> {
 
     @Autowired
     private StudentService service;
 
-    @Autowired
-    private FacultyRepository facultyRepository;
-    @Autowired
-    private AcademicDepartmentRepository departmentRepository;
-    @Autowired
-    private SpecializationRepository specializationRepository;
-    @Autowired
-    private GroupService groupService;
+    @Override
+    protected FullCrudService<Student, StudentCreateUpdateDto, Integer> getService() {
+        return service;
+    }
 
-    private StudentCreateUpdateDto student = new StudentCreateUpdateDto();
+    @Override
+    protected StudentCreateUpdateDto createValidDto() {
+        Group group = persistValidGroup();
+        return StudentDtoTestBuilder.aStudent().withGroupName(group.getName()).build();
+    }
 
-    @BeforeEach
-    void setUp() {
+    @Override
+    protected Integer getId(Student entity) {
+        return entity.getId();
+    }
 
-        Faculty faculty = new Faculty();
-        faculty.setTitle("Engineering");
-        faculty.setCode("EN");
-        Faculty engineeringFaculty = facultyRepository.save(faculty);
+    @Override
+    protected Integer nonExistentId() {
+        return 999;
+    }
 
-        AcademicDepartment computerScience = new AcademicDepartment();
-        computerScience.setTitle("Computer Science");
-        computerScience.setCode("CS");
-        computerScience.setFaculty(engineeringFaculty);
-        AcademicDepartment csDepartment = departmentRepository.save(computerScience);
-
-        Specialization specialization = new Specialization();
-        specialization.setDepartment(csDepartment);
-        specialization.setCode("SE");
-        specialization.setTitle("Security");
-        Specialization security = specializationRepository.save(specialization);
-
-        GroupCreateUpdateDto group = new GroupCreateUpdateDto();
-        group.setSpecializationCode(security.getCode());
-        Group firstGroup = groupService.addOne(group);
-        
-        Set<UserRole> roles = new HashSet<>();
-        roles.add(UserRole.STUDENT);
-        
-        student.setFirstName("Jack");
-        student.setLastName("Sparrow");
-        student.setGroupId(firstGroup.getId());
-        student.setEmail("Sparrow@university.com");
-        student.setPassword("JackSparrow1234");
-        student.setRoles(roles);
+    private Group persistValidGroup() {
+        Faculty faculty = testDataFactory.persistFaculty();
+        AcademicDepartment department = testDataFactory.persistDepartment(faculty);
+        Specialization specialization = testDataFactory.persistSpecialization(department);
+        return testDataFactory.persistGroup(specialization);
     }
 
     @Test
-    void addOne_shouldSaveNewEntity_whenCalled() {
+    void addOne_shouldThrowException_whenRoleIsNotStudent() {
+        Group group = persistValidGroup();
+        StudentCreateUpdateDto dto = StudentDtoTestBuilder.aStudent().withGroupName(group.getName())
+                .withRoles(Collections.singleton(UserRole.TEACHER)).build();
 
-        Student firstStudent = service.addOne(student);
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> service.addOne(dto));
 
-        assertNotNull(firstStudent.getId());
-        assertEquals("Jack", firstStudent.getFirstName());
-        assertEquals("Sparrow", firstStudent.getLastName());
+        assertEquals("User must have STUDENT role", ex.getMessage());
     }
 
     @Test
-    void findById_shouldFindEntityById_whenCalledIfEntityExists() {
+    void findByFullName_shouldReturnStudent_whenExists() {
+        StudentCreateUpdateDto dto = createValidDto();
+        Student saved = service.addOne(dto);
 
-        Student saved = service.addOne(student);
-        Student found = service.findById(saved.getId());
-
-        assertNotNull(found);
-        assertEquals(saved.getId(), found.getId());
-    }
-
-    @Test
-    void findById_shouldThrowException_whenCalledifEntityDoesNotExist() {
-        int nonexistentId = 34;
-        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.findById(nonexistentId));
-        assertEquals("Student not found: " + nonexistentId, ex.getMessage());
-    }
-
-    @Test
-    void findAll_shouldGetListOfAllEntities_whenCalledIfNotEmpty() {
-
-        List<Student> allStudents = service.findAll();
-
-        assertNotNull(allStudents);
-
-    }
-
-    @Test
-    void findByTitle_shouldReturnStudent_whenExists() {
-        Student saved = service.addOne(student);
-
-        Student result = service.findByFullName("Sparrow", "Jack", null);
+        Student result = service.findByFullName(dto.getLastName(), dto.getFirstName(), dto.getMiddleName());
 
         assertNotNull(result);
-        assertEquals("Jack", result.getFirstName());
-        assertEquals("Sparrow", result.getLastName());
         assertEquals(saved.getId(), result.getId());
     }
 
     @Test
-    void update_shouldUpdateEntity_whenCalled() {
-        Student firstStudent = service.addOne(student);
+    void findByFullName_shouldThrowException_whenNotFound() {
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
+                () -> service.findByFullName("Nobody", "Nobody", null));
 
-        StudentCreateUpdateDto firstStudentUpdated = new StudentCreateUpdateDto();
-        firstStudentUpdated.setFirstName("Gibbs");
-        Student result = service.update(firstStudentUpdated, firstStudent.getId());
-
-        assertEquals(firstStudent.getId(), result.getId());
-        assertEquals("Gibbs", result.getFirstName());
-
+        assertEquals("Student not found: Nobody Nobody null", ex.getMessage());
     }
 
     @Test
-    void update_shouldNotOwerwriteNullFields_whenOneOfFieldsIsNull() {
-        Student firstStudent = service.addOne(student);
+    void findByEmail_shouldReturnStudent_whenExists() {
+        StudentCreateUpdateDto dto = createValidDto();
+        Student saved = service.addOne(dto);
 
-        StudentCreateUpdateDto firstStudentUpdated = new StudentCreateUpdateDto();
-        firstStudentUpdated.setFirstName(null);
-        Student result = service.update(firstStudentUpdated, firstStudent.getId());
+        Student result = service.findByEmail(dto.getEmail());
 
-        assertEquals(firstStudent.getId(), result.getId());
+        assertNotNull(result);
+        assertEquals(saved.getId(), result.getId());
+    }
+
+    @Test
+    void findByEmail_shouldThrowException_whenNotFound() {
+        String nonexistentEmail = "nobody@example.com";
+
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
+                () -> service.findByEmail(nonexistentEmail));
+
+        assertEquals("Student are not found by this email: " + nonexistentEmail, ex.getMessage());
+    }
+
+    @Test
+    void findById_shouldThrowException_withCorrectMessage() {
+        Integer nonexistentId = nonExistentId();
+
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.findById(nonexistentId));
+
+        assertEquals("Student not found: " + nonexistentId, ex.getMessage());
+    }
+
+    @Test
+    void update_shouldChangeGroup_whenGroupNameProvided() {
+        Student saved = getService().addOne(createValidDto());
+        Group newGroup = persistValidGroup();
+
+        StudentCreateUpdateDto updateDto = new StudentCreateUpdateDto();
+        updateDto.setGroupName(newGroup.getName());
+
+        Student result = service.fullUpdate(updateDto, saved.getId());
+
+        assertEquals(saved.getId(), result.getId());
+        assertEquals(newGroup.getId(), result.getGroup().getId());
+    }
+
+    @Test
+    void update_shouldNotOverwriteFields_whenFieldIsNull() {
+        StudentCreateUpdateDto dto = StudentDtoTestBuilder.aStudent().withGroupName(persistValidGroup().getName())
+                .withFirstName("Jack").build();
+        Student saved = service.addOne(dto);
+
+        StudentCreateUpdateDto updateDto = new StudentCreateUpdateDto();
+        updateDto.setFirstName(null);
+
+        Student result = service.fullUpdate(updateDto, saved.getId());
+
         assertEquals("Jack", result.getFirstName());
-
     }
 
     @Test
-    void delete_shouldDeleteEntityById_whenEntityExists() {
-        Student firstStudent = service.addOne(student);
-        int id = firstStudent.getId();
+    void changeStudentGroup_shouldUpdateGroup_whenCalled() {
+        Student saved = getService().addOne(createValidDto());
+        Group newGroup = persistValidGroup();
 
-        assertNotNull(service.findById(id));
-        service.deleteById(id);
-        assertThrows(EntityNotFoundException.class, () -> service.findById(id));
+        service.changeStudentGroup(saved.getId(), newGroup.getId());
+
+        Student result = service.findById(saved.getId());
+        assertEquals(newGroup.getId(), result.getGroup().getId());
     }
 
+    @Test
+    void addAll_shouldSaveAllProvidedStudents() {
+        Group group = persistValidGroup();
+
+        StudentCreateUpdateDto first = StudentDtoTestBuilder.aStudent().withGroupName(group.getName())
+                .withFirstName("Jack").build();
+        StudentCreateUpdateDto second = StudentDtoTestBuilder.aStudent().withGroupName(group.getName())
+                .withFirstName("Gibbs").build();
+
+        List<Student> result = service.addAll(Arrays.asList(first, second));
+
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    void count_shouldReturnNumberOfStudents() {
+        service.addOne(createValidDto());
+        service.addOne(createValidDto());
+
+        assertEquals(2, service.count());
+    }
+
+    @Test
+    void count_shouldReturnZero_whenNoStudentsExist() {
+        assertEquals(0, service.count());
+    }
 }

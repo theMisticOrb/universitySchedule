@@ -37,10 +37,13 @@ public class LessonMapper {
 
         LessonResponseDto dto = new LessonResponseDto();
         dto.setId(entity.getId());
+        dto.setSubjectId(entity.getSubject().getId());
         dto.setSubjectTitle(entity.getSubject().getTitle());
         dto.setClassHour(entity.getClassHour());
         dto.setClassroomName(entity.getClassroom().getName());
         dto.setWeekDay(entity.getWeekDay());
+        dto.setGroupId(entity.getGroup().getId());
+        dto.setGroupName(entity.getGroup().getName());
         return dto;
     }
 
